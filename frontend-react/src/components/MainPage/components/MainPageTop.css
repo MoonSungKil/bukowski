@@ -1,0 +1,8 @@
+.main_page_top {
+  display: grid;
+  width: 70%;
+  grid-template-columns: 2fr 1.5fr;
+  justify-content: center;
+  align-items: center;
+  gap: 5%;
+}

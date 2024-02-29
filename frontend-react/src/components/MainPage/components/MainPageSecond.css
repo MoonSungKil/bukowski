@@ -1,0 +1,78 @@
+.main_page_second_container {
+  position: relative;
+  width: 100vw;
+  height: 70vh;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--secondary-background);
+  margin-bottom: 3%;
+}
+
+.main_page_second_svg {
+  width: 100%;
+  position: absolute;
+  top: -15%;
+}
+
+.main_page_second_waveform {
+  fill: var(--secondary-background);
+}
+
+.main_page_second {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  height: 100%;
+  width: 80%;
+}
+
+.main_page_second_button_container {
+  position: relative;
+  width: 25%;
+  height: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  z-index: 10;
+}
+
+.main_page_second_button_container_svg {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  left: -45%;
+}
+
+.main_page_second_button_container_waveform {
+  fill: var(--secondary-background);
+}
+
+.main_page_second_button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 12;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.main_page_second_button_svg {
+  position: absolute;
+  width: 110%;
+  height: 110%;
+}
+
+.main_page_second_button_waveform {
+  fill: var(--secondary-background);
+}

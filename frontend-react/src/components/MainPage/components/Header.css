@@ -1,0 +1,63 @@
+.header_container {
+  width: 100%;
+  height: 15rem;
+  position: relative;
+  color: var(--third-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  padding: 2rem;
+  gap: 3rem;
+  position: absolute;
+}
+
+.header_logo_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11;
+}
+
+.header_logo {
+  font-family: "Raleway";
+  font-size: 2.5rem;
+}
+
+.header_background {
+  width: 100vw;
+  height: 100%;
+  left: 0;
+  position: relative;
+}
+
+.header_svg {
+  position: absolute;
+  width: 100%;
+  height: max-content;
+  rotate: 180deg;
+  top: -10rem;
+  left: 0;
+  filter: drop-shadow(0px -14px 4px rgba(0, 0, 0, 0.5));
+}
+
+.header_waveform {
+  fill: var(--secondary-background);
+}
+
+@media screen and (max-width: 1700px) {
+  .header_svg {
+    top: -7rem;
+  }
+}
+
+@media screen and (max-width: 1450px) {
+  .header_svg {
+    top: -6rem;
+  }
+}

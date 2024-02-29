@@ -1,0 +1,54 @@
+.filter_search {
+  width: fit-content;
+  padding: 0.5rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.filter_search_filters {
+  width: 5rem;
+  height: 3rem;
+  border: 1px solid var(--primary-color);
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  color: var(--primary-color);
+  font-family: "Nunito";
+  font-weight: bold;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.filter_search_filters:hover {
+  color: white;
+  background-color: var(--primary-color);
+}
+
+.filter_search_input {
+  width: 15rem;
+  height: 3rem;
+  outline: none;
+  background-color: transparent;
+  border: 1px solid var(--primary-background);
+  border-radius: 1rem;
+  color: var(--third-color);
+  padding: 0 3rem 0 1rem;
+  font-size: 1rem;
+}
+
+.filter_search_button {
+  position: absolute;
+  right: 9%;
+  top: 25%;
+  border-radius: 50%;
+  border: none;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  color: var(--third-color);
+  background-color: var(--primary-color);
+  cursor: pointer;
+}

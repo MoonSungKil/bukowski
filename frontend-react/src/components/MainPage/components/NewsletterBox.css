@@ -1,0 +1,108 @@
+.newsletter_container {
+  position: relative;
+  width: 25rem;
+  height: 25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  filter: drop-shadow(10px 14px 4px rgba(0, 0, 0, 0.5));
+  align-items: center;
+}
+
+.newsletter {
+  position: relative;
+  width: 95%;
+  height: 95%;
+  background-color: transparent;
+  border-radius: inherit;
+  color: var(--third-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  gap: 2rem;
+}
+
+.newsletter_ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-align: start;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-decoration-color: var(--third-color);
+  text-decoration-thickness: 3px;
+  color: var(--primary-color);
+  margin: 0;
+  font-family: "Nunito";
+}
+
+.newsletter_container:hover .newsletter_ul {
+  color: var(--third-color);
+  text-decoration: none;
+  list-style-type: square;
+  list-style-position: inside;
+}
+
+.newsletter_ul > li::marker {
+  color: var(--primary-color);
+}
+
+.newsletter_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  height: 100%;
+  gap: 0.3rem;
+  z-index: 20;
+}
+
+.newsletter_form > input {
+  width: 95%;
+  height: 2rem;
+  outline: none;
+  border: none;
+  text-align: center;
+  color: var(--third-color);
+  font-size: 1.1rem;
+  padding: 0.2rem;
+  border-bottom: 2px solid #fff;
+  background-color: transparent;
+}
+
+.newsletter_form > input::placeholder {
+  color: white;
+}
+
+.newsletter_form > button {
+  width: 100%;
+  height: 3rem;
+  border-radius: 1rem;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  background-color: var(--third-color);
+  cursor: pointer;
+}
+.newsletter_svg {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  inset: -25%;
+}
+
+.newsletter_waveform {
+  fill: var(--secondary-background);
+}
+
+.newsletter_svg_inner {
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  inset: -20%;
+}
+
+.newsletter_waveform_inner {
+  fill: var(--primary-color);
+}

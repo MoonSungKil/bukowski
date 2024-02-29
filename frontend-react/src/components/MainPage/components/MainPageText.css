@@ -1,0 +1,60 @@
+.main_page_text {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: var(--third-color);
+}
+
+.main_page_text_ul {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  text-align: start;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.main_page_text_li {
+  font-size: 1.2rem;
+  list-style-type: none;
+}
+
+.main_page_text_li::marker {
+  color: var(--primary-color);
+}
+
+.main_page_text_svg_one {
+  width: 40%;
+  position: absolute;
+  top: 0rem;
+  left: -5rem;
+}
+
+.main_page_text_svg_one > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.main_page_text_svg_one > svg > path {
+  fill: var(--primary-color);
+}
+
+.main_page_text_svg_two {
+  width: 40%;
+  position: absolute;
+  bottom: 0rem;
+  right: 5rem;
+}
+
+.main_page_text_svg_two > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.main_page_text_svg_two > svg > path {
+  fill: var(--primary-color);
+}

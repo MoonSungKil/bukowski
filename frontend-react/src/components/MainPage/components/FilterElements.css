@@ -1,0 +1,16 @@
+.filter_elements {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.filter_elements_list {
+  list-style: none;
+  display: flex;
+  text-wrap: nowrap;
+  border-radius: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  box-shadow: 0 0 3px black;
+  cursor: pointer;
+}

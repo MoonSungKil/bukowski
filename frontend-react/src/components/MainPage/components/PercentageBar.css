@@ -1,0 +1,30 @@
+.percentage_bar_container {
+  width: 80%;
+  height: 1rem;
+  display: flex;
+  padding: 0 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.percentage_bar_title {
+  font-weight: bold;
+  color: #fff;
+}
+
+.percentage_bar {
+  position: relative;
+  width: 10rem;
+  height: 100%;
+  border-radius: 1rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  box-shadow: 2px 2px 2px black;
+}
+
+.percentage_bar_rate {
+  height: 100%;
+  background-color: var(--secondary-color);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
