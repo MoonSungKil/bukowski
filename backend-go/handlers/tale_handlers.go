@@ -14,6 +14,26 @@ import (
 	"gorm.io/gorm"
 )
 
+func HandleGetAllTalesWithoutAuth(ctx *gin.Context)  {
+	var tales []model.Tale
+	database.DB.Preload("Genres").Find(&tales)
+	ctx.JSON(http.StatusOK, tales)
+}
+
+func HandleGetSingleTaleWithouthAuth(ctx *gin.Context) {
+	var tale model.Tale
+	taleId := ctx.Param("id")
+
+	taleIdUint, err := strconv.ParseUint(taleId,10,64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid error format"})
+	}
+
+	database.DB.Preload("Genres").First(&tale, taleIdUint);
+	ctx.JSON(http.StatusOK, tale)
+
+}
+
 func HandleCreateTale(ctx *gin.Context) {
 	//extract the User ID from the JWT claims
 	user, exists := ctx.Get("user")
@@ -184,7 +204,7 @@ func HandlePurchaseTale(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "succesfully purchased tale", "tale": newPurchase})
 }
 
-func HandleGetAllPurchasedTalesByUserID(ctx *gin.Context) {
+func HandleGetAllTalesPurchasedByUserId(ctx *gin.Context) {
 	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
@@ -210,6 +230,7 @@ func HandleGetAllPurchasedTalesByUserID(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, tales)
+
 }
 
 func HandleGetPurchasedTaleByID(ctx *gin.Context) {

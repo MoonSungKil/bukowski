@@ -1,0 +1,98 @@
+.test_new_container {
+  position: relative;
+  width: 20rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  background-image: url("../../../assets/particle.jpg");
+  background-repeat: repeat;
+  background-color: var(--primary-color);
+  background-blend-mode: multiply;
+  border: 2px solid var(--primary-background);
+  padding: 0rem 1rem 0rem 1rem;
+}
+
+.test_new {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  color: var(--third-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.test_new_title {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: var(--primary-background);
+  align-items: center;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
+.test_new_title h2,
+.test_new_title p {
+  margin: 0.5rem;
+}
+
+.test_new_title p {
+  font-family: "Dancing Script", cursive;
+  font-size: 1.3rem;
+}
+
+.test_new_text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 1.2rem;
+  text-decoration-thickness: 3px;
+  color: var(--third-color);
+  margin: 0;
+}
+
+.test_new_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0.3rem;
+  z-index: 20;
+}
+
+.test_new_form > input {
+  height: 2rem;
+  outline: none;
+  border: none;
+  text-align: center;
+  color: var(--secondary-color);
+  font-size: 1.1rem;
+  border-bottom: 2px solid var(--secondary-color);
+  background-color: transparent;
+}
+
+.test_new_form > input::placeholder {
+  color: var(--secondary-color);
+}
+
+.test_new_form > button {
+  height: 3rem;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  border: none;
+  color: var(--secondary-color);
+  font-size: 1.1rem;
+  background-color: var(--primary-background);
+  cursor: pointer;
+  width: 100%;
+}

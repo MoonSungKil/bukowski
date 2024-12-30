@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import "./TalePreview.css";
 import PercentageBar from "./PercentageBar";
+import { useNavigate } from "react-router-dom";
 
-const TalePreview = () => {
+const TalePreview = ({ tale }) => {
   const [showPreview, setShowPreview] = useState(false);
+
+  const navigate = useNavigate();
+
+  const navigateToTale = () => {
+    navigate(`/tale/${tale.ID}`);
+  };
 
   return (
     <div
+      onClick={navigateToTale}
       onMouseEnter={() => setShowPreview(true)}
       onMouseLeave={() => setShowPreview(false)}
       className="tale_preview"
@@ -24,7 +32,7 @@ const TalePreview = () => {
         </div>
       </div>
       <div className="tale_preview_title_container">
-        <p className="tale_preview_title">The Room of the 90 Ubrellas</p>
+        <p className="tale_preview_title">{tale.title}</p>
         <svg className="tale_preview_svg" viewBox="0 0 1440 390" xmlns="http://www.w3.org/2000/svg">
           <path
             className="tale_preview_waveform"

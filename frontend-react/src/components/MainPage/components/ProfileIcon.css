@@ -1,0 +1,83 @@
+.profile_icon_container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile_icon_wrapper {
+  width: fit-content;
+  height: 3rem;
+  background-color: var(--primary-background);
+  padding: 0;
+  margin: 0;
+  padding: 0.1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--secondary-color);
+  cursor: pointer;
+}
+
+.profile_icon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.profile_icon_username {
+  color: var(--third-color);
+  margin: 0 1rem;
+  font-size: 1.1rem;
+}
+
+.profile_icon_image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 0.3rem;
+}
+
+.profile_icon_image > img {
+  width: 3rem;
+  height: 3rem;
+}
+
+.profile_icon_logout_btn {
+  width: 7rem;
+  height: 2.5rem;
+  border-radius: 5px;
+  background-color: var(--primary-background);
+  border: 1px solid transparent;
+  padding: 0.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--secondary-color);
+}
+
+.profile_icon_logout_btn_text {
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--third-color);
+  margin: 0;
+  background-color: var(--primary-background);
+  border-radius: inherit;
+}
+
+.profile_icon_logout_btn:hover {
+  cursor: pointer;
+  color: var(--primary-color);
+  background-color: var(--secondary-background);
+}
+
+.profile_icon_logout_btn:hover > .profile_icon_logout_btn_text {
+  color: var(--secondary-color);
+}

@@ -1,6 +1,7 @@
 .main_page_body {
   width: 95vw;
   height: max-content;
+  margin-bottom: 3rem;
 }
 
 .main_page_body_collection {
@@ -24,5 +25,11 @@
 @media (max-width: 1950px) {
   .main_page_body_collection {
     grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 1800px) {
+  .main_page_body_collection {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

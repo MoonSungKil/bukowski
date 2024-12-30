@@ -17,6 +17,8 @@ func init() {
 func main() {
 	router := gin.Default()
 
+	router.Use(middleware.CORSMiddleware())
+	
 	preventLoginGroup := router.Group("/")
 	preventLoginGroup.Use(middleware.PreventLoginIfAuthenticated)
 
@@ -36,15 +38,17 @@ func main() {
 	requireAuthGroup.DELETE("/users/delete_authorization_cookie", handlers.HandleDeleteAuthorizationCookie)
 
 	requireAuthGroup.POST("/tales/create", handlers.HandleCreateTale)
-	requireAuthGroup.GET("/tales/published", handlers.HandleGetAllTalesPublishedByUserId)
+	requireAuthGroup.GET("/tales/get_all_published", handlers.HandleGetAllTalesPublishedByUserId)
 	requireAuthGroup.GET("/tales/published/:id", handlers.HandleGetSingleTalePublishedById)
-	requireAuthGroup.GET("/tales/purchased/", handlers.HandleGetAllPurchasedTalesByUserID)
+	requireAuthGroup.GET("/tales/get_all_purchased", handlers.HandleGetAllTalesPurchasedByUserId)
 	requireAuthGroup.POST("/tales/purchase/:id", handlers.HandlePurchaseTale)
 	requireAuthGroup.GET("/tales/purchased/:id", handlers.HandleGetPurchasedTaleByID)
 	requireAuthGroup.DELETE("/tales/soft_delete/:id", handlers.HandleSoftDeleteTaleByUserID)
 	requireAuthGroup.DELETE("/tales/permanent_delete/:id", handlers.HandlePermanentDeleteTaleByUserID)
 	requireAuthGroup.PUT("/tales/activate_tale/:id", handlers.HandleActiveTaleByUserId)
 
+	router.GET("/tales/get_tales", handlers.HandleGetAllTalesWithoutAuth)
+	router.GET("/tales/get_tales/:id", handlers.HandleGetSingleTaleWithouthAuth)
 
 	router.Run()
 }

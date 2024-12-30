@@ -12,7 +12,7 @@
 }
 
 .tale_preview:hover {
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 1);
 }
 
 .tale_preview_main {

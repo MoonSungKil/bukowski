@@ -1,6 +1,7 @@
 import React from "react";
 import "./Header.css";
 import Navigation from "./Navigation";
+import Auth from "../../AuthPage/Auth";
 
 function Header() {
   return (
@@ -19,6 +20,7 @@ function Header() {
         </div>
         <Navigation />
       </div>
+      <Auth />
     </div>
   );
 }

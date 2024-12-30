@@ -5,6 +5,9 @@ import App from "./App";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AuthPage from "./components/AuthPage/Auth";
 import { SiteStateProvider } from "./context/SiteStateContext";
+import SinglePage from "./components/SinglePage/SinglePage";
+import { TaleProvider } from "./context/TaleContext";
+import { UserProvider } from "./context/UserContext";
 
 const router = createBrowserRouter([
   {
@@ -15,13 +18,21 @@ const router = createBrowserRouter([
     path: "/auth",
     element: <AuthPage />,
   },
+  {
+    path: "/tale/:id",
+    element: <SinglePage />,
+  },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <SiteStateProvider>
-      <RouterProvider router={router} />
+      <UserProvider>
+        <TaleProvider>
+          <RouterProvider router={router} />
+        </TaleProvider>
+      </UserProvider>
     </SiteStateProvider>
   </React.StrictMode>
 );

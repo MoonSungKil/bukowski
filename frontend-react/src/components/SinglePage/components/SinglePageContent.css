@@ -1,0 +1,81 @@
+.single_page_content_container {
+  position: relative;
+  width: 100%;
+  color: rgb(216, 216, 216);
+  background-repeat: repeat;
+  background-blend-mode: multiply;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+}
+
+.single_page_content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.single_page_content_title_author {
+  font-size: 2rem;
+}
+
+.single_page_content_underline {
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  height: 0.5rem;
+  width: 40%;
+  top: -7rem;
+  right: 8%;
+  margin-bottom: 1.5%;
+}
+
+.single_page_content_story {
+  text-align: start;
+  padding-bottom: 3rem;
+}
+
+.single_page_content_line {
+  width: 1rem;
+  height: 100%;
+  background: linear-gradient(
+    transparent,
+    var(--primary-color),
+    transparent,
+    var(--primary-color),
+    transparent
+  );
+  justify-self: center;
+  align-items: center;
+}
+
+.single_page_content_locked {
+  position: relative;
+  width: 100%;
+  background-color: var(--secondary-background);
+}
+
+.single_page_content_locked_text {
+  position: relative;
+  z-index: 10;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 3rem;
+  width: 100%;
+}
+
+.single_page_content_svg {
+  width: 100%;
+  position: absolute;
+  top: -50%;
+}
+
+.single_page_content_waveform {
+  fill: var(--secondary-background);
+}

@@ -1,5 +1,102 @@
 .newsletter_container {
   position: relative;
+  width: 70%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(black, transparent, black, transparent, black, transparent);
+}
+
+.newsletter {
+  position: relative;
+  width: 95%;
+  height: 95%;
+  background-color: transparent;
+  border-radius: inherit;
+  color: var(--secondary-color);
+  display: grid;
+  grid-template-rows: 3fr 1fr;
+  z-index: 10;
+  color: var(--third-color);
+  background-image: url("../../../assets/rainy.gif");
+  background-color: var(--secondary-color);
+  background-blend-mode: multiply;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.newsletter_title {
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+}
+
+.newsletter_title > h2 {
+  color: var(--third-color);
+}
+
+.newsletter_title p {
+  font-family: "Dancing Script", cursive;
+}
+
+.newsletter_title h2,
+.newsletter_title p {
+  margin: 0.5rem;
+}
+
+.newsletter_form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 0.3rem;
+  z-index: 20;
+}
+
+.newsletter_form > input {
+  width: 95%;
+  height: 2rem;
+  outline: none;
+  border: none;
+  text-align: center;
+  color: var(--third-color);
+  font-size: 1.1rem;
+  padding: 0.2rem;
+  border-bottom: 2px solid var(--secondary-color);
+  background-color: transparent;
+}
+
+.newsletter_form > input::placeholder {
+  color: var(--third-color);
+}
+
+.newsletter_form > button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  color: var(--third-color);
+  background-color: rgba(0, 0, 0, 0.719);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.newsletter_form > button:hover {
+  background-color: rgba(65, 37, 1, 0.486);
+}
+
+/* 
+.newsletter_container {
+  position: relative;
   width: 25rem;
   height: 25rem;
   display: flex;
@@ -15,45 +112,41 @@
   height: 95%;
   background-color: transparent;
   border-radius: inherit;
-  color: var(--third-color);
+  color: var(--secondary-color);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   z-index: 10;
-  gap: 2rem;
-}
-
-.newsletter_ul {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  text-align: start;
-  font-size: 0.9rem;
-  text-decoration: underline;
-  text-decoration-color: var(--third-color);
-  text-decoration-thickness: 3px;
-  color: var(--primary-color);
-  margin: 0;
-  font-family: "Nunito";
-}
-
-.newsletter_container:hover .newsletter_ul {
   color: var(--third-color);
-  text-decoration: none;
-  list-style-type: square;
-  list-style-position: inside;
+  gap: 2rem;
+  background-image: url("../../../assets/particle.jpg");
+  background-repeat: repeat;
+  background-color: var(--primary-background);
+  background-blend-mode: multiply;
 }
 
-.newsletter_ul > li::marker {
-  color: var(--primary-color);
+.newsletter_title > h2 {
+  color: var(--third-color);
+}
+
+.newsletter_title {
+  font-size: 1.5rem;
+}
+.newsletter_title p {
+  font-family: "Dancing Script", cursive;
+}
+
+.newsletter_title h2,
+.newsletter_title p {
+  margin: 0.5rem;
 }
 
 .newsletter_form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 90%;
-  height: 100%;
+  width: 80%;
   gap: 0.3rem;
   z-index: 20;
 }
@@ -67,42 +160,55 @@
   color: var(--third-color);
   font-size: 1.1rem;
   padding: 0.2rem;
-  border-bottom: 2px solid #fff;
+  border-bottom: 2px solid var(--third-color);
   background-color: transparent;
 }
 
 .newsletter_form > input::placeholder {
-  color: white;
+  color: var(--third-color);
 }
 
 .newsletter_form > button {
   width: 100%;
   height: 3rem;
-  border-radius: 1rem;
   border: none;
   color: #fff;
   font-size: 1.1rem;
-  background-color: var(--third-color);
+  color: var(--third-color);
+  background-color: var(--primary-background);
   cursor: pointer;
+  border-radius: 5px;
+  border: 2px solid var(--third-color);
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
+
+.newsletter_form > button:hover {
+  color: var(--primary-background);
+  background-color: var(--primary-color);
+  border: 2px solid var(--primary-background);
+}
+
 .newsletter_svg {
   position: absolute;
-  width: 150%;
-  height: 150%;
-  inset: -25%;
+  width: 145%;
+  height: 145%;
+  inset: -20%;
 }
 
 .newsletter_waveform {
-  fill: var(--secondary-background);
+  fill: var(--primary-color);
 }
 
 .newsletter_svg_inner {
   position: absolute;
-  width: 140%;
-  height: 140%;
-  inset: -20%;
+  width: 135%;
+  height: 135%;
+  inset: -15%;
 }
 
 .newsletter_waveform_inner {
-  fill: var(--primary-color);
+  fill: var(--primary-background);
 }
+
+} */

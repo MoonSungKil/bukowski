@@ -1,9 +1,12 @@
-import React from "react";
 import "./Navigation.css";
 import { useSiteState } from "../../../context/SiteStateContext";
+import { ProfileIcon } from "./ProfileIcon";
+import { useUser } from "../../../context/UserContext";
 
 const Navigation = () => {
   const { openAuthModalRegister, openAuthModalLogin } = useSiteState();
+
+  const { userLoggedIn } = useUser();
 
   return (
     <div className="navigation_container">
@@ -12,18 +15,24 @@ const Navigation = () => {
           <input type="text" placeholder="Search for Book" />
         </div>
         <div className="navigation_auth_box">
-          <div
-            onClick={() => openAuthModalLogin()}
-            className="navigation_auth_login navigation_auth_btn"
-          >
-            <p className="navigation_auth_btn_text">Log In</p>
-          </div>
-          <div
-            onClick={() => openAuthModalRegister()}
-            className="navigation_auth_register navigation_auth_btn"
-          >
-            <p className="navigation_auth_btn_text">Register</p>
-          </div>
+          {userLoggedIn.username ? (
+            <ProfileIcon user={userLoggedIn} />
+          ) : (
+            <>
+              <div
+                onClick={() => openAuthModalLogin()}
+                className="navigation_auth_login navigation_auth_btn"
+              >
+                <p className="navigation_auth_btn_text">Log In</p>
+              </div>
+              <div
+                onClick={() => openAuthModalRegister()}
+                className="navigation_auth_register navigation_auth_btn"
+              >
+                <p className="navigation_auth_btn_text">Register</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className="navigation_bottom_section">

@@ -15,14 +15,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-:root {
+/* :root {
   --primary-background: #b1a3a2;
   --secondary-background: #e9d3d0;
   --third-background: #0b0b0e;
   --primary-color: #790326;
   --secondary-color: rgb(92, 0, 31);
   --third-color: rgb(0, 0, 0);
-}
+} */
 /* :root {
   --primary-background: #0b0b0e;
   --secondary-background: rgb(0, 0, 0);
@@ -31,3 +31,19 @@ code {
   --secondary-color: rgb(92, 0, 31);
   --third-color: rgb(255, 255, 255);
 } */
+/* :root {
+  --primary-background: #0b0b0e;
+  --secondary-background: #1d1615;
+  --third-background: #0b0b0e;
+  --primary-color: rgb(0, 117, 102);
+  --secondary-color: rgb(65, 165, 152);
+  --third-color: rgb(255, 255, 255);
+} */
+:root {
+  --primary-background: #0b0b0e;
+  --secondary-background: #1d1615;
+  --third-background: #0b0b0e;
+  --primary-color: rgb(199, 80, 0);
+  --secondary-color: rgb(165, 118, 65);
+  --third-color: rgb(255, 255, 255);
+}
