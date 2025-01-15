@@ -17,6 +17,7 @@ func init() {
 func main() {
 	router := gin.Default()
 
+	router.Static("/uploads", "../uploads")
 	router.Use(middleware.CORSMiddleware())
 	
 	preventLoginGroup := router.Group("/")
@@ -33,12 +34,14 @@ func main() {
 	requireAuthGroup.DELETE("/users/soft_delete/:id", handlers.HandleSoftDeleteSingleUser)
 	requireAuthGroup.DELETE("/users/permanent_delete/:id", handlers.HandlePermanentDeleteSingleUser)
 	requireAuthGroup.PUT("/users/update_info/:id",handlers.HandleUpdateUserInformation)
+	requireAuthGroup.PUT("/users/update_profile_picture/:id",handlers.HandleUpdateUserProfilePicture)
 	requireAuthGroup.PUT("/users/update_password/:id", handlers.HandleUpdateUserPassword)
 	requireAuthGroup.GET("/users/test", handlers.Test)
 	requireAuthGroup.DELETE("/users/delete_authorization_cookie", handlers.HandleDeleteAuthorizationCookie)
 
 	requireAuthGroup.POST("/tales/create", handlers.HandleCreateTale)
 	requireAuthGroup.GET("/tales/get_all_published", handlers.HandleGetAllTalesPublishedByUserId)
+	requireAuthGroup.GET("/tales/get_all_drafts", handlers.HandleGetAllTalesDraftedByUserId)
 	requireAuthGroup.GET("/tales/published/:id", handlers.HandleGetSingleTalePublishedById)
 	requireAuthGroup.GET("/tales/get_all_purchased", handlers.HandleGetAllTalesPurchasedByUserId)
 	requireAuthGroup.POST("/tales/purchase/:id", handlers.HandlePurchaseTale)

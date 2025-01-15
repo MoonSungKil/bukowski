@@ -1,10 +1,10 @@
 import "./SinglePageContent.css";
-import { useTale } from "../../../context/TaleContext";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useSiteState } from "../../../context/SiteStateContext";
 
 const SinglePageContent = () => {
-  const { isPurchased, singleTaleSelected } = useTale();
+  const { isPurchased, singleTaleSelected } = useSiteState();
 
   const { id } = useParams();
 

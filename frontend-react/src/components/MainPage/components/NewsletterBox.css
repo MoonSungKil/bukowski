@@ -18,7 +18,6 @@
   color: var(--secondary-color);
   display: grid;
   grid-template-rows: 3fr 1fr;
-  z-index: 10;
   color: var(--third-color);
   background-image: url("../../../assets/rainy.gif");
   background-color: var(--secondary-color);

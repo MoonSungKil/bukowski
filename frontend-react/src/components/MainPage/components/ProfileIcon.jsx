@@ -1,11 +1,13 @@
 import React from "react";
 import "./ProfileIcon.css";
-import ProfilePictureImage from "../../../assets/profilepic.jpg";
-import { useUser } from "../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { useSiteState } from "../../../context/SiteStateContext";
 
-export const ProfileIcon = ({ user }) => {
-  const { logoutUser } = useUser();
+export const ProfileIcon = () => {
+  const { logoutUser, userLoggedIn } = useSiteState();
+
+  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
+  const profilePicture = `${backendURL}${userLoggedIn.profile_picture}`;
 
   const navigate = useNavigate();
 
@@ -14,13 +16,17 @@ export const ProfileIcon = ({ user }) => {
     navigate("/");
   };
 
+  const navigateToProfile = () => {
+    navigate(`/profile/${userLoggedIn.id}`);
+  };
+
   return (
     <div className="profile_icon_container">
-      <div className="profile_icon_wrapper">
+      <div onClick={navigateToProfile} className="profile_icon_wrapper">
         <div className="profile_icon">
-          <div className="profile_icon_username">{user.username}</div>
+          <div className="profile_icon_username">{userLoggedIn.username}</div>
           <div className="profile_icon_image">
-            <img src={ProfilePictureImage} alt="profile_picture" />
+            <img src={profilePicture} alt="profile_picture" />
           </div>
         </div>
       </div>

@@ -1,0 +1,141 @@
+.profile_collection_container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  align-self: flex-start;
+  z-index: 10;
+  gap: 1rem;
+}
+
+.profile_collection {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: start;
+  justify-content: center;
+  row-gap: 0rem;
+  column-gap: 0rem;
+  align-self: start;
+}
+
+.profile_collection_search {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  margin-left: 1%;
+  gap: 1rem;
+  border-bottom: 2px solid var(--secondary-background);
+}
+
+.profile_collection_search_type {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  color: var(--secondary-color);
+  font-family: "Raleway";
+  font-weight: bold;
+  border-radius: 1rem;
+  padding: 0rem 1rem;
+  font-size: 1.4rem;
+}
+
+.profile_collection_search_input {
+  width: 15rem;
+  height: 3rem;
+  outline: none;
+  background-color: transparent;
+  border: 1px solid var(--secondary-background);
+  border-radius: 1rem;
+  color: gray;
+  padding: 0 3rem 0 1rem;
+  font-size: 1rem;
+}
+
+.profile_collection_search_button {
+  position: absolute;
+  right: 2%;
+  top: 27%;
+  border-radius: 50%;
+  border: none;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  color: var(--third-color);
+  background-color: var(--secondary-color);
+  cursor: pointer;
+}
+
+.profile_collection_create_tale_button {
+  background-color: rgb(29, 59, 29);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--third-color);
+}
+
+.profile_collection_create_tale_button:hover {
+  transform: scale(1);
+}
+
+.profile_collection_create_tale_button_backdrop {
+  position: absolute;
+  background-color: rgb(25, 58, 25);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10rem;
+  color: rgba(0, 0, 0, 0.616);
+  opacity: 0;
+}
+
+.profile_collection_create_tale_button_backdrop:hover {
+  opacity: 1;
+}
+
+.profile_collection_empty {
+  grid-column: span 3;
+  justify-self: start;
+  font-family: "Raleway";
+  color: gray;
+  text-indent: 1rem;
+}
+
+@media screen and (max-width: 2200px) {
+  .profile_collection {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media screen and (max-width: 1900px) {
+  .profile_collection {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media screen and (max-width: 1700px) {
+  .profile_collection {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .profile_collection {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

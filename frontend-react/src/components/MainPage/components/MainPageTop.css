@@ -1,8 +1,10 @@
 .main_page_top {
   display: grid;
   width: 70%;
+  height: 60vh;
   grid-template-columns: 2fr 1.5fr;
   justify-content: center;
   align-items: center;
   gap: 5%;
+  padding-top: 8%;
 }

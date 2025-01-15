@@ -3,7 +3,6 @@ import "./MainPage.css";
 import MainPageFirst from "./components/MainPageFirst";
 import MainPageSecond from "./components/MainPageSecond";
 import MainPageBody from "./components/MainPageBody";
-import Auth from "../AuthPage/Auth";
 
 const MainPage = () => {
   return (

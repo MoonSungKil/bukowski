@@ -62,6 +62,7 @@ export const UserProvider = ({ children }) => {
 
       localStorage.removeItem("userLoggedIn");
       localStorage.removeItem("purchasedTales");
+      localStorage.removeItem("singleTaleSelected");
 
       dispatch({
         type: "LOGOUT_USER",

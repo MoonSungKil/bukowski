@@ -33,8 +33,10 @@
 }
 
 .single_page_content_story {
+  width: 80%;
   text-align: start;
   padding-bottom: 3rem;
+  color: gray;
 }
 
 .single_page_content_line {
@@ -74,6 +76,7 @@
   width: 100%;
   position: absolute;
   top: -50%;
+  left: 0;
 }
 
 .single_page_content_waveform {

@@ -14,6 +14,7 @@ type User struct {
     Username  string `json:"username" gorm:"unique;not null"`
     Email     string `json:"email" gorm:"unique;not null"`
     Password  string `json:"password" gorm:"not null;validate:min=8"`
+    ProfilePicture  string `json:"profile_picture,omitempty"`
 	PublishedTales []Tale `gorm:"foreignKey:UserID" json:"published_tales"`
 	PurchasedTales []Tale `gorm:"many2many:tale_purchases" json:"purchased_tales"`
 }

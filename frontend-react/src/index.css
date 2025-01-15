@@ -4,8 +4,7 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--secondary-background);
-  /* background-color: var(--primary-background); */
+  background-color: var(--primary-background);
   margin: 0;
   padding: 0;
   font-family: "Nunito";
@@ -23,6 +22,7 @@ code {
   --secondary-color: rgb(92, 0, 31);
   --third-color: rgb(0, 0, 0);
 } */
+
 /* :root {
   --primary-background: #0b0b0e;
   --secondary-background: rgb(0, 0, 0);
@@ -31,6 +31,7 @@ code {
   --secondary-color: rgb(92, 0, 31);
   --third-color: rgb(255, 255, 255);
 } */
+
 /* :root {
   --primary-background: #0b0b0e;
   --secondary-background: #1d1615;
@@ -39,6 +40,7 @@ code {
   --secondary-color: rgb(65, 165, 152);
   --third-color: rgb(255, 255, 255);
 } */
+
 :root {
   --primary-background: #0b0b0e;
   --secondary-background: #1d1615;

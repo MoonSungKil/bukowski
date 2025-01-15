@@ -16,7 +16,7 @@ import (
 
 func HandleGetAllTalesWithoutAuth(ctx *gin.Context)  {
 	var tales []model.Tale
-	database.DB.Preload("Genres").Find(&tales)
+	database.DB.Where("status = ?", "published").Preload("Genres").Find(&tales)
 	ctx.JSON(http.StatusOK, tales)
 }
 
@@ -58,6 +58,7 @@ func HandleCreateTale(ctx *gin.Context) {
 		Content: taleBody.Content,
 		Pages: taleBody.Pages,
 		Price: taleBody.Price,
+		Status: taleBody.Status,
 		PublishedAt: taleBody.PublishedAt,
 		UserID: userID,
 	} 
@@ -90,7 +91,21 @@ func HandleGetAllTalesPublishedByUserId(ctx *gin.Context) {
 	userID := user.ID
 
 	var tales []model.Tale
-	database.DB.Where("user_id = ?", userID).Preload("Genres").Unscoped().Find(&tales)
+	database.DB.Where("user_id = ? AND status = ?", userID, "published").Preload("Genres").Unscoped().Find(&tales)
+	ctx.JSON(http.StatusOK, tales)
+}
+
+func HandleGetAllTalesDraftedByUserId(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	userID := user.ID
+
+	var tales []model.Tale
+	database.DB.Where("user_id = ? AND status = ?", userID, "draft").Preload("Genres").Unscoped().Find(&tales)
 	ctx.JSON(http.StatusOK, tales)
 }
 
@@ -370,9 +385,9 @@ func HandleActiveTaleByUserId(ctx *gin.Context) {
 		return
 	}
 
-	if !tale.DeletedAt.Time.IsZero() || !tale.IsActive{
+	if !tale.DeletedAt.Time.IsZero() || tale.Status == "archived" {
 		tale.DeletedAt = gorm.DeletedAt{} // setting the deleteAt value to nil
-		tale.IsActive = true
+		tale.Status = "published"
 
 		result := database.DB.Save(&tale)
 		if result.Error != nil {

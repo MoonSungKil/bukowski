@@ -1,0 +1,226 @@
+:root {
+  --create-tale-input: rgba(255, 255, 255, 0.123);
+}
+
+.create_tale {
+  width: 100%;
+  color: var(--primary-color);
+  border-radius: 1rem;
+}
+
+.create_tale_form {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  height: 100%;
+}
+
+.create_tale_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.create_tale input {
+  background-color: var(--create-tale-input);
+  outline: none;
+  color: var(--third-color);
+  border: none;
+  padding: 0.5rem 0;
+  width: 100%;
+  margin-bottom: 1rem;
+  text-indent: 0.4rem;
+}
+
+.create_tale_info_element {
+  box-shadow: 0px 0px 3px black;
+}
+
+.create_tale_title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.create_tale_description {
+  height: 8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.3rem;
+}
+
+.create_tale_description > textarea {
+  height: 100%;
+  resize: none;
+  text-indent: 0.3rem;
+  color: var(--third-color);
+  outline: none;
+  border: none;
+  background-color: var(--create-tale-input);
+}
+
+.create_tale_image_genres {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+}
+
+.create_tale_image {
+  position: relative;
+  background-color: var(--create-tale-input);
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.create_tale_image_backdrop {
+  position: absolute;
+  inset: auto;
+  padding: 0;
+  margin: 0;
+  height: inherit;
+  width: inherit;
+  display: flex;
+  justify-content: center;
+  background-color: var(--primary-color);
+  align-items: center;
+  opacity: 0;
+  left: 0;
+  top: 0;
+}
+
+.create_tale_image_backdrop > i {
+  margin: 0;
+  padding: 0;
+  font-size: 8rem;
+  color: rgba(0, 0, 0, 0.616);
+}
+
+.create_tale_image_backdrop:hover {
+  opacity: 1;
+}
+
+.create_tale_genres {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.create_tale_genres select {
+  background-color: var(--create-tale-input);
+  height: 100%;
+  outline: none;
+  color: var(--third-color);
+  border: none;
+  text-indent: 0.3rem;
+}
+
+.create_tale_genres option {
+  background-color: var(--create-tale-input);
+  color: black;
+}
+
+.create_tale_publisher_price {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: 2rem;
+}
+
+.create_tale_publisher {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.create_tale_publisher > label {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+}
+
+.create_tale_publisher_element {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid var(--create-tale-input);
+  margin-bottom: 0.3rem;
+  width: 100%;
+}
+
+.create_tale_publisher_element label {
+  color: var(--third-color);
+  font-size: 1rem;
+}
+
+.create_tale_publisher_element input {
+  margin: 0;
+  justify-self: start;
+}
+
+.create_tale_price {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.3rem;
+}
+
+.create_tale_price > input {
+  margin: 0;
+}
+
+.create_tale_btns {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.create_tale_draft_delete {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.create_tale_btns button {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: var(--primary-background);
+  color: var(--third-color);
+}
+
+.create_tale_draft:hover {
+  background-color: rgb(0, 83, 0);
+}
+
+.create_tale_delete:hover {
+  background-color: rgb(158, 0, 0);
+}
+
+.create_tale_publish:hover {
+  background-color: var(--primary-color);
+}
+
+.create_tale_content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.create_tale_content > textarea {
+  width: 100%;
+  height: 100%;
+  background-color: var(--create-tale-input);
+  resize: none;
+  color: var(--third-color);
+  outline: none;
+  box-shadow: 0px 0px 3px black;
+  border: none;
+  text-indent: 1rem;
+}

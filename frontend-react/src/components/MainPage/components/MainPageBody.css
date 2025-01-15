@@ -1,3 +1,12 @@
+.main_page_body_container {
+  width: 100%;
+  height: 100%;
+  height: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--secondary-background);
+}
 .main_page_body {
   width: 95vw;
   height: max-content;

@@ -1,16 +1,15 @@
 import React, { useEffect } from "react";
 import "./SinglePage.css";
 import { useParams } from "react-router-dom";
-import Header from "../MainPage/components/Header";
 import SinglePageContent from "./components/SinglePageContent";
 import SinglePageFog from "./components/SinglePageFog";
 import SinglePageTop from "./components/SinglePageTop.jsx";
-import { useTale } from "../../context/TaleContext.js";
+import { useSiteState } from "../../context/SiteStateContext.js";
 
 const SinglePage = () => {
   const { id } = useParams();
 
-  const { getSingleTale, singleTaleSelected } = useTale();
+  const { getSingleTale, singleTaleSelected } = useSiteState();
 
   useEffect(() => {
     getSingleTale(id);
@@ -20,7 +19,6 @@ const SinglePage = () => {
 
   return (
     <div className="single_page">
-      <Header />
       <SinglePageTop taleId={id} />
       <SinglePageContent />
       <SinglePageFog />

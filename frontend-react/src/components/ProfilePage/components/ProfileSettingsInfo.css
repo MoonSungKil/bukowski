@@ -1,0 +1,14 @@
+.profile_settings_info {
+  position: absolute;
+  background-color: var(--primary-background);
+  padding: 0.2rem 0.5rem;
+  color: gray;
+  font-size: 0.5rem;
+  top: -80%;
+  left: 50%;
+  width: max-content;
+  padding: 0.1rem 0.5rem;
+  box-shadow: 0px 0px 3px 1px black;
+  display: none;
+  letter-spacing: 1px;
+}

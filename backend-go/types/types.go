@@ -7,6 +7,7 @@ type UserType struct {
 	Email           string `json:"email" binding:"required,email"`
 	Password        string `json:"password" binding:"required,min=8"`
 	ConfirmPassword string `json:"confirm_password" binding:"required,min=8"`
+	ProfilePicture 	string `json:"profile_picture"`
 }
 
 type PasswordUpdate struct {
@@ -28,6 +29,7 @@ type TaleBody struct {
 	Content     string         `json:"content" binding:"required"`
 	Pages       int64          `json:"pages" binding:"required"`
 	Price       float64        `json:"price" binding:"required"`
+	Status 		string			`json:"status"`
 	Genres      []string        `json:"genres" binding:"required"`
 	PublishedAt time.Time      `json:"published_at" binding:"required"`
 }

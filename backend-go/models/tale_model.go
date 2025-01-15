@@ -18,7 +18,7 @@ type Tale struct {
 	Content string `gorm:"not null" json:"content"`
 	Pages int64 `gorm:"not null" json:"pages"`
 	Price float64 `gorm:"not null" json:"price"`
-	IsActive bool `gorm:"not null;default:true" json:"is_active"`
+	Status string `gorm:"type:varchar(9);not null;default:'draft'" json:"status"`
 	Genres []Genre `gorm:"many2many:tale_genres" json:"genres"`
 	PublishedAt time.Time `json:"published_at"`	
 	UserID uint `gorm:"not null" json:"-"`

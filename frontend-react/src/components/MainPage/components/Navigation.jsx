@@ -1,12 +1,9 @@
 import "./Navigation.css";
 import { useSiteState } from "../../../context/SiteStateContext";
 import { ProfileIcon } from "./ProfileIcon";
-import { useUser } from "../../../context/UserContext";
 
 const Navigation = () => {
-  const { openAuthModalRegister, openAuthModalLogin } = useSiteState();
-
-  const { userLoggedIn } = useUser();
+  const { openAuthModalRegister, openAuthModalLogin, userLoggedIn } = useSiteState();
 
   return (
     <div className="navigation_container">
@@ -16,7 +13,7 @@ const Navigation = () => {
         </div>
         <div className="navigation_auth_box">
           {userLoggedIn.username ? (
-            <ProfileIcon user={userLoggedIn} />
+            <ProfileIcon />
           ) : (
             <>
               <div

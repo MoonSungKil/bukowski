@@ -40,10 +40,13 @@ func HandleCreateUser(ctx *gin.Context){
 		return
 	}
 	
+	defaultProfilePicture := "/uploads/profile_pictures/user_placeholder.webp"
+
 	newUser := model.User{
 		Username: userBody.Username,
 		Email: userBody.Email,
 		Password: hash,
+		ProfilePicture: defaultProfilePicture,
 	}
 
 	result := database.DB.Create(&newUser) 
@@ -98,7 +101,15 @@ func HandleLoginUser(ctx *gin.Context) {
 	ctx.SetSameSite(http.SameSiteLaxMode)
 	ctx.SetCookie("Authorization", tokenString, 3600 * 24 * 30, "", "", false, true)
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Successfuly Logged in", "user": user})
+	// Return only essential info
+	sanitizedUser := map[string]interface{}{
+		"id": user.ID,
+		"username": user.Username,
+		"email": user.Email,
+		"profile_picture": user.ProfilePicture,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Successfuly Logged in", "user": sanitizedUser})
 }
 
 
@@ -349,6 +360,43 @@ func Test(ctx *gin.Context) {
 	database.DB.Preload("PublishedTales").First(&testUser, claims["sub"])
 
 	ctx.JSON(http.StatusOK, gin.H{"message":"Authorized User", "user": user, "username": username, "email": email, "expire date": exp, "issued at": iat, "testUser": testUser})
+}
+
+func HandleUpdateUserProfilePicture(ctx *gin.Context) {
+
+	id := ctx.Param("id")
+	userId, err := strconv.ParseInt(id,10,64) 
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+		return
+	}
+
+	var userToChangeProfilePicture model.User
+	result := database.DB.First(&userToChangeProfilePicture, userId)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": result.Error.Error()})
+	}
+
+	if result.RowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	
+	uploadDir := "../uploads/profile_pictures"
+	filePath, err := utils.UploadImage(ctx, uploadDir)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Updating user's profile picture in the database (the path)
+	userToChangeProfilePicture.ProfilePicture = filePath
+	if err := database.DB.Save(&userToChangeProfilePicture).Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update profile picture"})
+		return
+	}
+	
+	ctx.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "filePath": filePath})
 }
 
 func HandleDeleteAuthorizationCookie(ctx *gin.Context) {

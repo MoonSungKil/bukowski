@@ -2,37 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import AuthPage from "./components/AuthPage/Auth";
 import { SiteStateProvider } from "./context/SiteStateContext";
-import SinglePage from "./components/SinglePage/SinglePage";
-import { TaleProvider } from "./context/TaleContext";
-import { UserProvider } from "./context/UserContext";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/auth",
-    element: <AuthPage />,
-  },
-  {
-    path: "/tale/:id",
-    element: <SinglePage />,
-  },
-]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <SiteStateProvider>
-      <UserProvider>
-        <TaleProvider>
-          <RouterProvider router={router} />
-        </TaleProvider>
-      </UserProvider>
+      <App />
     </SiteStateProvider>
   </React.StrictMode>
 );

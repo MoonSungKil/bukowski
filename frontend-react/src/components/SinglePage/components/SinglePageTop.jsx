@@ -2,12 +2,12 @@ import React from "react";
 import "./SinglePageTop.css";
 import bookImg from "../../../assets/cover/soul.jpg";
 import PercentageBar from "../../MainPage/components/PercentageBar";
-import { useTale } from "../../../context/TaleContext";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useSiteState } from "../../../context/SiteStateContext";
 
 const SinglePageTop = () => {
-  const { singleTaleSelected, isPurchased } = useTale();
+  const { singleTaleSelected, isPurchased } = useSiteState();
 
   const { id } = useParams();
 
@@ -36,7 +36,7 @@ const SinglePageTop = () => {
           </div>
         </div>
         <div className="single_page_head_top_stats">
-          <div className="single_page_head_top_title">{purchased && singleTaleSelected.title}</div>
+          <div className="single_page_head_top_title">{singleTaleSelected.title}</div>
           <div className="single_page_head_top_stats_preview">
             In a quiet town nestled between rolling hills, twenty-three-year-old Eleanor Bennett
             stumbles upon a faded journal tucked away in the dusty corner of her grandmother's

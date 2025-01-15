@@ -2,8 +2,15 @@ import React from "react";
 import "./Header.css";
 import Navigation from "./Navigation";
 import Auth from "../../AuthPage/Auth";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
+  const navigate = useNavigate();
+
+  const navigateToHomePage = () => {
+    navigate("/");
+  };
+
   return (
     <div className="header_container">
       <div className="header_background">
@@ -15,7 +22,7 @@ function Header() {
         </svg>
       </div>
       <div className="header">
-        <div className="header_logo_container">
+        <div onClick={navigateToHomePage} className="header_logo_container">
           <h1 className="header_logo">BUKOWSKI</h1>
         </div>
         <Navigation />

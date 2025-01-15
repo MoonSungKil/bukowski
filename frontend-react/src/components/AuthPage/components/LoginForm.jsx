@@ -4,8 +4,7 @@ import { useUser } from "../../../context/UserContext";
 import { useSiteState } from "../../../context/SiteStateContext";
 
 const LoginForm = () => {
-  const { loginUser } = useUser();
-  const { closeAuthModal } = useSiteState();
+  const { closeAuthModal, loginUser } = useSiteState();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

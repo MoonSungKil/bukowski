@@ -6,7 +6,6 @@ import MainPageTop from "./MainPageTop";
 const MainPageFirst = () => {
   return (
     <div className="main_page_first">
-      <Header />
       <MainPageTop />
     </div>
   );
