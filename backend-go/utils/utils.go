@@ -78,6 +78,6 @@ func UploadImage(ctx *gin.Context, uploadDir string) (string, error) {
 		return "", err
 	}
 
-	relativePath := "/uploads/profile_pictures/" + newFileName
+	relativePath := uploadDir[2:] + "/" + newFileName
 	return relativePath, nil
 }

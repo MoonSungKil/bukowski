@@ -1,5 +1,4 @@
 .single_page {
-  background-color: var(--primary-background);
   background-repeat: repeat;
   background-blend-mode: multiply;
   display: flex;

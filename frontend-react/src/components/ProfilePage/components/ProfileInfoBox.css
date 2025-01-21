@@ -2,6 +2,7 @@
   padding: 2rem;
   justify-self: start;
   align-self: start;
+  position: relative;
 }
 
 .profile_info_box {

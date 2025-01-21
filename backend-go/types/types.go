@@ -34,3 +34,15 @@ type TaleBody struct {
 	PublishedAt time.Time      `json:"published_at" binding:"required"`
 }
 
+type DraftBody struct {
+	Title       string         `json:"title" binding:"required"`
+	Author      string         `json:"author" binding:"required"`
+	Description string         `json:"description" `
+	Preview     string         `json:"preview" `
+	Content     string         `json:"content" `
+	Pages       int64          `json:"pages" `
+	Price       float64        `json:"price" `
+	Status 		string			`json:"status"`
+	Genres      []string        `json:"genres"`
+}
+

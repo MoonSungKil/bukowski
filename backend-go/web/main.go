@@ -40,8 +40,12 @@ func main() {
 	requireAuthGroup.DELETE("/users/delete_authorization_cookie", handlers.HandleDeleteAuthorizationCookie)
 
 	requireAuthGroup.POST("/tales/create", handlers.HandleCreateTale)
+	requireAuthGroup.POST("/tales/convert_draft_to_tale/:draft_id", handlers.HandleCreateTale)
+	requireAuthGroup.DELETE("/tales/delete_draft/:draft_id", handlers.HandleDeleteDraft)
+	requireAuthGroup.POST("/tales/create_draft", handlers.HandleCreateDraft)
 	requireAuthGroup.GET("/tales/get_all_published", handlers.HandleGetAllTalesPublishedByUserId)
-	requireAuthGroup.GET("/tales/get_all_drafts", handlers.HandleGetAllTalesDraftedByUserId)
+	requireAuthGroup.GET("/tales/get_single_draft/:id", handlers.HandleGetSingleDraft)
+	requireAuthGroup.GET("/tales/get_all_drafts", handlers.HandleGetAllDraftByUserId)
 	requireAuthGroup.GET("/tales/published/:id", handlers.HandleGetSingleTalePublishedById)
 	requireAuthGroup.GET("/tales/get_all_purchased", handlers.HandleGetAllTalesPurchasedByUserId)
 	requireAuthGroup.POST("/tales/purchase/:id", handlers.HandlePurchaseTale)

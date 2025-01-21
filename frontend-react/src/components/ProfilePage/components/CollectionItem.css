@@ -22,12 +22,16 @@
 
 .collection_item {
   position: relative;
-  background-image: url("../../../assets/cover/soul.jpg");
   background-size: cover;
   background-position: center;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.collection_item_image {
+  width: 100%;
+  height: 100%;
 }
 
 .collection_item_backdrop {
@@ -37,10 +41,11 @@
   border-radius: inherit;
   display: flex;
   align-items: flex-end;
+  backdrop-filter: brightness(70%);
 }
 
 .collection_item_backdrop:hover {
-  opacity: 0.8;
+  backdrop-filter: brightness(100%);
 }
 
 .collection_item_title {
@@ -49,4 +54,8 @@
   padding: 1%;
   color: var(--third-color);
   text-shadow: 1px 1px 3px black;
+}
+
+.collection_item_backdrop:hover .collection_item_title {
+  background-color: var(--secondary-color);
 }

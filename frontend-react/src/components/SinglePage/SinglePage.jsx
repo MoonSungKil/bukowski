@@ -19,7 +19,7 @@ const SinglePage = () => {
 
   return (
     <div className="single_page">
-      <SinglePageTop taleId={id} />
+      <SinglePageTop />
       <SinglePageContent />
       <SinglePageFog />
     </div>

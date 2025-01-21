@@ -8,7 +8,7 @@
   background-color: var(--secondary-background);
 }
 .main_page_body {
-  width: 95vw;
+  width: 90vw;
   height: max-content;
   margin-bottom: 3rem;
 }
@@ -17,6 +17,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 2rem;
+  margin-top: 2%;
 }
 
 @media (min-width: 2350px) {

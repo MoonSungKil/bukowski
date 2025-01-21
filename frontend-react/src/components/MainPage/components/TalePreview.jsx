@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./TalePreview.css";
 import PercentageBar from "./PercentageBar";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useSiteState } from "../../../context/SiteStateContext";
 
 const TalePreview = ({ tale }) => {
   const [showPreview, setShowPreview] = useState(false);
@@ -11,6 +13,9 @@ const TalePreview = ({ tale }) => {
   const navigateToTale = () => {
     navigate(`/tale/${tale.ID}`);
   };
+
+  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
+  const taleImage = `${backendURL}${tale.tale_image}`;
 
   return (
     <div
@@ -27,6 +32,7 @@ const TalePreview = ({ tale }) => {
         <PercentageBar title="Profanity" percentage="10" />
       </div>
       <div className="tale_preview_main">
+        <img className="tale_preview_image" src={taleImage} alt="tale_image" />
         <div className="tale_preview_add_cart">
           <i className="fa-solid fa-cart-shopping"></i>
         </div>

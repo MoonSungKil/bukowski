@@ -1,7 +1,7 @@
 .tale_preview {
   position: relative;
-  width: 20rem;
-  height: 20rem;
+  height: 18rem;
+  width: 18rem;
   background-color: var(--primary-background);
   border-radius: 1rem;
   display: grid;
@@ -16,7 +16,9 @@
 }
 
 .tale_preview_main {
-  background-image: url("../../../assets/cover/soul.jpg");
+  width: 100%;
+  height: 100%;
+  position: relative;
   background-size: cover;
   background-position: center;
   display: flex;
@@ -24,11 +26,10 @@
   align-items: center;
 }
 
-.tale_preview_main > img {
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+.tale_preview_image {
+  height: 15rem;
+  width: 18rem;
+  object-fit: cover;
 }
 
 .tale_preview_add_cart {
@@ -52,6 +53,7 @@
   align-items: center;
   gap: 1rem;
   padding-top: 4rem;
+  z-index: 10;
 }
 
 .tale_previeew_inside_show {
@@ -60,17 +62,16 @@
 
 .tale_preview_title_container {
   position: relative;
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  bottom: 0;
 }
 
 .tale_preview_title {
   color: var(--third-color);
   font-weight: bold;
-  z-index: 10;
+  z-index: 11;
 }
 
 .tale_preview_svg {

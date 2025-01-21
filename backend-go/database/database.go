@@ -19,7 +19,7 @@ func ConnectToDB() {
 		log.Fatal(err)
 	}
 
-	if err := DB.AutoMigrate(&model.User{}, &model.Tale{}, &model.TalePurchase{}); err != nil {
+	if err := DB.AutoMigrate(&model.User{}, &model.Tale{}, &model.Draft{}, &model.TalePurchase{}); err != nil {
 		log.Fatal(err)
 	}
 }	

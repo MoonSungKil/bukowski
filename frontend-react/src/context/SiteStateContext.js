@@ -2,6 +2,7 @@ import { createContext, useReducer, useEffect } from "react";
 import siteStateReducer, { initialState } from "./SiteStateReducer";
 import { useContext } from "react";
 import axios from "axios";
+import { type } from "@testing-library/user-event/dist/type";
 
 const SiteStateContext = createContext();
 
@@ -53,8 +54,9 @@ export const SiteStateProvider = ({ children }) => {
   useEffect(() => {
     const storedPurchasedTales = localStorage.getItem("purchased");
     const storedPublishedTales = localStorage.getItem("published");
-    const draftedPublishedTales = localStorage.getItem("drafts");
+    const draftedTales = localStorage.getItem("drafts");
     const singleTaleSelected = localStorage.getItem("singleTaleSelected");
+    const singleDraftSelected = localStorage.getItem("singleDraftSelected");
     if (storedPurchasedTales) {
       dispatch({
         type: "GET_ALL_PURCHASED_TALES",
@@ -71,11 +73,11 @@ export const SiteStateProvider = ({ children }) => {
         },
       });
     }
-    if (draftedPublishedTales) {
+    if (draftedTales) {
       dispatch({
         type: "GET_ALL_DRAFTED_TALES",
         payload: {
-          drafts: JSON.parse(draftedPublishedTales),
+          drafts: JSON.parse(draftedTales),
         },
       });
     }
@@ -84,6 +86,14 @@ export const SiteStateProvider = ({ children }) => {
         type: "GET_SINGLE_TALE",
         payload: {
           singleTaleSelected: JSON.parse(singleTaleSelected),
+        },
+      });
+    }
+    if (singleDraftSelected) {
+      dispatch({
+        type: "GET_SINGLE_DRAFT",
+        payload: {
+          singleDraftSelected: JSON.parse(singleDraftSelected),
         },
       });
     }
@@ -123,16 +133,96 @@ export const SiteStateProvider = ({ children }) => {
   };
 
   // create tale
-  const createTale = async (createTaleData) => {
+  const createTale = async (formData) => {
     try {
-      const { data: createdTale } = await axios.post(
-        "http://localhost:8000/tales/create",
-        createTaleData,
+      const { data: tale } = await axios.post("http://localhost:8000/tales/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+
+      dispatch({
+        type: "CREATE_TALE",
+        payload: {
+          tale: tale,
+        },
+      });
+
+      return tale;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // convert draft to tale
+  const convertDraftToTale = async (formData, draftID) => {
+    try {
+      const { data: tale } = await axios.post(
+        `http://localhost:8000/tales/convert_draft_to_tale/${draftID}`,
+        formData,
         {
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         }
       );
+
+      dispatch({
+        type: "CREATE_TALE_DELETE_DRAFT",
+        payload: {
+          tale: tale,
+          draftID: draftID,
+        },
+      });
+
+      return tale;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // create draft
+  const createDraft = async (formData) => {
+    try {
+      const { data: draft } = await axios.post(
+        "http://localhost:8000/tales/create_draft",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
+
+      dispatch({
+        type: "CREATE_DRAFT",
+        payload: {
+          draft: draft,
+        },
+      });
+
+      return draft;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getSingleDraft = async (id) => {
+    const { data: draft } = await axios.get(`http://localhost:8000/tales/get_single_draft/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+
+    try {
+      dispatch({
+        type: "GET_SINGLE_DRAFT",
+        payload: {
+          singleDraftSelected: draft,
+        },
+      });
+
+      return draft;
+
+      // localStorage.setItem("singleDraftSelected", JSON.stringify(draft));
     } catch (error) {
       console.log(error);
     }
@@ -278,6 +368,8 @@ export const SiteStateProvider = ({ children }) => {
       localStorage.removeItem("userLoggedIn");
       localStorage.removeItem("purchased");
       localStorage.removeItem("singleTaleSelected");
+      localStorage.removeItem("drafts");
+      localStorage.removeItem("published");
 
       dispatch({
         type: "LOGOUT_USER",
@@ -391,12 +483,16 @@ export const SiteStateProvider = ({ children }) => {
         purchased: state.purchased,
         published: state.published,
         singleTaleSelected: state.singleTaleSelected,
+        singleDraftSelected: state.singleDraftSelected,
         getAllTales,
         getSingleTale,
         getAllPurchasedTales,
         getAllPublishedTales,
         isPurchased,
         createTale,
+        createDraft,
+        getSingleDraft,
+        convertDraftToTale,
         // end tale values
         stateObject: state,
       }}

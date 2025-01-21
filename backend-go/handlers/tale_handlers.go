@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
@@ -9,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/moonsungkil/bukowski/database"
 	model "github.com/moonsungkil/bukowski/models"
-	"github.com/moonsungkil/bukowski/types"
 	"github.com/moonsungkil/bukowski/utils"
 	"gorm.io/gorm"
 )
@@ -34,51 +34,265 @@ func HandleGetSingleTaleWithouthAuth(ctx *gin.Context) {
 
 }
 
+
 func HandleCreateTale(ctx *gin.Context) {
-	//extract the User ID from the JWT claims
+	// Extract user ID from JWT claims
 	user, exists := ctx.Get("user")
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
 		return
 	}
-
 	userID := user.(model.User).ID
 
-	var taleBody types.TaleBody
-	if err := ctx.ShouldBindJSON(&taleBody); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request", "details": err.Error()})
+	// Parse form data fields
+	title := ctx.PostForm("title")
+	description := ctx.PostForm("description")
+	preview := ctx.PostForm("preview")
+	content := ctx.PostForm("content")
+	author := ctx.PostForm("author")
+	pages, _ := strconv.Atoi(ctx.PostForm("pages")) // Convert to int
+	price, _ := strconv.ParseFloat(ctx.PostForm("price"), 64)
+	status := ctx.PostForm("status")
+	publishedAt, _ := time.Parse(time.RFC3339, ctx.PostForm("published_at"))
+
+	// Parse genres JSON string into a slice
+	genresJSON := ctx.PostForm("genres")
+	var genres []string
+	if err := json.Unmarshal([]byte(genresJSON), &genres); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid genres format", "details": err.Error()})
 		return
 	}
 
-	newTale := model.Tale{
-		Title: taleBody.Title,
-		Author: taleBody.Author,
-		Description: taleBody.Description,
-		Preview: taleBody.Preview,
-		Content: taleBody.Content,
-		Pages: taleBody.Pages,
-		Price: taleBody.Price,
-		Status: taleBody.Status,
-		PublishedAt: taleBody.PublishedAt,
-		UserID: userID,
-	} 
+	// Handle image upload
+	uploadDir := "../uploads/tale_covers"
+	filePath, err := utils.UploadImage(ctx, uploadDir)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image", "details": err.Error()})
+		return
+	}
 
-	for _, genreName := range taleBody.Genres {
+	// Create a new tale
+	newTale := model.Tale{
+		Title:       title,
+		Author:      author,
+		Description: description,
+		Preview:     preview,
+		Content:     content,
+		Pages:       int64(pages),
+		Price:       price,
+		Status:      status,
+		TaleImage:   filePath,
+		PublishedAt: publishedAt,
+		UserID:      userID,
+	}
+
+	// Add genres to the tale
+	for _, genreName := range genres {
 		genre := model.Genre{Name: genreName}
 		if err := database.DB.Where("name = ?", genreName).FirstOrCreate(&genre).Error; err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": err.Error()})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save genre", "details": err.Error()})
+			return
 		}
 		newTale.Genres = append(newTale.Genres, genre)
 	}
 
-	result := database.DB.Create(&newTale)
-	if result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": result.Error.Error()})
+	// Save the tale to the database
+	if err := database.DB.Create(&newTale).Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tale", "details": err.Error()})
 		return
 	}
-	
-	ctx.JSON(http.StatusOK, newTale)
 
+	draftID := ctx.Param("draft_id")
+	if draftID  != "" {
+		draftIDUint, _ := strconv.ParseUint(draftID, 10, 64)
+		result := database.DB.Where("draft_id = ?", draftIDUint).Delete(&model.DraftGenre{})
+		if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "cannot delete associated genres"})
+		return
+	}
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete genres", "details": err.Error()})
+			return
+	}
+
+	result = database.DB.Delete(&model.Draft{}, draftIDUint); if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to delete draft"})
+	}
+		
+	}
+
+	ctx.JSON(http.StatusOK, newTale)
+}
+
+func HandleDeleteDraft(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	userID := user.ID
+	draftID := ctx.Param("draft_id")
+	draftIDUint, err := strconv.ParseUint(draftID,10,64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to parse ID"})
+		return
+	}
+
+	var draft model.Draft
+	result := database.DB.First(&draft, draftIDUint)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "no record found"})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	if userID != draft.UserID {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "not authorized to perform this action"})
+		return
+	}
+
+	result = database.DB.Where("draft_id = ?", draftIDUint).Delete(&model.DraftGenre{})
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "cannot delete associated genres"})
+		return
+	}
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete genres"})
+		return
+	}
+
+	result = database.DB.Delete(&model.Draft{}, draftIDUint)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Succesfully deleted draft", "draft": draft})
+
+}
+
+func HandleCreateDraft(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	userID := user.ID
+
+	title := ctx.PostForm("title")
+	description := ctx.PostForm("description")
+	pages, _ := strconv.Atoi(ctx.PostForm("pages"))
+	price, _ := strconv.ParseFloat(ctx.PostForm("price"),64)
+	content := ctx.PostForm("content")
+	author := ctx.PostForm("author")
+	preview := ctx.PostForm("preview")
+
+	genresJSON := ctx.PostForm("genres")
+	var genres []string
+
+	if genresJSON == "" {
+			genres = nil
+	} else {
+		if err := json.Unmarshal([]byte(genresJSON), &genres); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid genres format", "details": err.Error()})
+			return
+		}
+	}
+
+	uploadDir := "../uploads/tale_covers"
+	var filePath string
+	_, err = ctx.FormFile("file")
+	if err == nil {
+		filePath, err = utils.UploadImage(ctx, uploadDir);
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload Image", "details": err.Error()})
+		}
+	}
+	
+	// Create a new draft
+	newDraft := model.Draft{
+		Title:       title,
+		Author:      author,
+		Description: description,
+		Preview:     preview,
+		Content:     content,
+		Pages:       int64(pages),
+		Price:       price,
+		TaleImage:   filePath,
+		UserID:      userID,
+	}
+
+	for _, genreName := range genres {
+		genre := model.Genre{Name: genreName}
+		if  err := database.DB.Where("name = ?", genreName).FirstOrCreate(&genre).Error; err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save genre", "details": err.Error()})
+			return
+		}
+		newDraft.Genres = append(newDraft.Genres, genre)
+	}
+
+	if err := database.DB.Create(&newDraft).Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create draft", "details": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, newDraft)
+
+}
+
+
+
+func HandleGetAllDraftByUserId(ctx *gin.Context) {
+	user, err :=utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	userID := user.ID
+	var drafts []model.Draft
+	database.DB.Where("user_id = ?", userID).Preload("Genres").Unscoped().Find(&drafts)
+	ctx.JSON(http.StatusOK, drafts)
+}
+
+func HandleGetSingleDraft(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	userID := user.ID
+
+	var userFound model.User
+	result := database.DB.Preload("PublishedTales").Preload("PublishedTales.Genres").Unscoped().First(&userFound, userID);
+	if result.RowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found", "details:": result.Error.Error()})
+		return
+	}
+
+	taleID := ctx.Param("id")
+	taleIDUint, err := strconv.ParseUint(taleID,10,64);
+	if err !=nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+		return
+	}
+
+	var draft model.Draft
+	result = database.DB.Where("user_id = ? AND id = ?", userID, taleIDUint).Preload("Genres").First(&draft)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Tale not found"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, draft)
 }
 
 func HandleGetAllTalesPublishedByUserId(ctx *gin.Context) {

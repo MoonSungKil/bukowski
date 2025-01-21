@@ -5,8 +5,8 @@
   flex-direction: column;
   justify-items: center;
   align-items: center;
-  background-color: var(--primary-background);
-  background-image: url("../../../assets/textbg.avif");
-  background-repeat: repeat;
-  background-blend-mode: multiply;
+  /* background-color: var(--primary-background); */
+  /* background-image: url("../../../assets/textbg.avif"); */
+  /* background-repeat: repeat; */
+  /* background-blend-mode: multiply; */
 }

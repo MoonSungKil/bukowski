@@ -1,0 +1,280 @@
+.compose {
+  display: grid;
+  width: 70%;
+  height: 100%;
+  justify-content: center;
+  align-items: start;
+  padding-top: 6%;
+  gap: 5%;
+  background-color: transparent;
+}
+
+.compose_form {
+  display: grid;
+  position: relative;
+  grid-template-rows: 0.5fr 5fr;
+  gap: 2%;
+  z-index: 30;
+}
+
+.compose_title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10%;
+}
+
+.compose_title > input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0.5rem;
+  font-size: 3rem;
+  text-align: center;
+  color: var(--secondary-color);
+}
+
+.compose_form_body {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  gap: 1rem;
+}
+
+.compose_form_body_left {
+  display: grid;
+  grid-template-rows: 3fr 2fr;
+  gap: 5%;
+}
+
+.compose_image {
+  display: grid;
+  grid-template-rows: 3fr 1fr;
+  gap: 2%;
+}
+
+.compose_image > span {
+  color: var(--primary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.compose_image_preview {
+  box-shadow: 0px 0px 3px black;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  border-radius: 1rem;
+}
+
+.compose_image_preview > span {
+  position: absolute;
+  font-size: 2rem;
+  color: var(--secondary-color);
+}
+
+.compose_image_preview > img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.compose_image_buttons {
+  display: grid;
+  flex-direction: column;
+  gap: 5%;
+  color: var(--third-color);
+}
+
+.compose_image_select_button {
+  box-shadow: 0px 0px 3px black;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10%;
+  cursor: pointer;
+  background-color: var(--secondary-background);
+}
+
+.compose_image_select_button:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: rgb(30, 117, 66);
+}
+
+.compose_image_remove_button {
+  box-shadow: 0px 0px 3px black;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10%;
+  background-color: var(--secondary-background);
+  cursor: pointer;
+}
+
+.compose_image_remove_button:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: rgb(139, 19, 45);
+}
+
+.compose_image_select_button > input {
+  display: none;
+}
+
+.compose_genres {
+  display: flex;
+  flex-direction: column;
+  gap: 5%;
+}
+
+.compose_genres > label {
+  color: var(--third-color);
+  align-self: flex-start;
+}
+
+.compose_genres > select {
+  height: 15%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--third-color);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.compose_genres > select > option {
+  background-color: var(--primary-background);
+}
+
+.compose_content {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  border-bottom: 2px solid white;
+}
+
+.compose_content > textarea {
+  width: 95%;
+  height: 90%;
+  resize: none;
+  border-radius: inherit;
+  background-color: var(--primary-background);
+  border: none;
+  color: gray;
+  padding: 3% 5%;
+  outline: none;
+  text-indent: 0.5rem;
+}
+
+.compose_form_body_right {
+  display: grid;
+  grid-template-rows: 3fr 1fr 2fr;
+  gap: 3%;
+  padding: 5%;
+}
+
+.compose_description {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3%;
+}
+
+.compose_description > label {
+  color: var(--third-color);
+}
+
+.compose_description > textarea {
+  height: 100%;
+  width: 100%;
+  color: var(--third-color);
+  padding: 0.5rem;
+  outline: none;
+  color: gray;
+  resize: none;
+  border: none;
+  background-color: var(--primary-background);
+  border-radius: inherit;
+  border-radius: 0.5rem;
+}
+
+.compose_price_pages {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5%;
+}
+
+.compose_price,
+.compose_pages_count {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--third-color);
+  gap: 5%;
+}
+
+.compose_price > input,
+.compose_pages_count > input {
+  width: 100%;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  height: 100%;
+  text-align: center;
+  background-color: var(--primary-background);
+  color: var(--third-color);
+  font-size: 1.5rem;
+}
+
+.compose_form_buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 5%;
+}
+
+.compose_draft,
+.compose_publish,
+.compose_delete {
+  height: 20%;
+  background-color: var(--primary-background);
+  box-shadow: 0px 0px 5px black;
+  color: var(--third-color);
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.compose_draft {
+  border-bottom: 2px solid rgb(30, 117, 66);
+}
+
+.compose_draft:hover {
+  background-color: rgb(0, 128, 53);
+}
+
+.compose_publish {
+  border-bottom: 2px solid rgb(218, 138, 47);
+}
+
+.compose_publish:hover {
+  background-color: rgb(218, 138, 47);
+}
+
+.compose_delete {
+  border-bottom: 2px solid rgb(139, 19, 45);
+}
+
+.compose_delete:hover {
+  background-color: rgb(128, 0, 28);
+}

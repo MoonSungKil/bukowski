@@ -8,6 +8,7 @@ import AuthPage from "./components/AuthPage/Auth";
 import SinglePage from "./components/SinglePage/SinglePage";
 import ProfilePage from "./components/ProfilePage/ProfilePage";
 import { ProfileStateProvider } from "./context/ProfileStateContext";
+import ComposePage from "./components/ComposePage/ComposePage";
 
 function App() {
   const { getAllPurchasedTales } = useSiteState();
@@ -48,6 +49,22 @@ function App() {
           <ProfileStateProvider>
             <ProfilePage />
           </ProfileStateProvider>
+        </Layout>
+      ),
+    },
+    {
+      path: "/profile/:id/compose",
+      element: (
+        <Layout>
+          <ComposePage />
+        </Layout>
+      ),
+    },
+    {
+      path: "/profile/:id/edit/:tale_id",
+      element: (
+        <Layout>
+          <ComposePage />
         </Layout>
       ),
     },

@@ -2,22 +2,35 @@ import React, { useState } from "react";
 import "./ProfileCollection.css";
 import CollectionItem from "./CollectionItem";
 import { useProfileState } from "../../../context/ProfileStateContext";
-import CreateTale from "./CreateTale";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ProfileCollection = () => {
-  const {
-    typeCollectionSelected,
-    filteredCollection,
-    selectedCollectionType,
-    toggleCreateTaleModalState,
-    createTaleModalState,
-  } = useProfileState();
+  const { typeCollectionSelected, filteredCollection, selectedCollectionType } = useProfileState();
+
+  const { id } = useParams();
 
   const [inputValue, setInputValue] = useState("");
 
   const submitHandler = (e) => {
     e.preventDefault();
     selectedCollectionType(typeCollectionSelected.toLowerCase());
+  };
+
+  const navigate = useNavigate();
+
+  const navigateToEdit = (taleId) => {
+    console.log(id, taleId);
+    if (typeCollectionSelected.toLowerCase() === "drafts".toLowerCase()) {
+      navigate(`/profile/${id}/edit/${taleId}`);
+    }
+
+    if (typeCollectionSelected.toLowerCase() === "published".toLocaleLowerCase()) {
+      navigate(`/tale/${taleId}`);
+    }
+
+    if (typeCollectionSelected.toLocaleLowerCase() === "purchased".toLocaleLowerCase()) {
+      navigate(`/tale/${taleId}`);
+    }
   };
 
   return (
@@ -41,32 +54,29 @@ const ProfileCollection = () => {
           </form>
         </div>
       </div>
-      {/* <div className="profile_collection_create_tale"></div>
-       */}
-      {createTaleModalState ? (
-        <CreateTale />
-      ) : (
-        <div className="profile_collection">
-          {typeCollectionSelected.toLowerCase() === "drafts".toLowerCase() && (
-            <div
-              onClick={() => toggleCreateTaleModalState()}
-              className="profile_collection_create_tale_button"
-            >
-              <p>Create New Tale</p>
-              <div className="profile_collection_create_tale_button_backdrop">
-                <i className="fa-solid fa-plus"></i>
-              </div>
+
+      <div className="profile_collection">
+        {typeCollectionSelected.toLowerCase() === "drafts".toLowerCase() && (
+          <div
+            onClick={() => navigate(`/profile/${id}/compose`)}
+            className="profile_collection_create_tale_button"
+          >
+            <p>Create New Tale</p>
+            <div className="profile_collection_create_tale_button_backdrop">
+              <i className="fa-solid fa-plus"></i>
             </div>
-          )}
-          {filteredCollection.length > 0 ? (
-            filteredCollection.map((tale) => <CollectionItem title={tale.title} />)
-          ) : (
-            <h4 className="profile_collection_empty">
-              No items found under "{typeCollectionSelected}"
-            </h4>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+        {filteredCollection.length > 0 ? (
+          filteredCollection.map((tale) => (
+            <CollectionItem clickHandler={() => navigateToEdit(tale.ID)} tale={tale} />
+          ))
+        ) : (
+          <h4 className="profile_collection_empty">
+            No items found under "{typeCollectionSelected}"
+          </h4>
+        )}
+      </div>
     </div>
   );
 };

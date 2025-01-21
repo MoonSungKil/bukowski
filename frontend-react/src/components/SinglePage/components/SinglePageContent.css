@@ -37,6 +37,7 @@
   text-align: start;
   padding-bottom: 3rem;
   color: gray;
+  word-wrap: break-word;
 }
 
 .single_page_content_line {

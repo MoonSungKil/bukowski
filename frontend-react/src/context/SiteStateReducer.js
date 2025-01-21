@@ -5,6 +5,7 @@ export const initialState = {
   //tale values
   tales: [],
   singleTaleSelected: {},
+  singleDraftSelected: {},
   purchased: [],
   published: [],
   drafts: [],
@@ -47,10 +48,39 @@ export const siteStateReducer = (state, action) => {
         ...state,
         tales: payload.tales,
       };
+    case "CREATE_TALE":
+      localStorage.setItem("published", JSON.stringify([...state.published, payload.tale]));
+      return {
+        ...state,
+        tales: [...state.tales, payload.tale],
+        published: [...state.published, payload.tale],
+      };
+    case "CREATE_DRAFT":
+      localStorage.setItem("drafts", JSON.stringify([...state.drafts, payload.draft]));
+      return {
+        ...state,
+        drafts: [...state.drafts, payload.draft],
+      };
+    case "CREATE_TALE_DELETE_DRAFT":
+      localStorage.setItem("published", JSON.stringify([...state.published, payload.tale]));
+      localStorage.setItem(
+        "drafts",
+        JSON.stringify(state.drafts.filter((draft) => +draft.ID !== +payload.draftID))
+      );
+      return {
+        ...state,
+        published: [...state.published, payload.tale],
+        drafts: state.drafts.filter((draft) => +draft.ID !== +payload.draftID),
+      };
     case "GET_SINGLE_TALE":
       return {
         ...state,
         singleTaleSelected: payload.singleTaleSelected,
+      };
+    case "GET_SINGLE_DRAFT":
+      return {
+        ...state,
+        singleDraftSelected: payload.singleDraftSelected,
       };
     case "GET_ALL_PURCHASED_TALES":
       return {
