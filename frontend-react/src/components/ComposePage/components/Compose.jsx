@@ -5,8 +5,14 @@ import coverPhotoTest from "../../../assets/cover/cover_placeholder.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Compose = () => {
-  const { userLoggedIn, createTale, createDraft, convertDraftToTale, singleDraftSelected } =
-    useSiteState();
+  const {
+    userLoggedIn,
+    createTale,
+    createDraft,
+    convertDraftToTale,
+    updateDraft,
+    singleDraftSelected,
+  } = useSiteState();
 
   const { tale_id } = useParams();
 
@@ -95,8 +101,12 @@ const Compose = () => {
       }
     }
     if (type === "draft") {
-      const newDraftCreated = await createDraft(formData);
-      navigate(`/profile/${userLoggedIn.ID}`);
+      if (tale_id) {
+        const updatedDraft = await updateDraft(formData, tale_id);
+      } else {
+        const newDraftCreated = await createDraft(formData);
+        navigate(`/profile/${userLoggedIn.id}`);
+      }
     }
   };
 
@@ -116,7 +126,6 @@ const Compose = () => {
           <div className="compose_form_body_left">
             <div className="compose_image">
               <div className="compose_image_preview">
-                <span>Add Cover Photo</span>
                 <img src={imagePreview ? imagePreview : coverPhotoTest} alt="cover_image" />
               </div>
               <div className="compose_image_buttons">

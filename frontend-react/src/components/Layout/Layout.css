@@ -1,3 +1,4 @@
 .layout {
   background: linear-gradient(black, var(--primary-background));
+  overflow-x: hidden;
 }

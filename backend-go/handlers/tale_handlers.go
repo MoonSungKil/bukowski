@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -321,6 +322,123 @@ func HandleGetAllTalesDraftedByUserId(ctx *gin.Context) {
 	var tales []model.Tale
 	database.DB.Where("user_id = ? AND status = ?", userID, "draft").Preload("Genres").Unscoped().Find(&tales)
 	ctx.JSON(http.StatusOK, tales)
+}
+
+func HandleUpdateDraft(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+	userID := user.ID
+
+	draftIDFromParam := ctx.Param("draft_id")
+	draftID, err := strconv.ParseInt(draftIDFromParam,10,64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+		return
+	}
+
+	var draftToUpdate model.Draft
+	result := database.DB.Preload("Genres").First(&draftToUpdate, draftID)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": result.Error.Error()})
+		return
+	}
+
+	if userID != draftToUpdate.UserID {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "not authorized to perform this action"})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Draft not found"})
+		return
+	}
+
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data format", "details": err.Error()})
+		return
+	}
+
+	formData := make(map[string]string)
+	for key, value := range form.Value {
+		if len(value) > 0 {
+			formData[key] = value[0]
+		}
+	}
+
+	for key, value := range formData {
+		fmt.Printf("Processing key: %v, value: %v pairs:", key, value)
+		switch key {
+		case "title":
+			draftToUpdate.Title = value
+		case "content":
+			draftToUpdate.Content = value
+		case "description":
+			draftToUpdate.Description = value
+		case "price":
+			parsedValueForPrice, _ := strconv.ParseFloat(value,64)
+			draftToUpdate.Price = parsedValueForPrice
+		case "pages":
+			parsedValueForPages, _ := strconv.ParseInt(value,10,64)
+			draftToUpdate.Pages = parsedValueForPages
+		case "preview":
+			draftToUpdate.Preview = value
+		case "author":
+			draftToUpdate.Author = value
+		case "genres":
+			var genres []string
+			if err := json.Unmarshal([]byte(value),&genres); err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid genre format", "details": err.Error()})
+				return
+			}
+			result := database.DB.Where("draft_id = ?", draftID).Delete(&model.DraftGenre{})
+			if result.Error != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "cannot delete asssociated genres"})
+				return
+			}
+			draftToUpdate.Genres = []model.Genre{}
+			for _, genreName := range genres {
+				genre := model.Genre{Name: genreName}
+				if err := database.DB.Where("name = ?", genreName).FirstOrCreate(&genre).Error; err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save genre", "details": err.Error()})
+					return
+				}
+				draftGenre := model.DraftGenre{
+					DraftID: draftToUpdate.ID,
+					GenreID: genre.ID,
+				}
+				if err := database.DB.Create(&draftGenre).Error; err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to associate genres", "details": err.Error()})
+					return
+				}
+				draftToUpdate.Genres = append(draftToUpdate.Genres, genre)
+			}
+		default:
+			fmt.Printf("Unrecogniyed key: %s\n", key)
+		}
+	}
+
+	_, ok := form.File["file"];
+	if ok {
+		uploadDir := "../uploads/tale_covers"
+		filePath, err := utils.UploadImage(ctx, uploadDir)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image", "details": err.Error()})
+			return
+		}
+		draftToUpdate.TaleImage = filePath
+	}
+
+	result = database.DB.Save(&draftToUpdate)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update draft", "details": result.Error.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, draftToUpdate)
 }
 
 func HandleGetSingleTalePublishedById(ctx *gin.Context) {

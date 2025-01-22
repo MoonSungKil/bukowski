@@ -41,6 +41,7 @@ func main() {
 
 	requireAuthGroup.POST("/tales/create", handlers.HandleCreateTale)
 	requireAuthGroup.POST("/tales/convert_draft_to_tale/:draft_id", handlers.HandleCreateTale)
+	requireAuthGroup.PUT("/tales/update_draft/:draft_id", handlers.HandleUpdateDraft)
 	requireAuthGroup.DELETE("/tales/delete_draft/:draft_id", handlers.HandleDeleteDraft)
 	requireAuthGroup.POST("/tales/create_draft", handlers.HandleCreateDraft)
 	requireAuthGroup.GET("/tales/get_all_published", handlers.HandleGetAllTalesPublishedByUserId)

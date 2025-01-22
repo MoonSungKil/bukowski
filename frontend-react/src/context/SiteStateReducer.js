@@ -72,6 +72,18 @@ export const siteStateReducer = (state, action) => {
         published: [...state.published, payload.tale],
         drafts: state.drafts.filter((draft) => +draft.ID !== +payload.draftID),
       };
+    case "UPDATE_DRAFT":
+      localStorage.setItem(
+        "drafts",
+        JSON.stringify([
+          ...state.drafts.filter((draft) => +draft.ID !== +payload.draftID),
+          payload.draft,
+        ])
+      );
+      return {
+        ...state,
+        drafts: [...state.drafts.filter((draft) => +draft.ID !== +payload.draftID), payload.draft],
+      };
     case "GET_SINGLE_TALE":
       return {
         ...state,

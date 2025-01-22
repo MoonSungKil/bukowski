@@ -204,6 +204,32 @@ export const SiteStateProvider = ({ children }) => {
     }
   };
 
+  //Update draft
+  const updateDraft = async (formData, draftID) => {
+    try {
+      const { data: draft } = await axios.put(
+        `http://localhost:8000/tales/update_draft/${draftID}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
+
+      dispatch({
+        type: "UPDATE_DRAFT",
+        payload: {
+          draft: draft,
+          draftID: draftID,
+        },
+      });
+
+      return draft;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getSingleDraft = async (id) => {
     const { data: draft } = await axios.get(`http://localhost:8000/tales/get_single_draft/${id}`, {
       headers: {
@@ -493,6 +519,7 @@ export const SiteStateProvider = ({ children }) => {
         createDraft,
         getSingleDraft,
         convertDraftToTale,
+        updateDraft,
         // end tale values
         stateObject: state,
       }}
