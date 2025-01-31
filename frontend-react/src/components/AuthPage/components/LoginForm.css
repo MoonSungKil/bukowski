@@ -51,8 +51,6 @@
   cursor: pointer;
 }
 
-.login_form_element_error {
-  position: absolute;
-  bottom: 20%;
-  color: red;
+.login_form_element_button_error {
+  background-color: var(--error-color);
 }

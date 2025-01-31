@@ -33,11 +33,26 @@
 }
 
 .single_page_content_story {
-  width: 80%;
+  width: 60%;
   text-align: start;
   padding-bottom: 3rem;
   color: gray;
   word-wrap: break-word;
+  white-space: pre-line;
+}
+
+.single_page_content_story_fragment {
+}
+
+.single_page_content_story_fragment_page {
+  font-size: 1rem;
+  color: var(--primary-color);
+  color: white;
+  justify-self: flex-end;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.3rem;
+  box-shadow: 2px 2px 1px var(--primary-color);
+  margin: 4rem;
 }
 
 .single_page_content_line {
@@ -57,7 +72,6 @@
 .single_page_content_locked {
   position: relative;
   width: 100%;
-  background-color: var(--secondary-background);
 }
 
 .single_page_content_locked_text {
@@ -71,15 +85,5 @@
   flex-direction: column;
   padding-bottom: 3rem;
   width: 100%;
-}
-
-.single_page_content_svg {
-  width: 100%;
-  position: absolute;
-  top: -50%;
-  left: 0;
-}
-
-.single_page_content_waveform {
-  fill: var(--secondary-background);
+  text-shadow: 2px 2px 12px black;
 }

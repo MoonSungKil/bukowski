@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/moonsungkil/bukowski/database"
 	"github.com/moonsungkil/bukowski/middleware"
@@ -23,20 +25,36 @@ func HandleCreateUser(ctx *gin.Context){
 	var userBody types.UserType
 
 	if err := ctx.ShouldBindJSON(&userBody); err != nil {
+		
+		var errorMessage []string
+
+		for _, err := range err.(validator.ValidationErrors) {
+			switch err.Tag() {
+			case "required":
+				errorMessage = append(errorMessage, fmt.Sprintf("%s is required", err.Field()))
+			case "min":
+				errorMessage = append(errorMessage, fmt.Sprintf("%s must be at least %s characters", err.Field(), err.Param()))
+			case "max":
+				errorMessage = append(errorMessage, fmt.Sprintf("%s cannot be more than %s characters", err.Field(), err.Param()))
+			case "email":
+				errorMessage = append(errorMessage, "Invalid email format.")
+			}
+		}
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "Bad Request",
-			"details": err.Error(),
+			"success": false,
+			"error": errorMessage,
 		})
+		return
 	}
 
 	if userBody.Password != userBody.ConfirmPassword {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Passwords do not match"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Passwords do not match"})
 		return
 	}
 
 	hash, err := utils.HashPassword(userBody.Password);
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Internal Server Error", "details": err.Error()})
 		return
 	}
 	
@@ -51,25 +69,67 @@ func HandleCreateUser(ctx *gin.Context){
 
 	result := database.DB.Create(&newUser) 
 	if result.Error != nil {
+		if strings.Contains(result.Error.Error(), "Duplicate entry") {
+			if strings.Contains(result.Error.Error(), "users.username") {
+				ctx.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Username already taken."})
+				return
+			} else if strings.Contains(result.Error.Error(), "users.email"){
+				ctx.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Email already taken."})
+				return
+			}
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(200, newUser)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,jwt.MapClaims{
+		"sub": newUser.ID,
+		"email": newUser.Email,
+		"username": newUser.Username,
+		"iat": time.Now().Unix(),
+		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create token", "details": err.Error()})
+		return
+	}
+
+	ctx.SetSameSite(http.SameSiteLaxMode)
+	ctx.SetCookie("Authorization", tokenString, 3600 * 25 * 30, "", "", false, true)
+
+	sanitizedUser := map[string]interface{}{
+		"id": newUser.ID,
+		"username": newUser.Username,
+		"email": newUser.Email,
+		"profile_picture": newUser.ProfilePicture,
+	}
+
+	ctx.JSON(200, gin.H{"message":"Succesfully user Created", "user": sanitizedUser})
 }
 
 func HandleLoginUser(ctx *gin.Context) {
 	var loginBody types.LoginUserBody
 
-	if ctx.ShouldBindJSON(&loginBody) != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to read body"})
+	if err := ctx.ShouldBindJSON(&loginBody); err != nil {
+
+		var errorMessage []string
+
+		for _, err := range err.(validator.ValidationErrors) {
+			switch err.Tag() {
+			case "required":
+				errorMessage = append(errorMessage, fmt.Sprintf("%s is required", err.Field()))
+			}
+		}
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false, "error": errorMessage})
 		return
 	}
 
 	var user model.User
 	result := database.DB.First(&user,"username = ?", loginBody.Username)
 	if result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": result.Error.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid Username or Password", "details": result.Error.Error()})
 		return
 	}
 

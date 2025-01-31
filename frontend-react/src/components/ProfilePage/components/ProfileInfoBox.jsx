@@ -157,9 +157,9 @@ const ProfileInfoBox = () => {
             >
               WISHLIST
             </li>
-            <li onClick={() => setCollectionType("quotes")} className="profile_info_box_body_item">
+            {/* <li onClick={() => setCollectionType("quotes")} className="profile_info_box_body_item">
               QUOTES
-            </li>
+            </li> */}
             <li onClick={() => setCollectionType("cart")} className="profile_info_box_body_item">
               CART
             </li>

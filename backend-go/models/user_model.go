@@ -11,9 +11,9 @@ type User struct {
     CreatedAt time.Time
     UpdatedAt time.Time
     DeletedAt gorm.DeletedAt `gorm:"index"`
-    Username  string `json:"username" gorm:"unique;not null"`
-    Email     string `json:"email" gorm:"unique;not null"`
-    Password  string `json:"password" gorm:"not null;validate:min=8"`
+    Username  string `json:"username" gorm:"unique;not null;" binding:"required,min=3,max=15"`
+    Email     string `json:"email" gorm:"unique;not null" binding:"required,email"`
+    Password  string `json:"password" gorm:"not null;" binding:"required,min=8,max=16"`
     ProfilePicture  string `json:"profile_picture,omitempty"`
 	PublishedTales []Tale `gorm:"foreignKey:UserID" json:"published_tales"`
 	PurchasedTales []Tale `gorm:"many2many:tale_purchases" json:"purchased_tales"`

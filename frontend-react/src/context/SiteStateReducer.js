@@ -2,6 +2,10 @@ export const initialState = {
   authModalType: "register",
   authModalOpen: false,
 
+  //error values
+  errorMessage: "",
+  errorState: false,
+
   //tale values
   tales: [],
   singleTaleSelected: {},
@@ -40,6 +44,15 @@ export const siteStateReducer = (state, action) => {
       return {
         ...state,
         authModalOpen: false,
+      };
+
+    // Error Modal
+    case "SET_ERROR_MODAL":
+      console.log("SET_ERROR_MODAL");
+      return {
+        ...state,
+        errorMessage: payload.errorMessage,
+        errorState: payload.errorState,
       };
 
     // Tale Reducers
@@ -84,6 +97,15 @@ export const siteStateReducer = (state, action) => {
         ...state,
         drafts: [...state.drafts.filter((draft) => +draft.ID !== +payload.draftID), payload.draft],
       };
+    case "DELETE_DRAFT":
+      localStorage.setItem(
+        "drafts",
+        JSON.stringify([...state.drafts.filter((draft) => +draft.ID !== +payload.draftID)])
+      );
+      return {
+        ...state,
+        drafts: [...state.drafts.filter((draft) => +draft.ID !== +payload.draftID)],
+      };
     case "GET_SINGLE_TALE":
       return {
         ...state,
@@ -113,6 +135,12 @@ export const siteStateReducer = (state, action) => {
 
     // User Reducers
     case "LOGIN_USER":
+      return {
+        ...state,
+        userLoggedIn: payload.user,
+      };
+
+    case "REGISTER_USER":
       return {
         ...state,
         userLoggedIn: payload.user,

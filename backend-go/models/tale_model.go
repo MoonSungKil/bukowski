@@ -11,18 +11,18 @@ type Tale struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Title string `gorm:"not null" json:"title"`
-	Author string `gorm:"not null" json:"author"`
-	Description string `gorm:"not null" json:"description"`
-	Preview string `gorm:"not null" json:"preview"`
-	Content string `gorm:"not null" json:"content"`
-	Pages int64 `gorm:"not null" json:"pages"`
-	Price float64 `gorm:"not null" json:"price"`
-	Status string `gorm:"type:varchar(10);not null;default:'draft'" json:"status"`
-	Genres []Genre `gorm:"many2many:tale_genres" json:"genres"`
-    TaleImage  string `json:"tale_image,omitempty"`
-	PublishedAt time.Time `json:"published_at"`	
-	UserID uint `gorm:"not null" json:"-"`
+	Title string `gorm:"not null; size:50" json:"title" validate:"required"`
+	Author string `gorm:"not null" json:"author" validate:"required"`
+	Description string `gorm:"not null; size:1000" json:"description" validate:"required"`
+	Preview string `gorm:"not null; size:1000" json:"preview" validate:"required"`
+	Content string `gorm:"not null" json:"content" validate:"required"`
+	Pages int64 `gorm:"not null" json:"pages" validate:"required"`
+	Price float64 `gorm:"not null" json:"price" validate:"required"`
+	Status string `gorm:"type:varchar(10);not null;default:'draft'" json:"status" validate:"required"`
+	Genres []Genre `gorm:"many2many:tale_genres" json:"genres" validate:"required"`
+    TaleImage  string `json:"tale_image,omitempty" validate:"required"`
+	PublishedAt time.Time `json:"published_at" validate:"required"`	
+	UserID uint `gorm:"not null" json:"-" validate:"required"`
 	TalePurchases []TalePurchase `gorm:"foreignKey:TaleID" json:"-"`
 }
 

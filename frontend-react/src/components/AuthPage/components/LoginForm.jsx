@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import "./LoginForm.css";
-import { useUser } from "../../../context/UserContext";
 import { useSiteState } from "../../../context/SiteStateContext";
 
 const LoginForm = () => {
-  const { closeAuthModal, loginUser } = useSiteState();
+  const { closeAuthModal, loginUser, errorState } = useSiteState();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -18,10 +16,7 @@ const LoginForm = () => {
       setEmail("");
       setPassword("");
     } else {
-      setError("Invalid username or password");
-      setTimeout(() => {
-        setError("");
-      }, 2500);
+      console.log("Unable to login");
     }
   };
 
@@ -45,8 +40,10 @@ const LoginForm = () => {
           type="password"
         />
       </div>
-      <div className="login_form_element_error">{error}</div>
-      <button className="login_form_element_button" type="submit">
+      <button
+        className={`login_form_element_button ${errorState && "login_form_element_button_error"}`}
+        type="submit"
+      >
         login
       </button>
     </form>

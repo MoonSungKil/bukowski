@@ -2,3 +2,7 @@
   background: linear-gradient(black, var(--primary-background));
   overflow-x: hidden;
 }
+
+.layout_main {
+  min-height: 100vh;
+}

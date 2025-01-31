@@ -49,3 +49,7 @@
   background-color: var(--secondary-color);
   cursor: pointer;
 }
+
+.register_form_element_button_error {
+  background-color: var(--error-color);
+}

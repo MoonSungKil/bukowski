@@ -12,7 +12,7 @@ function Header() {
   };
 
   return (
-    <div className="header_container">
+    <div id="header" className="header_container">
       <div className="header_background">
         <svg className="header_svg" viewBox="0 0 1440 490">
           <path

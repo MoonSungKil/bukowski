@@ -1,5 +1,5 @@
 .main_thread_suggestion {
-  width: 90%;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -10,32 +10,15 @@
   color: var(--third-color);
 }
 
-.main_thread_suggestion > h1 {
-  margin-top: 5%;
-  text-decoration: underline;
-  text-decoration-thickness: 0.3rem;
-  text-decoration-color: var(--primary-color);
-}
-
-.main_thread_suggestion > h2 {
-  width: 80%;
-  margin-bottom: 5rem;
-  font-size: 1.2rem;
-  text-align: start;
-}
-
-.main_thread_suggestion > h2 > a {
-  color: var(--primary-color);
-}
-
 .main_thread_suggestion_previews {
-  width: 100%;
+  width: 80%;
   height: 100%;
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   justify-content: center;
   align-items: center;
+  margin-top: 5%;
 }
 
 .main_thread_suggestion_previews_one {
@@ -47,6 +30,15 @@
 }
 
 .main_thread_suggestion_previews_two {
+  transform: perspective(900px) rotateX(14deg);
+  transition: all 1s ease;
+  transition: all 1s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main_thread_suggestion_previews_three {
   transform: perspective(500px) rotateY(-14deg);
   transition: all 1s ease;
   transition: all 1s ease;
@@ -56,6 +48,17 @@
 }
 
 .main_thread_suggestion_previews_one:hover,
-.main_thread_suggestion_previews_two:hover {
+.main_thread_suggestion_previews_two:hover,
+.main_thread_suggestion_previews_three:hover {
   transform: none;
+}
+
+@media (max-width: 1650px) {
+  .main_thread_suggestion {
+    width: 100%;
+  }
+
+  .main_thread_suggestion_previews {
+    width: 90%;
+  }
 }

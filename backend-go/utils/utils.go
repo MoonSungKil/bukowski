@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -58,7 +57,6 @@ func UploadImage(ctx *gin.Context, uploadDir string) (string, error) {
 	// Retrive the file from the request
 	file, err := ctx.FormFile("file")
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Failed to retrive file"})
 		return "", err
 	}
 
@@ -74,10 +72,37 @@ func UploadImage(ctx *gin.Context, uploadDir string) (string, error) {
 	// Save the file to the server
 	filePath := filepath.Join(uploadDir, newFileName)
 	if err := ctx.SaveUploadedFile(file, filePath); err !=nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"erro": "Fiailed to save file" })
 		return "", err
 	}
 
 	relativePath := uploadDir[2:] + "/" + newFileName
+	return relativePath, nil
+}
+
+func MoveImageToAnotherDirectory(ctx *gin.Context, imageLocation, destDir string ) (string,error) {
+
+	// Ensure that the new directory exists
+	if _ , err := os.Stat(destDir); os.IsNotExist(err) {
+		 err := os.MkdirAll(destDir, os.ModePerm)
+		 if err != nil {
+			return "", err
+		 }
+	}
+
+	imageLocation = filepath.Clean(imageLocation)
+	destDir = filepath.Clean(destDir)
+	fileName := filepath.Base(imageLocation)
+	newLocation := filepath.Join(destDir, fileName)
+	
+
+	oldPath := filepath.ToSlash(imageLocation)
+	oldPath = filepath.Join("..", oldPath)
+	newPath := filepath.ToSlash(newLocation)
+
+	if err := os.Rename(oldPath, newPath); err != nil {
+		return "", err
+	}
+
+	relativePath := newPath[2:]
 	return relativePath, nil
 }

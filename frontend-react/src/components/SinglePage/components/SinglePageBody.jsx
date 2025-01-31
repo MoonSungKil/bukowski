@@ -11,10 +11,6 @@ const SinglePageBody = () => {
           <div className="single_page_body_top_image_wrapper">
             <img className="single_page_cover" src={bookImg} alt="cover_picture" />
           </div>
-          {/* <div className="single_page_body_top_image_info">
-            <div className="single_page_body_top_image_info_title">Soul</div>
-            <div className="single_page_body_top_image_info_author">Olivia Wilson</div>
-          </div> */}
         </div>
         <div className="single_page_body_top_divider"></div>
         <div className="single_page_body_top_stats">

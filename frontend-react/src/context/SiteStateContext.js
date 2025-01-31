@@ -149,7 +149,31 @@ export const SiteStateProvider = ({ children }) => {
 
       return tale;
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data);
+
+      const message = Array.isArray(error.response.data.error)
+        ? error.response.data.error[0]
+        : error.response.data.error;
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+
+      return false;
     }
   };
 
@@ -175,7 +199,31 @@ export const SiteStateProvider = ({ children }) => {
 
       return tale;
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data);
+
+      const message = Array.isArray(error.response.data.error)
+        ? error.response.data.error[0]
+        : error.response.data.error;
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+
+      return false;
     }
   };
 
@@ -218,6 +266,30 @@ export const SiteStateProvider = ({ children }) => {
 
       dispatch({
         type: "UPDATE_DRAFT",
+        payload: {
+          draft: draft,
+          draftID: draftID,
+        },
+      });
+
+      return draft;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //Delete draft
+  const deleteDraft = async (draftID) => {
+    try {
+      const { data: draft } = await axios.delete(
+        `http://localhost:8000/tales/delete_draft/${draftID}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      dispatch({
+        type: "DELETE_DRAFT",
         payload: {
           draft: draft,
           draftID: draftID,
@@ -279,9 +351,12 @@ export const SiteStateProvider = ({ children }) => {
   };
 
   // check if the selected tale is purchased
-  const isPurchased = async (id) => {
+  const isPurchasedorPublished = async (id) => {
     try {
-      return state.purchased.some((tale) => +tale.ID === +id);
+      return (
+        state.purchased.some((tale) => +tale.ID === +id) ||
+        state.published.some((tale) => +tale.ID === +id)
+      );
     } catch (error) {
       console.log(error);
       return false;
@@ -377,6 +452,84 @@ export const SiteStateProvider = ({ children }) => {
 
       return true;
     } catch (error) {
+      console.log(error);
+
+      const message = Array.isArray(error.response.data.error)
+        ? error.response.data.error[0]
+        : error.response.data.error;
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+
+      return false;
+    }
+  };
+
+  const registerUser = async (username, email, password, confirmPassword) => {
+    try {
+      const { data } = await axios.post(
+        "http://localhost:8000/users/register",
+        {
+          username,
+          email,
+          password,
+          confirm_password: confirmPassword,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      localStorage.setItem("userLoggedIn", JSON.stringify(data.user));
+      dispatch({
+        type: "REGISTER_USER",
+        payload: {
+          user: data.user,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error.response.data);
+
+      const message = Array.isArray(error.response.data.error)
+        ? error.response.data.error[0]
+        : error.response.data.error;
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+
       return false;
     }
   };
@@ -494,6 +647,9 @@ export const SiteStateProvider = ({ children }) => {
         openAuthModalRegister,
         openAuthModalLogin,
         closeAuthModal,
+        // error values
+        errorMessage: state.errorMessage,
+        errorState: state.errorState,
         // user values
         loginUser: loginUser,
         logoutUser,
@@ -514,12 +670,14 @@ export const SiteStateProvider = ({ children }) => {
         getSingleTale,
         getAllPurchasedTales,
         getAllPublishedTales,
-        isPurchased,
+        isPurchasedorPublished,
         createTale,
         createDraft,
+        deleteDraft,
         getSingleDraft,
         convertDraftToTale,
         updateDraft,
+        registerUser,
         // end tale values
         stateObject: state,
       }}

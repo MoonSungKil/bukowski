@@ -3,9 +3,9 @@ package types
 import "time"
 
 type UserType struct {
-	Username        string `json:"username" binding:"required"`
+	Username        string `json:"username" binding:"required,min=3,max=15"`
 	Email           string `json:"email" binding:"required,email"`
-	Password        string `json:"password" binding:"required,min=8"`
+	Password        string `json:"password" binding:"required,min=8,max=16"`
 	ConfirmPassword string `json:"confirm_password" binding:"required,min=8"`
 	ProfilePicture 	string `json:"profile_picture"`
 }
@@ -17,8 +17,8 @@ type PasswordUpdate struct {
 }
 
 type LoginUserBody struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type TaleBody struct {

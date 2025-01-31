@@ -6,19 +6,19 @@ import { useEffect, useState } from "react";
 import { useSiteState } from "../../../context/SiteStateContext";
 
 const SinglePageTop = () => {
-  const { singleTaleSelected, isPurchased } = useSiteState();
+  const { singleTaleSelected, isPurchasedorPublished } = useSiteState();
 
   const { id } = useParams();
 
   const [purchased, setPurchased] = useState(false);
   useEffect(() => {
     const checkPurchasedStatus = async () => {
-      const result = await isPurchased(id); // wait for the async function
+      const result = await isPurchasedorPublished(id); // wait for the async function
       setPurchased(result);
     };
 
     checkPurchasedStatus();
-  }, [id, isPurchased]);
+  }, [id, isPurchasedorPublished]);
 
   const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
   const taleImage = `${backendURL}${singleTaleSelected.tale_image}`;

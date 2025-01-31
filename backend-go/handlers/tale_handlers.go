@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -47,14 +49,47 @@ func HandleCreateTale(ctx *gin.Context) {
 
 	// Parse form data fields
 	title := ctx.PostForm("title")
+	if title == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Title field is required", "field": "title"})
+		return
+	}
 	description := ctx.PostForm("description")
+	if description == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Description field is required", "field": "description"})
+		return
+	}
 	preview := ctx.PostForm("preview")
+	if preview == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Preview field is required", "field": "preview"})
+		return
+	}
 	content := ctx.PostForm("content")
+	if content == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Content field is required", "field": "content"})
+		return
+	}
 	author := ctx.PostForm("author")
-	pages, _ := strconv.Atoi(ctx.PostForm("pages")) // Convert to int
-	price, _ := strconv.ParseFloat(ctx.PostForm("price"), 64)
+	if author == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Author field is required", "field": "author"})
+		return
+	}
+	pages, err := strconv.Atoi(ctx.PostForm("pages")) // Convert to int
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Pages field is required", "field": "pages"})
+		return
+	}
+	price, err := strconv.ParseFloat(ctx.PostForm("price"), 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Price field is required", "field": "price"})
+		return
+	}
 	status := ctx.PostForm("status")
+	if status == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Status field is required", "field": "status"})
+		return
+	}
 	publishedAt, _ := time.Parse(time.RFC3339, ctx.PostForm("published_at"))
+	
 
 	// Parse genres JSON string into a slice
 	genresJSON := ctx.PostForm("genres")
@@ -64,13 +99,38 @@ func HandleCreateTale(ctx *gin.Context) {
 		return
 	}
 
+
 	// Handle image upload
 	uploadDir := "../uploads/tale_covers"
 	filePath, err := utils.UploadImage(ctx, uploadDir)
+	var draft model.Draft
+	draftID := ctx.Param("draft_id")
+	draftIDUint, _ := strconv.ParseInt(draftID,10,64)
+	_ = database.DB.Where("id = ? AND user_id = ?", draftIDUint, userID).First(&draft)
+	imageAlreadyMoved := false
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image", "details": err.Error()})
-		return
+		if draft.TaleImage != "" {
+			filePath, err = utils.MoveImageToAnotherDirectory(ctx, draft.TaleImage, "../uploads/tale_covers")
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save image", "details": err.Error(), "field": "image"})
+				return
+			}
+			imageAlreadyMoved = true
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "No image porvided or found within an associated draft of yours", "details": err.Error(), "field": "image"})
+			return
+		}
 	}
+
+	if draft.TaleImage != "" && !imageAlreadyMoved {
+		oldImageFilePath := draft.TaleImage
+		oldImageFilePath = filepath.Join("..", oldImageFilePath)
+		err := os.Remove(oldImageFilePath)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete old image path, draft deleted", "field": "image"})
+		}
+	}
+
 
 	// Create a new tale
 	newTale := model.Tale{
@@ -103,18 +163,14 @@ func HandleCreateTale(ctx *gin.Context) {
 		return
 	}
 
-	draftID := ctx.Param("draft_id")
 	if draftID  != "" {
-		draftIDUint, _ := strconv.ParseUint(draftID, 10, 64)
+		draftIDUint, _ := strconv.ParseInt(draftID,10,64)
 		result := database.DB.Where("draft_id = ?", draftIDUint).Delete(&model.DraftGenre{})
 		if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "cannot delete associated genres"})
 		return
 	}
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete genres", "details": err.Error()})
-			return
-	}
+	
 
 	result = database.DB.Delete(&model.Draft{}, draftIDUint); if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to delete draft"})
@@ -124,6 +180,7 @@ func HandleCreateTale(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, newTale)
 }
+
 
 func HandleDeleteDraft(ctx *gin.Context) {
 	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
@@ -169,6 +226,17 @@ func HandleDeleteDraft(ctx *gin.Context) {
 	}
 
 	result = database.DB.Delete(&model.Draft{}, draftIDUint)
+	if result.Error == nil {
+		if draft.TaleImage != "" {
+			draftImagePath := draft.TaleImage
+			draftImagePath = filepath.Join("..", draftImagePath)
+			err := os.Remove(draftImagePath)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Draft deleted but image still intact"})
+				return
+			}
+		}
+	}
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
@@ -187,10 +255,15 @@ func HandleCreateDraft(ctx *gin.Context) {
 
 	userID := user.ID
 
+	form, _ := ctx.MultipartForm()
+
 	title := ctx.PostForm("title")
 	description := ctx.PostForm("description")
 	pages, _ := strconv.Atoi(ctx.PostForm("pages"))
-	price, _ := strconv.ParseFloat(ctx.PostForm("price"),64)
+	price, _ := strconv.ParseFloat("0",64)
+	if _, exists := form.Value["price"]; exists {
+		price,_  = strconv.ParseFloat(ctx.PostForm("price"),64)
+	}
 	content := ctx.PostForm("content")
 	author := ctx.PostForm("author")
 	preview := ctx.PostForm("preview")
@@ -207,7 +280,7 @@ func HandleCreateDraft(ctx *gin.Context) {
 		}
 	}
 
-	uploadDir := "../uploads/tale_covers"
+	uploadDir := "../uploads/draft_covers"
 	var filePath string
 	_, err = ctx.FormFile("file")
 	if err == nil {
@@ -423,14 +496,22 @@ func HandleUpdateDraft(ctx *gin.Context) {
 
 	_, ok := form.File["file"];
 	if ok {
-		uploadDir := "../uploads/tale_covers"
+		uploadDir := "../uploads/draft_covers"
 		filePath, err := utils.UploadImage(ctx, uploadDir)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image", "details": err.Error()})
 			return
 		}
+		oldImageFilePath := draftToUpdate.TaleImage
+		oldImageFilePath = filepath.Join("..", oldImageFilePath)
+		if err = os.Remove(oldImageFilePath); err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete old image", "details": err.Error()})
+			return
+		}
 		draftToUpdate.TaleImage = filePath
 	}
+
+	
 
 	result = database.DB.Save(&draftToUpdate)
 	if result.Error != nil {

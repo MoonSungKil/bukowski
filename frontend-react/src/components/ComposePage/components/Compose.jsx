@@ -5,14 +5,8 @@ import coverPhotoTest from "../../../assets/cover/cover_placeholder.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Compose = () => {
-  const {
-    userLoggedIn,
-    createTale,
-    createDraft,
-    convertDraftToTale,
-    updateDraft,
-    singleDraftSelected,
-  } = useSiteState();
+  const { userLoggedIn, createTale, createDraft, convertDraftToTale, updateDraft, deleteDraft } =
+    useSiteState();
 
   const { tale_id } = useParams();
 
@@ -46,6 +40,9 @@ const Compose = () => {
           setImagePreview(
             fetchedDraft.tale_image && (`${backendURL}${fetchedDraft.tale_image}` || null)
           );
+          setGenreOne(fetchedDraft.genres[0].name || "None");
+          setGenreTwo(fetchedDraft.genres[1].name || "None");
+          setGenreThree(fetchedDraft.genres[2].name || "None");
         }
       } catch (error) {
         console.log("Failed to fetch");
@@ -86,28 +83,44 @@ const Compose = () => {
     formData.append("author", userLoggedIn.username);
     formData.append("pages", pages);
     formData.append("file", file); // File input
-    formData.append("price", parseFloat(price));
+    formData.append("price", price);
     formData.append("status", "published");
     formData.append("genres", JSON.stringify([genreOne, genreTwo, genreThree]));
     formData.append("published_at", new Date().toISOString());
 
     if (type === "publish") {
+      formData.forEach((f) => console.log(f));
       if (tale_id) {
         const newTaleCreated = await convertDraftToTale(formData, tale_id);
-        navigate(`/tale/${newTaleCreated.ID}`);
+        if (newTaleCreated) {
+          navigate(`/tale/${newTaleCreated.ID}`);
+        }
       } else {
         const newTaleCreated = await createTale(formData);
-        navigate(`/tale/${newTaleCreated.ID}`);
+        if (newTaleCreated) {
+          navigate(`/tale/${newTaleCreated.ID}`);
+        }
       }
     }
     if (type === "draft") {
       if (tale_id) {
         const updatedDraft = await updateDraft(formData, tale_id);
+        console.log(updatedDraft);
       } else {
         const newDraftCreated = await createDraft(formData);
         navigate(`/profile/${userLoggedIn.id}`);
       }
     }
+  };
+
+  const onDeleteDraft = async (e) => {
+    e.preventDefault();
+
+    if (tale_id) {
+      await deleteDraft(tale_id);
+    }
+
+    navigate(`/profile/${userLoggedIn.id}`);
   };
 
   return (
@@ -125,7 +138,7 @@ const Compose = () => {
         <div className="compose_form_body">
           <div className="compose_form_body_left">
             <div className="compose_image">
-              <div className="compose_image_preview">
+              <div className={`compose_image_preview`}>
                 <img src={imagePreview ? imagePreview : coverPhotoTest} alt="cover_image" />
               </div>
               <div className="compose_image_buttons">
@@ -143,7 +156,7 @@ const Compose = () => {
             <div className="compose_genres">
               <label htmlFor="genre">Assign Genres</label>
               <select value={genreOne} onChange={(e) => setGenreOne(e.target.value)}>
-                <option value="None">None</option>
+                <option value={genreOne}>{genreOne}</option>
                 <option value="Surrealism">Surrealism</option>
                 <option value="Existentialism">Existentialism</option>
                 <option value="Fantasy">Fantasy</option>
@@ -155,7 +168,7 @@ const Compose = () => {
                 <option value="Poetry">Poetry</option>
               </select>
               <select value={genreTwo} onChange={(e) => setGenreTwo(e.target.value)}>
-                <option value="None">None</option>
+                <option value={genreTwo}>{genreTwo}</option>
                 <option value="Surrealism">Surrealism</option>
                 <option value="Existentialism">Existentialism</option>
                 <option value="Fantasy">Fantasy</option>
@@ -167,7 +180,7 @@ const Compose = () => {
                 <option value="Poetry">Poetry</option>
               </select>
               <select value={genreThree} onChange={(e) => setGenreThree(e.target.value)}>
-                <option value="None">None</option>
+                <option value={genreThree}>{genreThree}</option>
                 <option value="Surrealism">Surrealism</option>
                 <option value="Existentialism">Existentialism</option>
                 <option value="Fantasy">Fantasy</option>
@@ -189,6 +202,8 @@ const Compose = () => {
             <div className="compose_description">
               <label htmlFor="textarea_description">Description</label>
               <textarea
+                className="textarea_description"
+                maxLength={1000}
                 onChange={(e) => setDescription(e.target.value)}
                 value={description}
                 name="textarea_description"
@@ -215,16 +230,18 @@ const Compose = () => {
             </div>
             <div className="compose_form_buttons">
               <button onClick={(e) => submitTale(e, "draft")} className="compose_draft">
-                DRAFT
+                SAVE DRAFT
               </button>
               <butto
                 onClick={(e) => submitTale(e, "publish")}
                 type="submit"
                 className="compose_publish"
               >
-                PUBLISH
+                PUBLISH TALE
               </butto>
-              <button className="compose_delete">DELETE</button>
+              <button onClick={(e) => onDeleteDraft(e)} className="compose_delete">
+                DELETE DRAFT
+              </button>
             </div>
           </div>
         </div>

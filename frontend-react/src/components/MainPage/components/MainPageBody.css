@@ -6,6 +6,7 @@
   align-items: center;
   justify-content: center;
   background-color: var(--secondary-background);
+  padding-bottom: 10%;
 }
 .main_page_body {
   width: 90vw;
