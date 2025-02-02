@@ -6,12 +6,13 @@ import UpdateProfileInfo from "./UpdateProfileInfo";
 import UpdateProfilePassword from "./UpdateProfilePassword";
 import { useProfileState } from "../../../context/ProfileStateContext";
 
-const ProfileInfoBox = () => {
+const ProfileInfoBox = ({ setKeyword }) => {
   const { userLoggedIn, updateUserProfilePicture } = useSiteState();
   const { selectedCollectionType } = useProfileState();
 
   const setCollectionType = (collectionType) => {
     selectedCollectionType(collectionType.toLowerCase());
+    setKeyword("");
   };
 
   const inputRef = useRef();

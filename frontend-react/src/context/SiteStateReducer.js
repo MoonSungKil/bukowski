@@ -156,17 +156,21 @@ export const siteStateReducer = (state, action) => {
       return {
         ...state,
         purchased: [...payload.purchased],
+        filteredPurchased: [...payload.purchased],
       };
     case "GET_ALL_PUBLISHED_TALES":
       return {
         ...state,
         published: [...payload.published],
+        filteredPublished: [...payload.published],
       };
     case "GET_ALL_DRAFTED_TALES":
       return {
         ...state,
         drafts: [...payload.drafts],
+        filteredDrafts: [...payload.drafts],
       };
+
     // End Tale Reducers
 
     // User Reducers

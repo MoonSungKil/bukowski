@@ -29,10 +29,10 @@ const Navigation = () => {
 
   useEffect(() => {
     quickFilterTale(keyword);
-    // document.addEventListener("click", handleClickOutside);
-    // return () => {
-    //   document.removeEventListener("click", handleClickOutside);
-    // };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, [keyword]);
 
   return (

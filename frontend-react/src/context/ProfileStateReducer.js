@@ -13,6 +13,21 @@ export const profileStateReducer = (state, action) => {
         filteredCollection: payload.filteredCollection,
         typeCollectionSelected: payload.typeCollectionSelected,
       };
+    case "FILTER_COLLECTION_BY_KEYWORD":
+      if (payload.keyword === "") {
+        return {
+          ...state,
+          filteredCollection: payload.collection,
+        };
+      }
+
+      let filterCollection = payload.collection.filter((tale) =>
+        tale.title.toLowerCase().includes(payload.keyword.toLowerCase())
+      );
+      return {
+        ...state,
+        filteredCollection: filterCollection,
+      };
     case "SET_CREATE_TALE_MODAL_STATE":
       return {
         ...state,

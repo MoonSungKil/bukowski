@@ -12,12 +12,9 @@ const FilterSearch = ({ keyword, setKeyword, handleSubmitFilter }) => {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           type="text"
-          placeholder="Search for keyword"
+          placeholder="All"
           className="filter_search_input"
         />
-        <button type="submit" className="filter_search_button">
-          +
-        </button>
       </form>
     </div>
   );

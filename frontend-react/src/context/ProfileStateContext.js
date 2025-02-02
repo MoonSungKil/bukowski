@@ -25,6 +25,19 @@ export const ProfileStateProvider = ({ children }) => {
     });
   };
 
+  const filterCollectionByKeyword = (keyword) => {
+    let collection = siteState[state.typeCollectionSelected.toLowerCase()]
+      ? siteState[state.typeCollectionSelected.toLowerCase()]
+      : [];
+    dispatch({
+      type: "FILTER_COLLECTION_BY_KEYWORD",
+      payload: {
+        keyword: keyword,
+        collection: [...collection],
+      },
+    });
+  };
+
   const toggleCreateTaleModalState = () => {
     dispatch({
       type: "SET_CREATE_TALE_MODAL_STATE",
@@ -39,6 +52,7 @@ export const ProfileStateProvider = ({ children }) => {
       value={{
         selectedCollectionType,
         toggleCreateTaleModalState,
+        filterCollectionByKeyword,
         createTaleModalState: state.createTaleModalState,
         typeCollectionSelected: state.typeCollectionSelected,
         filteredCollection: state.filteredCollection,

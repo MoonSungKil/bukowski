@@ -118,6 +118,33 @@ export const SiteStateProvider = ({ children }) => {
     });
   };
 
+  const filterPurchased = (keyword) => {
+    dispatch({
+      type: "FILTER_PURCHASED_BY_KEYWORD",
+      payload: {
+        keyword: keyword,
+      },
+    });
+  };
+
+  const filterPublished = (keyword) => {
+    dispatch({
+      type: "FILTER_PUBLISHED_BY_KEYWORD",
+      payload: {
+        keyword: keyword,
+      },
+    });
+  };
+
+  const filterDrafts = (keyword) => {
+    dispatch({
+      type: "FILTER_DRAFTS_BY_KEYWORD",
+      payload: {
+        keyword: keyword,
+      },
+    });
+  };
+
   const quickFilterTale = (keyword) => {
     dispatch({
       type: "QUICK_FILTER_TALE",
@@ -742,8 +769,14 @@ export const SiteStateProvider = ({ children }) => {
         getTaleByAccess,
         getAllGenres,
         filterTales,
+        filterPublished,
+        filterPurchased,
+        filterDrafts,
         quickFilterTale,
         filteredTales: state.filteredTales,
+        filteredPurchased: state.filteredPurchased,
+        filteredPublished: state.filteredPublished,
+        filteredDrafts: state.filteredDrafts,
         quickFilteredTales: state.quickFilteredTales,
         // end tale values
         stateObject: state,

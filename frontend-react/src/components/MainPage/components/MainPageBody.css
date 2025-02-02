@@ -49,3 +49,9 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+@media (max-width: 1400px) {
+  .main_page_body_collection {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -22,7 +22,7 @@ const MainPageBody = () => {
 
   useEffect(() => {
     filterTales(keyword, selectedGenres);
-  }, [selectedGenres]);
+  }, [keyword, selectedGenres]);
 
   return (
     <div className="main_page_body_container">

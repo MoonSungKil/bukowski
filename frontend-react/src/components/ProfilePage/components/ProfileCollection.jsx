@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ProfileCollection.css";
 import CollectionItem from "./CollectionItem";
 import { useProfileState } from "../../../context/ProfileStateContext";
 import { useNavigate, useParams } from "react-router-dom";
 
-const ProfileCollection = () => {
-  const { typeCollectionSelected, filteredCollection, selectedCollectionType } = useProfileState();
+const ProfileCollection = ({ keyword, setKeyword }) => {
+  const { typeCollectionSelected, filteredCollection, filterCollectionByKeyword } =
+    useProfileState();
 
   const { id } = useParams();
 
-  const [inputValue, setInputValue] = useState("");
-
   const submitHandler = (e) => {
     e.preventDefault();
-    selectedCollectionType(typeCollectionSelected.toLowerCase());
+    filterCollectionByKeyword(keyword);
   };
+
+  useEffect(() => {
+    filterCollectionByKeyword(keyword);
+  }, [keyword]);
 
   const navigate = useNavigate();
 
@@ -42,15 +45,12 @@ const ProfileCollection = () => {
           </div>
           <form onSubmit={(e) => submitHandler(e)} className="profile_collection_search_form">
             <input
+              onChange={(e) => setKeyword(e.target.value)}
               type="text"
               placeholder="Search for book"
               className="profile_collection_search_input"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              value={keyword}
             />
-            <button type="submit" className="profile_collection_search_button">
-              +
-            </button>
           </form>
         </div>
       </div>
@@ -76,6 +76,36 @@ const ProfileCollection = () => {
             No items found under "{typeCollectionSelected}"
           </h4>
         )}
+        {/* {typeCollectionSelected.toLowerCase() === "purchased".toLowerCase() &&
+        filteredPurchased.length > 0 ? (
+          filteredPurchased.map((tale) => {
+            return <CollectionItem clickHandler={() => navigateToEdit(tale.ID)} tale={tale} />;
+          })
+        ) : (
+          <h4 className="profile_collection_empty">
+            No items found under "{typeCollectionSelected}"
+          </h4>
+        )}
+        {typeCollectionSelected.toLowerCase() === "published".toLowerCase() &&
+        filterPublished.length > 0 ? (
+          filterPublished.map((tale) => {
+            return <CollectionItem clickHandler={() => navigateToEdit(tale.ID)} tale={tale} />;
+          })
+        ) : (
+          <h4 className="profile_collection_empty">
+            No items found under "{typeCollectionSelected}"
+          </h4>
+        )}
+        {typeCollectionSelected.toLowerCase() === "drafts".toLowerCase() &&
+        filteredDrafts.length > 0 ? (
+          filteredDrafts.map((tale) => {
+            return <CollectionItem clickHandler={() => navigateToEdit(tale.ID)} tale={tale} />;
+          })
+        ) : (
+          <h4 className="profile_collection_empty">
+            No items found under "{typeCollectionSelected}"
+          </h4>
+        )} */}
       </div>
     </div>
   );

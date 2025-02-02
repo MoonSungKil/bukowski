@@ -18,6 +18,7 @@
   color: var(--primary-color);
   font-family: "Nunito";
   font-weight: bold;
+  box-shadow: 1px 1px 2px black;
   border-radius: 1rem;
 }
 
@@ -26,23 +27,11 @@
   height: 3rem;
   outline: none;
   background-color: transparent;
-  border: 1px solid var(--primary-background);
+  border: 1px solid var(--primary-color);
   border-radius: 1rem;
   color: var(--third-color);
   padding: 0 3rem 0 1rem;
   font-size: 1rem;
-}
-
-.filter_search_button {
-  position: absolute;
-  right: 9%;
-  top: 25%;
-  border-radius: 50%;
-  border: none;
-  width: 2rem;
-  height: 2rem;
-  font-size: 1.5rem;
-  color: var(--third-color);
-  background-color: var(--primary-color);
-  cursor: pointer;
+  box-shadow: 1px 1px 2px black;
+  color: gray;
 }
