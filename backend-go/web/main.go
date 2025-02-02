@@ -57,6 +57,7 @@ func main() {
 
 	router.GET("/tales/get_tales", handlers.HandleGetAllTalesWithoutAuth)
 	router.GET("/tales/get_tales/:id", handlers.HandleGetSingleTaleWithouthAuth)
+	router.GET("/tales/get_genres", handlers.HandleGetAllGenres)
 
 	router.Run()
 }

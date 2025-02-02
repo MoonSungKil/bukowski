@@ -1,6 +1,10 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	model "github.com/moonsungkil/bukowski/models"
+)
 
 type UserType struct {
 	Username        string `json:"username" binding:"required,min=3,max=15"`
@@ -46,3 +50,16 @@ type DraftBody struct {
 	Genres      []string        `json:"genres"`
 }
 
+type TaleBodyUnauthorized struct {
+	ID          uint      `json:"id"`
+	Title       string    `json:"title"`
+	Author      string    `json:"author"`
+	Description string    `json:"description"`
+	Preview     string    `json:"preview"`
+	Pages       int64     `json:"pages"`
+	Price       float64   `json:"price"`
+	Status      string    `json:"status"`
+	Genres      []model.Genre   `json:"genres"`
+	TaleImage   string    `json:"tale_image"`
+	PublishedAt time.Time `json:"published_at"`
+}

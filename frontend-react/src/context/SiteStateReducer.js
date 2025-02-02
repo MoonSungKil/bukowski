@@ -8,6 +8,8 @@ export const initialState = {
 
   //tale values
   tales: [],
+  filteredTales: [],
+  quickFilteredTales: [],
   singleTaleSelected: {},
   singleDraftSelected: {},
   purchased: [],
@@ -60,7 +62,41 @@ export const siteStateReducer = (state, action) => {
       return {
         ...state,
         tales: payload.tales,
+        filteredTales: payload.tales,
       };
+    case "FILTER_TALES":
+      let filtered = [...state.tales];
+      if (payload.keyword !== "") {
+        filtered = filtered.filter(
+          (tale) =>
+            tale.title.toLowerCase().includes(payload.keyword.toLowerCase()) ||
+            tale.author.toLowerCase().includes(payload.keyword.toLowerCase())
+        );
+      }
+      if (payload.genres.length > 0) {
+        filtered = filtered.filter((tale) =>
+          tale.genres.some((genre) => payload.genres.includes(genre.name))
+        );
+      }
+      return {
+        ...state,
+        filteredTales: filtered,
+      };
+    case "QUICK_FILTER_TALE":
+      if (payload.keyword === "") {
+        return {
+          ...state,
+          quickFilteredTales: [],
+        };
+      } else {
+        let quickFilter = state.tales.filter((tale) =>
+          tale.title.toLowerCase().includes(payload.keyword.toLowerCase())
+        );
+        return {
+          ...state,
+          quickFilteredTales: quickFilter.slice(0, 3),
+        };
+      }
     case "CREATE_TALE":
       localStorage.setItem("published", JSON.stringify([...state.published, payload.tale]));
       return {

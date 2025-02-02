@@ -172,7 +172,7 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
-  column-gap: 0.3rem;
+  gap: 0.3rem;
 }
 
 .profile_info_box_body_item {
@@ -185,10 +185,13 @@
   color: gray;
   border: 1px solid var(--secondary-background);
   font-size: 1.1rem;
+  border-radius: 1rem;
+  box-shadow: 2px 2px 2px black;
+  transition: all 0.3s ease;
 }
 
 .profile_info_box_body_item:hover {
   color: black;
   background-color: var(--primary-color);
-  border-bottom: 1px solid transparent;
+  transform: scale(1.03);
 }

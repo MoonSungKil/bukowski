@@ -5,8 +5,15 @@ import coverPhotoTest from "../../../assets/cover/cover_placeholder.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Compose = () => {
-  const { userLoggedIn, createTale, createDraft, convertDraftToTale, updateDraft, deleteDraft } =
-    useSiteState();
+  const {
+    userLoggedIn,
+    createTale,
+    createDraft,
+    convertDraftToTale,
+    updateDraft,
+    deleteDraft,
+    getAllGenres,
+  } = useSiteState();
 
   const { tale_id } = useParams();
 
@@ -19,9 +26,9 @@ const Compose = () => {
   const [content, setContent] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [genreOne, setGenreOne] = useState("None");
-  const [genreTwo, setGenreTwo] = useState("None");
-  const [genreThree, setGenreThree] = useState("None");
+  const [genreOne, setGenreOne] = useState("");
+  const [genreTwo, setGenreTwo] = useState("");
+  const [genreThree, setGenreThree] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
 
   const [draft, setDraft] = useState();
@@ -52,6 +59,17 @@ const Compose = () => {
     fetchDraft();
   }, []);
 
+  const [fetchedGenres, setFetchedGenres] = useState([]);
+  useEffect(() => {
+    (async () => {
+      const genres = await getAllGenres();
+      setFetchedGenres([...genres]);
+      setGenreOne(genres[0].name);
+      setGenreTwo(genres[0].name);
+      setGenreThree(genres[0].name);
+    })();
+  }, []);
+
   const inputRef = useRef();
   const [file, setFile] = useState(null);
 
@@ -78,7 +96,7 @@ const Compose = () => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("preview", content.substring(0, 100) + "...");
+    formData.append("preview", content.substring(0, 500) + "...");
     formData.append("content", content);
     formData.append("author", userLoggedIn.username);
     formData.append("pages", pages);
@@ -89,7 +107,6 @@ const Compose = () => {
     formData.append("published_at", new Date().toISOString());
 
     if (type === "publish") {
-      formData.forEach((f) => console.log(f));
       if (tale_id) {
         const newTaleCreated = await convertDraftToTale(formData, tale_id);
         if (newTaleCreated) {
@@ -156,40 +173,19 @@ const Compose = () => {
             <div className="compose_genres">
               <label htmlFor="genre">Assign Genres</label>
               <select value={genreOne} onChange={(e) => setGenreOne(e.target.value)}>
-                <option value={genreOne}>{genreOne}</option>
-                <option value="Surrealism">Surrealism</option>
-                <option value="Existentialism">Existentialism</option>
-                <option value="Fantasy">Fantasy</option>
-                <option value="Drama">Drama</option>
-                <option value="Horror">Horror</option>
-                <option value="Philosophy">Philosophy</option>
-                <option value="Adventure">Adventure</option>
-                <option value="Mystery">Mystery</option>
-                <option value="Poetry">Poetry</option>
+                {fetchedGenres.map((genre) => (
+                  <option value={genre.name}>{genre.name}</option>
+                ))}
               </select>
               <select value={genreTwo} onChange={(e) => setGenreTwo(e.target.value)}>
-                <option value={genreTwo}>{genreTwo}</option>
-                <option value="Surrealism">Surrealism</option>
-                <option value="Existentialism">Existentialism</option>
-                <option value="Fantasy">Fantasy</option>
-                <option value="Drama">Drama</option>
-                <option value="Horror">Horror</option>
-                <option value="Philosophy">Philosophy</option>
-                <option value="Adventure">Adventure</option>
-                <option value="Mystery">Mystery</option>
-                <option value="Poetry">Poetry</option>
+                {fetchedGenres.map((genre) => (
+                  <option value={genre.name}>{genre.name}</option>
+                ))}
               </select>
               <select value={genreThree} onChange={(e) => setGenreThree(e.target.value)}>
-                <option value={genreThree}>{genreThree}</option>
-                <option value="Surrealism">Surrealism</option>
-                <option value="Existentialism">Existentialism</option>
-                <option value="Fantasy">Fantasy</option>
-                <option value="Drama">Drama</option>
-                <option value="Horror">Horror</option>
-                <option value="Philosophy">Philosophy</option>
-                <option value="Adventure">Adventure</option>
-                <option value="Mystery">Mystery</option>
-                <option value="Poetry">Poetry</option>
+                {fetchedGenres.map((genre) => (
+                  <option value={genre.name}>{genre.name}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -203,7 +199,7 @@ const Compose = () => {
               <label htmlFor="textarea_description">Description</label>
               <textarea
                 className="textarea_description"
-                maxLength={1000}
+                maxLength={950}
                 onChange={(e) => setDescription(e.target.value)}
                 value={description}
                 name="textarea_description"

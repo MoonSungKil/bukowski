@@ -6,21 +6,43 @@ import FilterElements from "./FilterElements";
 import { useSiteState } from "../../../context/SiteStateContext";
 
 const MainPageBody = () => {
-  const { getAllTales, tales } = useSiteState();
+  const { getAllTales, filteredTales, filterTales } = useSiteState();
+
+  const [keyword, setKeyword] = useState("");
+  const [selectedGenres, setSelectedGenres] = useState([]);
+
+  const handleSubmitFilter = (e) => {
+    e.preventDefault();
+    filterTales(keyword, selectedGenres);
+  };
 
   useEffect(() => {
     getAllTales();
   }, []);
 
+  useEffect(() => {
+    filterTales(keyword, selectedGenres);
+  }, [selectedGenres]);
+
   return (
     <div className="main_page_body_container">
       <div className="main_page_body">
-        <FilterSearch />
-        <FilterElements />
+        <FilterSearch
+          keyword={keyword}
+          setKeyword={setKeyword}
+          handleSubmitFilter={handleSubmitFilter}
+        />
+        <FilterElements
+          selectedGenres={selectedGenres}
+          setSelectedGenres={setSelectedGenres}
+          handleSubmitFilter={handleSubmitFilter}
+        />
         <div className="main_page_body_collection">
-          {tales.map((tale) => (
-            <TalePreview key={tale.ID} tale={tale} />
-          ))}
+          {filteredTales.length > 0 ? (
+            filteredTales.map((tale) => <TalePreview key={tale.id} tale={tale} />)
+          ) : (
+            <div className="main_page_body_empty">No Tales Found</div>
+          )}
         </div>
       </div>
     </div>

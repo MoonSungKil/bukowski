@@ -1,0 +1,38 @@
+.quick_filter_tale {
+  width: 100%;
+  padding: 0.1rem;
+  display: grid;
+  grid-template-columns: 1fr 10fr;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0;
+  gap: 0.5rem;
+  box-shadow: 2px 2px 2px black;
+  background-color: var(--primary-background);
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.quick_filter_tale_image {
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quick_filter_tale_image > img {
+  object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
+  height: 3.5rem;
+  box-shadow: 2px 2px 2px black;
+  width: 3.5rem;
+}
+
+.quick_filter_tale_title {
+  height: 4rem;
+  margin: 0;
+  text-indent: 1rem;
+  display: flex;
+  align-items: center;
+}

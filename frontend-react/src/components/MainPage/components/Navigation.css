@@ -17,6 +17,19 @@
 
 .navigation_search_box {
   flex: 3;
+  position: relative;
+}
+
+.navigation_search_box_filtered_tales {
+  width: 100%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  top: 110%;
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  gap: 0.3rem;
 }
 
 .navigation_search_box > input {

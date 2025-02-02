@@ -1,15 +1,56 @@
 import "./Navigation.css";
 import { useSiteState } from "../../../context/SiteStateContext";
 import { ProfileIcon } from "./ProfileIcon";
+import { useEffect, useRef, useState } from "react";
+import QuickFilteredTale from "./QuickFilteredTale";
 
 const Navigation = () => {
-  const { openAuthModalRegister, openAuthModalLogin, userLoggedIn } = useSiteState();
+  const {
+    openAuthModalRegister,
+    openAuthModalLogin,
+    userLoggedIn,
+    quickFilterTale,
+    quickFilteredTales,
+  } = useSiteState();
+
+  const [keyword, setKeyword] = useState("");
+  const inputRef = useRef(null);
+
+  const handleClickOutside = (e) => {
+    if (inputRef.current && !inputRef.current.contains(e.target)) {
+      setKeyword("");
+    }
+  };
+
+  const quickSearch = (e) => {
+    setKeyword(e.target.value);
+    quickFilterTale(keyword);
+  };
+
+  useEffect(() => {
+    quickFilterTale(keyword);
+    // document.addEventListener("click", handleClickOutside);
+    // return () => {
+    //   document.removeEventListener("click", handleClickOutside);
+    // };
+  }, [keyword]);
 
   return (
     <div className="navigation_container">
       <div className="navigation_top_section">
-        <div className="navigation_search_box">
-          <input type="text" placeholder="Search for Book" />
+        <div ref={inputRef} className="navigation_search_box">
+          <input
+            value={keyword}
+            onChange={(e) => quickSearch(e)}
+            type="text"
+            placeholder="Search for Book"
+          />
+          <div className="navigation_search_box_filtered_tales">
+            {quickFilteredTales.length > 0 &&
+              quickFilteredTales.map((tale) => (
+                <QuickFilteredTale tale={tale} setKeyword={setKeyword} />
+              ))}
+          </div>
         </div>
         <div className="navigation_auth_box">
           {userLoggedIn.username ? (

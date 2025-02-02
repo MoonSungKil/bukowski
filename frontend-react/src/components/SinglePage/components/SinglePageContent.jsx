@@ -3,8 +3,8 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSiteState } from "../../../context/SiteStateContext";
 
-const SinglePageContent = () => {
-  const { isPurchasedorPublished, singleTaleSelected } = useSiteState();
+const SinglePageContent = ({ tale }) => {
+  const { isPurchasedorPublished } = useSiteState();
 
   const { id } = useParams();
 
@@ -21,7 +21,9 @@ const SinglePageContent = () => {
 
   let contentSegments = [];
 
-  if (singleTaleSelected.content) {
+  if (!tale) return <div>Loading</div>;
+
+  if (tale.content) {
     const filterPagesIntoArray = (content, pageLength) => {
       let contentToManipulate = content;
       while (contentToManipulate.length > pageLength) {
@@ -50,7 +52,7 @@ const SinglePageContent = () => {
         contentSegments.push(contentToManipulate);
       }
     };
-    filterPagesIntoArray(singleTaleSelected.content, 1800);
+    filterPagesIntoArray(tale.content, 1800);
   }
 
   return (
@@ -59,10 +61,10 @@ const SinglePageContent = () => {
         {purchased ? (
           <>
             <div className="single_page_content_title_author">
-              {singleTaleSelected.title} by {singleTaleSelected.author}
+              {tale.title} by {tale.author}
             </div>
             <div className="single_page_content_underline"></div>
-            {/* <p className="single_page_content_story">{singleTaleSelected.content}</p> */}
+            <p className="single_page_content_story">{tale.content}</p>
             <div className="single_page_content_story">
               {contentSegments.map((segment, index) => {
                 return (

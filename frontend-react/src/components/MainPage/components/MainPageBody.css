@@ -21,6 +21,11 @@
   margin-top: 2%;
 }
 
+.main_page_body_empty {
+  font-size: 2rem;
+  color: var(--primary-background);
+}
+
 @media (min-width: 2350px) {
   .main_page_body_collection {
     grid-template-columns: repeat(7, 1fr);

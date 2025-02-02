@@ -2,7 +2,6 @@ import { createContext, useReducer, useEffect } from "react";
 import siteStateReducer, { initialState } from "./SiteStateReducer";
 import { useContext } from "react";
 import axios from "axios";
-import { type } from "@testing-library/user-event/dist/type";
 
 const SiteStateContext = createContext();
 
@@ -55,8 +54,8 @@ export const SiteStateProvider = ({ children }) => {
     const storedPurchasedTales = localStorage.getItem("purchased");
     const storedPublishedTales = localStorage.getItem("published");
     const draftedTales = localStorage.getItem("drafts");
-    const singleTaleSelected = localStorage.getItem("singleTaleSelected");
     const singleDraftSelected = localStorage.getItem("singleDraftSelected");
+
     if (storedPurchasedTales) {
       dispatch({
         type: "GET_ALL_PURCHASED_TALES",
@@ -81,14 +80,6 @@ export const SiteStateProvider = ({ children }) => {
         },
       });
     }
-    if (singleTaleSelected) {
-      dispatch({
-        type: "GET_SINGLE_TALE",
-        payload: {
-          singleTaleSelected: JSON.parse(singleTaleSelected),
-        },
-      });
-    }
     if (singleDraftSelected) {
       dispatch({
         type: "GET_SINGLE_DRAFT",
@@ -101,32 +92,71 @@ export const SiteStateProvider = ({ children }) => {
 
   // get all tales to show for everyone (unauthorized)
   const getAllTales = async () => {
-    const { data: tales } = await axios.get("http://localhost:8000/tales/get_tales");
+    const { data } = await axios.get("http://localhost:8000/tales/get_tales");
 
     try {
       dispatch({
         type: "GET_ALL_TALES",
         payload: {
-          tales: tales,
+          tales: data.tales,
         },
       });
+
+      localStorage.setItem("tales", JSON.stringify(data.tales));
     } catch (error) {
       console.log(error);
     }
   };
 
+  const filterTales = (keyword, genres) => {
+    dispatch({
+      type: "FILTER_TALES",
+      payload: {
+        keyword: keyword,
+        genres: genres,
+      },
+    });
+  };
+
+  const quickFilterTale = (keyword) => {
+    dispatch({
+      type: "QUICK_FILTER_TALE",
+      payload: {
+        keyword: keyword,
+      },
+    });
+  };
+
   // select tale to show for single page view
   const getSingleTale = async (id) => {
-    const { data: tale } = await axios.get(`http://localhost:8000/tales/get_tales/${id}`);
     try {
-      dispatch({
-        type: "GET_SINGLE_TALE",
-        payload: {
-          singleTaleSelected: tale,
-        },
+      const { data } = await axios.get(`http://localhost:8000/tales/get_tales/${id}`);
+      return data.tale;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //  get single tale published
+  const getSingleTalePublished = async (id) => {
+    try {
+      const { data } = await axios.get(`http://localhost:8000/tales/published/${id}`, {
+        withCredentials: true,
       });
 
-      localStorage.setItem("singleTaleSelected", JSON.stringify(tale));
+      return data.tale;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get single tale purchased
+  const getSingleTalePurchased = async (id) => {
+    try {
+      const { data } = await axios.get(`http://localhost:8000/tales/purchased/${id}`, {
+        withCredentials: true,
+      });
+      return data.tale;
     } catch (error) {
       console.log(error);
     }
@@ -363,6 +393,26 @@ export const SiteStateProvider = ({ children }) => {
     }
   };
 
+  //check if tale is published
+  const hasAccessToTale = async (id) => {
+    try {
+      return state.published.some((tale) => +tale.ID === +id);
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+  //fetch tale by access
+  const getTaleByAccess = async (id) => {
+    if (state.published.some((tale) => +tale.ID === +id)) {
+      return await getSingleTalePublished(id);
+    } else if (state.purchased.some((tale) => +tale.ID === +id)) {
+      return await getSingleTalePurchased(id);
+    } else {
+      return await getSingleTale(id);
+    }
+  };
   // get all the published tales for a logged user
   const getAllPublishedTales = async () => {
     try {
@@ -402,6 +452,16 @@ export const SiteStateProvider = ({ children }) => {
           drafts: drafts,
         },
       });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAllGenres = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:8000/tales/get_genres");
+
+      return data.genres;
     } catch (error) {
       console.log(error);
     }
@@ -546,7 +606,6 @@ export const SiteStateProvider = ({ children }) => {
 
       localStorage.removeItem("userLoggedIn");
       localStorage.removeItem("purchased");
-      localStorage.removeItem("singleTaleSelected");
       localStorage.removeItem("drafts");
       localStorage.removeItem("published");
 
@@ -656,7 +715,7 @@ export const SiteStateProvider = ({ children }) => {
         updateUserProfilePicture,
         updateUserProfileInfo,
         updateProfilePassword,
-        getAllDraftedTales,
+        registerUser,
         users: state.users,
         userLoggedIn: state.userLoggedIn,
         // end user values
@@ -664,7 +723,6 @@ export const SiteStateProvider = ({ children }) => {
         tales: state.tales,
         purchased: state.purchased,
         published: state.published,
-        singleTaleSelected: state.singleTaleSelected,
         singleDraftSelected: state.singleDraftSelected,
         getAllTales,
         getSingleTale,
@@ -677,7 +735,16 @@ export const SiteStateProvider = ({ children }) => {
         getSingleDraft,
         convertDraftToTale,
         updateDraft,
-        registerUser,
+        getAllDraftedTales,
+        getSingleTalePublished,
+        getSingleTalePurchased,
+        hasAccessToTale,
+        getTaleByAccess,
+        getAllGenres,
+        filterTales,
+        quickFilterTale,
+        filteredTales: state.filteredTales,
+        quickFilteredTales: state.quickFilteredTales,
         // end tale values
         stateObject: state,
       }}

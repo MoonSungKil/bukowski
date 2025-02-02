@@ -13,14 +13,34 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/moonsungkil/bukowski/database"
 	model "github.com/moonsungkil/bukowski/models"
+	"github.com/moonsungkil/bukowski/types"
 	"github.com/moonsungkil/bukowski/utils"
 	"gorm.io/gorm"
 )
 
 func HandleGetAllTalesWithoutAuth(ctx *gin.Context)  {
 	var tales []model.Tale
-	database.DB.Where("status = ?", "published").Preload("Genres").Find(&tales)
-	ctx.JSON(http.StatusOK, tales)
+	database.DB.Where("status = ?", "published").Preload("Genres").Omit("content").Find(&tales)
+
+	var talesUnauthorized []types.TaleBodyUnauthorized
+
+	for _, tale := range tales {
+		talesUnauthorized = append(talesUnauthorized, types.TaleBodyUnauthorized{
+			ID:          tale.ID,
+			Title:       tale.Title,
+			Author:      tale.Author,
+			Description: tale.Description,
+			Preview:     tale.Preview,
+			Pages:       tale.Pages,
+			Price:       tale.Price,
+			Status:      tale.Status,
+			Genres:      tale.Genres,
+			TaleImage:   tale.TaleImage,
+			PublishedAt: tale.PublishedAt,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"success":true, "tales": talesUnauthorized})
 }
 
 func HandleGetSingleTaleWithouthAuth(ctx *gin.Context) {
@@ -32,8 +52,23 @@ func HandleGetSingleTaleWithouthAuth(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid error format"})
 	}
 
-	database.DB.Preload("Genres").First(&tale, taleIdUint);
-	ctx.JSON(http.StatusOK, tale)
+	database.DB.Preload("Genres").Omit("content").First(&tale, taleIdUint);
+
+	taleUnauthorized := types.TaleBodyUnauthorized{
+		ID:          tale.ID,
+		Title:       tale.Title,
+		Author:      tale.Author,
+		Description: tale.Description,
+		Preview:     tale.Preview,
+		Pages:       tale.Pages,
+		Price:       tale.Price,
+		Status:      tale.Status,
+		Genres:      tale.Genres,
+		TaleImage:   tale.TaleImage,
+		PublishedAt: tale.PublishedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"success": true, "tale": taleUnauthorized})
 
 }
 
@@ -479,14 +514,6 @@ func HandleUpdateDraft(ctx *gin.Context) {
 					ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save genre", "details": err.Error()})
 					return
 				}
-				draftGenre := model.DraftGenre{
-					DraftID: draftToUpdate.ID,
-					GenreID: genre.ID,
-				}
-				if err := database.DB.Create(&draftGenre).Error; err != nil {
-					ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to associate genres", "details": err.Error()})
-					return
-				}
 				draftToUpdate.Genres = append(draftToUpdate.Genres, genre)
 			}
 		default:
@@ -502,11 +529,13 @@ func HandleUpdateDraft(ctx *gin.Context) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image", "details": err.Error()})
 			return
 		}
-		oldImageFilePath := draftToUpdate.TaleImage
-		oldImageFilePath = filepath.Join("..", oldImageFilePath)
-		if err = os.Remove(oldImageFilePath); err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete old image", "details": err.Error()})
-			return
+		if draftToUpdate.TaleImage != "" {
+			oldImageFilePath := draftToUpdate.TaleImage
+			oldImageFilePath = filepath.Join("..", oldImageFilePath)
+			if err = os.Remove(oldImageFilePath); err != nil {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete old image", "details": err.Error(), "path": oldImageFilePath})
+				return
+			}
 		}
 		draftToUpdate.TaleImage = filePath
 	}
@@ -563,6 +592,7 @@ func HandleGetSingleTalePublishedById(ctx *gin.Context) {
 				tale.Price = t.Price
 				tale.Genres = t.Genres
 				tale.PublishedAt = t.PublishedAt
+				tale.TaleImage = t.TaleImage
 				taleFound = true
 				break
 		}
@@ -573,7 +603,7 @@ func HandleGetSingleTalePublishedById(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, tale)
+	ctx.JSON(http.StatusOK, gin.H{"success": true, "tale": tale})
 }
 
 func HandlePurchaseTale(ctx *gin.Context) {
@@ -682,7 +712,7 @@ func HandleGetPurchasedTaleByID(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, tale)
+	ctx.JSON(http.StatusOK, gin.H{"success":true, "tale": tale})
 }
 
 func HandleSoftDeleteTaleByUserID(ctx *gin.Context) {
@@ -813,4 +843,14 @@ func HandleActiveTaleByUserId(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Tale back active", "tale": tale})
+}
+
+func HandleGetAllGenres(ctx *gin.Context) {
+	var genres []model.Genre
+	if err := database.DB.Find(&genres).Error; err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Unable to fetch genres"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"sucess": true, "genres": genres})
 }

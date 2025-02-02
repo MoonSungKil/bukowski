@@ -5,6 +5,7 @@
   justify-self: center;
   cursor: pointer;
   z-index: 10;
+  border-radius: 1rem;
 }
 
 .collection_item {
@@ -52,11 +53,11 @@
 .collection_item_title {
   width: 100%;
   margin: 0;
-  padding: 1%;
   color: var(--third-color);
   text-shadow: 1px 1px 3px black;
+  padding: 0.3rem;
 }
 
 .collection_item_backdrop:hover .collection_item_title {
-  background-color: var(--secondary-color);
+  text-shadow: 2px 2px 2px black;
 }

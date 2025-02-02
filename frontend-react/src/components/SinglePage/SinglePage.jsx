@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./SinglePage.css";
 import { useParams } from "react-router-dom";
 import SinglePageContent from "./components/SinglePageContent";
@@ -9,18 +9,21 @@ import { useSiteState } from "../../context/SiteStateContext.js";
 const SinglePage = () => {
   const { id } = useParams();
 
-  const { getSingleTale, singleTaleSelected } = useSiteState();
+  const { getTaleByAccess } = useSiteState();
+
+  const [fetchedTale, setFetchedTale] = useState();
 
   useEffect(() => {
-    getSingleTale(id);
-  }, []);
-
-  console.log(singleTaleSelected);
+    (async () => {
+      const tale = await getTaleByAccess(id);
+      setFetchedTale(tale);
+    })();
+  }, [id, getTaleByAccess]);
 
   return (
     <div className="single_page">
-      <SinglePageTop />
-      <SinglePageContent />
+      <SinglePageTop tale={fetchedTale} />
+      <SinglePageContent tale={fetchedTale} />
       <SinglePageFog />
     </div>
   );

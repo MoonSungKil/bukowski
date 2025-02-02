@@ -11,7 +11,17 @@
   text-wrap: nowrap;
   border-radius: 0.5rem;
   padding: 0.2rem 0.5rem;
-  box-shadow: 1px 1px 2px 2px black;
   color: var(--third-color);
+  box-shadow: 0px 0px 5px black;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter_elements_list:hover {
+  box-shadow: 1px 1px 2px 2px black;
+  transform: scale(1.1rem);
+}
+
+.filter_element_selected {
+  background-color: var(--primary-color);
 }

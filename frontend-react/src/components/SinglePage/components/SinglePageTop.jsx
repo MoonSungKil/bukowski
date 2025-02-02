@@ -5,8 +5,8 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSiteState } from "../../../context/SiteStateContext";
 
-const SinglePageTop = () => {
-  const { singleTaleSelected, isPurchasedorPublished } = useSiteState();
+const SinglePageTop = ({ tale }) => {
+  const { isPurchasedorPublished } = useSiteState();
 
   const { id } = useParams();
 
@@ -21,7 +21,11 @@ const SinglePageTop = () => {
   }, [id, isPurchasedorPublished]);
 
   const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
-  const taleImage = `${backendURL}${singleTaleSelected.tale_image}`;
+  const taleImage = tale && `${backendURL}${tale.tale_image}`;
+
+  if (!tale) {
+    return <div>Loading</div>;
+  }
 
   return (
     <div className="single_page_head">
@@ -38,9 +42,9 @@ const SinglePageTop = () => {
           </div>
         </div>
         <div className="single_page_head_top_stats">
-          <div className="single_page_head_top_title">{singleTaleSelected.title}</div>
+          <div className="single_page_head_top_title">{tale.title}</div>
           <div className="single_page_head_top_stats_preview">
-            <p>{singleTaleSelected.description}</p>
+            <p>{tale.description}</p>
             <div className="single_page_head_top_stats_preview_shadow"></div>
           </div>
           <div className="single_page_head_top_stats_bottom">
@@ -52,7 +56,7 @@ const SinglePageTop = () => {
             ) : (
               <div className="single_page_head_top_stats_bottom_purchase">
                 <div className="single_page_head_top_stats_bottom_buy">
-                  ${singleTaleSelected && singleTaleSelected.price}
+                  ${tale && tale.price}
                   <br />
                   Buy Now
                 </div>

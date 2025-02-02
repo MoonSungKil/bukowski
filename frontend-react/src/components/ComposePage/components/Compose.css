@@ -160,6 +160,7 @@
   padding: 3% 5%;
   outline: none;
   text-indent: 0.5rem;
+  border-bottom: none;
 }
 
 .compose *::-webkit-scrollbar {
