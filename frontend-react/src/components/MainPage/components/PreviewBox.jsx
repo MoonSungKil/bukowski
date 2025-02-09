@@ -16,7 +16,7 @@ const PreviewBox = ({ tale, position, hover }) => {
           <div className="preview_box_genre_list">
             {tale.genres.map((genre) => (
               <p
-                className={`preview_box_genre preview_box_genre_${genre.name
+                className={`preview_box_genre genre_type_name_${genre.name
                   .toLowerCase()
                   .replace(/[\/\-]/g, "_")}`}
               >

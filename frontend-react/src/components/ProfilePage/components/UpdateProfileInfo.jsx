@@ -23,10 +23,13 @@ const UpdateProfileInfo = ({ type, inputState, changeState, setInputState, isTog
     changeState(false);
   };
 
-  const updateHandler = (e) => {
+  const updateHandler = async (e) => {
     e.preventDefault();
-    updateUserProfileInfo(userLoggedIn.id, { [type]: inputState });
-    changeState(false);
+    const didUpdate = await updateUserProfileInfo(userLoggedIn.id, { [type]: inputState });
+    console.log(didUpdate);
+    if (didUpdate) {
+      changeState(false);
+    }
   };
 
   return (

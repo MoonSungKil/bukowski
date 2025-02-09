@@ -33,6 +33,9 @@ export const ProfileIcon = () => {
       <div onClick={logOutAndRedirect} className="profile_icon_logout_btn">
         <p className="profile_icon_logout_btn_text">Log Out</p>
       </div>
+      {userLoggedIn.balance && (
+        <div className="profile_icon_balance">${`${userLoggedIn.balance} `.slice(0.8)}</div>
+      )}
     </div>
   );
 };

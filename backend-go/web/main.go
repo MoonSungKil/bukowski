@@ -5,6 +5,7 @@ import (
 	"github.com/moonsungkil/bukowski/database"
 	handlers "github.com/moonsungkil/bukowski/handlers"
 	"github.com/moonsungkil/bukowski/initializers"
+	"github.com/moonsungkil/bukowski/jobs"
 	"github.com/moonsungkil/bukowski/middleware"
 )
 
@@ -16,6 +17,8 @@ func init() {
 
 func main() {
 	router := gin.Default()
+
+	go jobs.StartNewsletterCron()
 
 	router.Static("/uploads", "../uploads")
 	router.Use(middleware.CORSMiddleware())
@@ -58,6 +61,8 @@ func main() {
 	router.GET("/tales/get_tales", handlers.HandleGetAllTalesWithoutAuth)
 	router.GET("/tales/get_tales/:id", handlers.HandleGetSingleTaleWithouthAuth)
 	router.GET("/tales/get_genres", handlers.HandleGetAllGenres)
+
+	router.POST("/newsletter/subscribe", handlers.HandleSubscribeToNewsletter)
 
 	router.Run()
 }

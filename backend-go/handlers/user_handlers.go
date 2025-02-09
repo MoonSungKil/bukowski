@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/mail"
+	"net/smtp"
 	"os"
 	"strconv"
 	"strings"
@@ -104,6 +106,7 @@ func HandleCreateUser(ctx *gin.Context){
 		"username": newUser.Username,
 		"email": newUser.Email,
 		"profile_picture": newUser.ProfilePicture,
+		"balance": newUser.Balance,
 	}
 
 	ctx.JSON(200, gin.H{"message":"Succesfully user Created", "user": sanitizedUser})
@@ -167,6 +170,7 @@ func HandleLoginUser(ctx *gin.Context) {
 		"username": user.Username,
 		"email": user.Email,
 		"profile_picture": user.ProfilePicture,
+		"balance": user.Balance,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successfuly Logged in", "user": sanitizedUser})
@@ -292,21 +296,38 @@ func HandleUpdateUserInformation(ctx *gin.Context) {
 	var requestData map[string]interface{}
 
 	if err := ctx.ShouldBindJSON(&requestData); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 	}
 
 	for key, value := range requestData{
 		strValue := value.(string)
 		if key != "password" {
+			if key == "email" {
+				_, err := mail.ParseAddress(strValue)
+				if err != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{"error": "Not a valid email address"})
+					return
+				}
+			}
 			if err := utils.UpdateFields(key, strValue, &userToUpdate); err != nil {
+				if strings.Contains(err.Error(), "1062") { //MySQL duplicate entry error code
+					if strings.Contains(err.Error(), "username") {
+						ctx.JSON(http.StatusBadRequest, gin.H{"error": "Username already taken"})
+						return
+					}
+					if strings.Contains(err.Error(), "email") {
+						ctx.JSON(http.StatusBadRequest, gin.H{"error": "Email already in use"})
+						return
+					}
+				}
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 		}
 	}
 
-	ctx.JSON(http.StatusOK, "Updated")
+	ctx.JSON(http.StatusOK, gin.H{"success": true, "message": "Successfuly Updated"})
 }
 
 func HandleUpdateUserPassword(ctx *gin.Context) {
@@ -364,7 +385,7 @@ func HandleUpdateUserPassword(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Password Updated"})
+	ctx.JSON(http.StatusOK, gin.H{"success":true, "message": "Password Updated"})
 }
 
 
@@ -462,3 +483,77 @@ func HandleUpdateUserProfilePicture(ctx *gin.Context) {
 func HandleDeleteAuthorizationCookie(ctx *gin.Context) {
 	middleware.DeleteCookie(ctx, "Authorization")
 }
+
+func HandleSubscribeToNewsletter(ctx *gin.Context) {
+
+	var emailBody types.EmailRequest
+	err := ctx.ShouldBind(&emailBody)
+	if err != nil {
+		if strings.Contains(err.Error(), "required") {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Filed cannot be empty", "details": err.Error()})
+			return
+		}
+		if strings.Contains(err.Error(), "validation") {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Not a valid email format", "details": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Bad Requests", "details": err.Error()})
+		return
+	}
+
+	_, err = mail.ParseAddress(emailBody.Email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Not a valid email format", "details": err.Error()})
+		return
+	} 
+
+	newSubscriber := model.NewsletterSubscriber{
+		Email: emailBody.Email,
+	}
+
+	result := database.DB.Create(&newSubscriber)
+	if result.Error != nil {
+		if strings.Contains(result.Error.Error(), "Duplicate entry") {
+			ctx.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Email already subscribed"})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Internal server Error", "details": result.Error.Error()})
+		return
+	}
+
+	htmlContent, err := os.ReadFile("../email_templates/subscribe_template.html")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": err.Error()})
+		return
+	}
+
+	bukowskiEmail := os.Getenv("NL_EMAIL")
+	bukowskiAppPass := os.Getenv("NL_APP_PASS")
+
+	auth := smtp.PlainAuth(
+		"",
+		bukowskiEmail,
+		bukowskiAppPass,
+		"smtp.gmail.com",
+	)
+
+	msg := "MIME-Version: 1.0\r\n" +
+		"Content-Type: text/html; charset=\"UTF-8\"\r\n" +
+		"Subject: Welcome to the Bukowski Newsletter!\r\n\r\n" +
+		string(htmlContent)
+
+	err = smtp.SendMail(
+		"smtp.gmail.com:587",
+		auth,
+		bukowskiEmail,
+		[]string{emailBody.Email},
+		[]byte(msg),
+	)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request", "details": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"sucessful": true, "message": "Sucessfully Subscribed"})
+}
+

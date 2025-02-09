@@ -17,7 +17,7 @@ const SinglePageContent = ({ tale }) => {
     };
 
     checkPurchasedStatus();
-  }, [id, isPurchasedorPublished]);
+  }, [id, isPurchasedorPublished, tale]);
 
   let contentSegments = [];
 
@@ -56,7 +56,7 @@ const SinglePageContent = ({ tale }) => {
   }
 
   return (
-    <div className="single_page_content_container">
+    <div id="single_page_content" className="single_page_content_container">
       <div className="single_page_content">
         {purchased ? (
           <>

@@ -53,7 +53,7 @@
 }
 
 .autho_modal_error {
-  box-shadow: 0px 0px 5px 5px var(--error-color);
+  box-shadow: 0px 0px 2px 2px var(--error-color);
 }
 
 .auth_modal_form_error {

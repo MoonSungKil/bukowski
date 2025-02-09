@@ -140,6 +140,14 @@ const Compose = () => {
     navigate(`/profile/${userLoggedIn.id}`);
   };
 
+  const approveSubmit = (e, type) => {
+    e.preventDefault();
+    submitTale(e, type);
+    setPublishModal(false);
+  };
+
+  const [showPublishModal, setPublishModal] = useState(false);
+
   return (
     <div className="compose">
       <form className="compose_form">
@@ -229,7 +237,7 @@ const Compose = () => {
                 SAVE DRAFT
               </button>
               <butto
-                onClick={(e) => submitTale(e, "publish")}
+                onClick={() => setPublishModal(true)}
                 type="submit"
                 className="compose_publish"
               >
@@ -238,6 +246,30 @@ const Compose = () => {
               <button onClick={(e) => onDeleteDraft(e)} className="compose_delete">
                 DELETE DRAFT
               </button>
+              <div
+                className={`compose_publish_approve_box ${
+                  showPublishModal && "compose_publish_approve_box_display"
+                }`}
+              >
+                <p className="compose_publish_approve_box_text">
+                  By pressing "PUBLISH" the tale will be visible and purchasable by anyone, this
+                  acction is irreversible and tale cannot be eddited afterwards
+                </p>
+                <div className="compose_publish_approve_box_buttons">
+                  <div
+                    onClick={(e) => approveSubmit(e, "publish")}
+                    className="compose_publish_approve_btn"
+                  >
+                    Publish
+                  </div>
+                  <div
+                    onClick={() => setPublishModal(false)}
+                    className="compose_publish_cancle_btn"
+                  >
+                    Cancel
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

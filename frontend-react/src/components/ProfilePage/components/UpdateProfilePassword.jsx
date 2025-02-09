@@ -9,14 +9,17 @@ const UpdateProfilePassword = ({ changeState }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const updateHandler = (e) => {
+  const updateHandler = async (e) => {
     e.preventDefault();
     const passwordData = {
       current_password: currentPassword,
       new_password: newPassword,
       confirm_new_password: confirmPassword,
     };
-    updateProfilePassword(userLoggedIn.id, passwordData);
+    const isPasswordUpdated = await updateProfilePassword(userLoggedIn.id, passwordData);
+    if (isPasswordUpdated) {
+      changeState(false);
+    }
   };
 
   const cancelHandler = (e) => {

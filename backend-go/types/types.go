@@ -33,7 +33,7 @@ type TaleBody struct {
 	Content     string         `json:"content" binding:"required"`
 	Pages       int64          `json:"pages" binding:"required"`
 	Price       float64        `json:"price" binding:"required"`
-	Status 		string			`json:"status"`
+	IsActive 	bool			`json:"is_active" binding:"required"`
 	Genres      []string        `json:"genres" binding:"required"`
 	PublishedAt time.Time      `json:"published_at" binding:"required"`
 }
@@ -46,7 +46,6 @@ type DraftBody struct {
 	Content     string         `json:"content" `
 	Pages       int64          `json:"pages" `
 	Price       float64        `json:"price" `
-	Status 		string			`json:"status"`
 	Genres      []string        `json:"genres"`
 }
 
@@ -58,8 +57,12 @@ type TaleBodyUnauthorized struct {
 	Preview     string    `json:"preview"`
 	Pages       int64     `json:"pages"`
 	Price       float64   `json:"price"`
-	Status      string    `json:"status"`
+	IsActive    bool      `json:"is_active"`
 	Genres      []model.Genre   `json:"genres"`
 	TaleImage   string    `json:"tale_image"`
 	PublishedAt time.Time `json:"published_at"`
+}
+
+type EmailRequest struct {
+	Email string `json:"email" binding:"required,email"`
 }

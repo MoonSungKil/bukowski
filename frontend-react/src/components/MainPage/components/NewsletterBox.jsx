@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import "./NewsletterBox.css";
+import { useSiteState } from "../../../context/SiteStateContext";
 
 const NewsletterBox = () => {
+  const { SubscribeNewsletter } = useSiteState();
+
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    SubscribeNewsletter(email);
+    console.log(email);
+  };
+
   return (
     <div className="newsletter_container">
       <div className="newsletter">
@@ -10,8 +21,13 @@ const NewsletterBox = () => {
           <h2>Newsletter</h2>
           <p>We promise you'll love it!</p>
         </div>
-        <form className="newsletter_form">
-          <input type="text" placeholder="Enter email address" />
+        <form onSubmit={(e) => handleSubmit(e)} className="newsletter_form">
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Enter email address"
+          />
           <button type="submit">Subscribe</button>
         </form>
       </div>

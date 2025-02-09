@@ -243,6 +243,7 @@
   display: flex;
   flex-direction: column;
   gap: 5%;
+  position: relative;
 }
 
 .compose_draft,
@@ -259,6 +260,48 @@
   justify-content: center;
   align-items: center;
   font-size: 0.8rem;
+}
+
+.compose_publish_approve_box {
+  height: fit-content;
+  background-color: var(--primary-background);
+  padding: 1rem;
+  box-shadow: 2px 2px 5px black;
+  margin-top: 10%;
+  border: 1px solid rgb(51, 51, 51);
+  position: absolute;
+  width: 130%;
+  bottom: 70%;
+  right: 105%;
+  display: none;
+}
+
+.compose_publish_approve_box_display {
+  display: block;
+}
+
+.compose_publish_approve_box_text {
+  color: gray;
+}
+
+.compose_publish_approve_box_buttons {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.compose_publish_approve_box_buttons > div {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  border: none;
+  cursor: pointer;
+  background-color: var(--third-color);
+  box-shadow: 0px 0px 5px black;
+}
+
+.compose_publish_approve_box_buttons > div:hover {
+  background-color: rgb(185, 184, 183);
 }
 
 .compose_draft {

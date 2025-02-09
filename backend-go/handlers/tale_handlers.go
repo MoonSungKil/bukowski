@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -20,7 +21,7 @@ import (
 
 func HandleGetAllTalesWithoutAuth(ctx *gin.Context)  {
 	var tales []model.Tale
-	database.DB.Where("status = ?", "published").Preload("Genres").Omit("content").Find(&tales)
+	database.DB.Where("is_active = ?", true).Preload("Genres").Omit("content").Find(&tales)
 
 	var talesUnauthorized []types.TaleBodyUnauthorized
 
@@ -33,7 +34,6 @@ func HandleGetAllTalesWithoutAuth(ctx *gin.Context)  {
 			Preview:     tale.Preview,
 			Pages:       tale.Pages,
 			Price:       tale.Price,
-			Status:      tale.Status,
 			Genres:      tale.Genres,
 			TaleImage:   tale.TaleImage,
 			PublishedAt: tale.PublishedAt,
@@ -50,9 +50,19 @@ func HandleGetSingleTaleWithouthAuth(ctx *gin.Context) {
 	taleIdUint, err := strconv.ParseUint(taleId,10,64)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid error format"})
+		return
 	}
 
-	database.DB.Preload("Genres").Omit("content").First(&tale, taleIdUint);
+	result := database.DB.Preload("Genres").Omit("content").First(&tale, taleIdUint);
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid error format"})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Tale not found"})
+		return
+	}
 
 	taleUnauthorized := types.TaleBodyUnauthorized{
 		ID:          tale.ID,
@@ -62,7 +72,6 @@ func HandleGetSingleTaleWithouthAuth(ctx *gin.Context) {
 		Preview:     tale.Preview,
 		Pages:       tale.Pages,
 		Price:       tale.Price,
-		Status:      tale.Status,
 		Genres:      tale.Genres,
 		TaleImage:   tale.TaleImage,
 		PublishedAt: tale.PublishedAt,
@@ -176,7 +185,6 @@ func HandleCreateTale(ctx *gin.Context) {
 		Content:     content,
 		Pages:       int64(pages),
 		Price:       price,
-		Status:      status,
 		TaleImage:   filePath,
 		PublishedAt: publishedAt,
 		UserID:      userID,
@@ -213,7 +221,7 @@ func HandleCreateTale(ctx *gin.Context) {
 		
 	}
 
-	ctx.JSON(http.StatusOK, newTale)
+	ctx.JSON(http.StatusOK, gin.H{"sucess":true, "tale":newTale, "message": "Tale sucessfuly Published"})
 }
 
 
@@ -352,9 +360,9 @@ func HandleCreateDraft(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, newDraft)
-
+	ctx.JSON(http.StatusOK, gin.H{"sucess":true, "draft":newDraft, "message": "Draft sucessfuly created"})
 }
+
 
 
 
@@ -368,7 +376,8 @@ func HandleGetAllDraftByUserId(ctx *gin.Context) {
 	userID := user.ID
 	var drafts []model.Draft
 	database.DB.Where("user_id = ?", userID).Preload("Genres").Unscoped().Find(&drafts)
-	ctx.JSON(http.StatusOK, drafts)
+	ctx.JSON(http.StatusOK, gin.H{"success": true, "drafts": drafts})
+
 }
 
 func HandleGetSingleDraft(ctx *gin.Context) {
@@ -401,7 +410,7 @@ func HandleGetSingleDraft(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, draft)
+	ctx.JSON(http.StatusOK, gin.H{"sucess": true, "draft": draft})
 }
 
 func HandleGetAllTalesPublishedByUserId(ctx *gin.Context) {
@@ -414,7 +423,11 @@ func HandleGetAllTalesPublishedByUserId(ctx *gin.Context) {
 	userID := user.ID
 
 	var tales []model.Tale
-	database.DB.Where("user_id = ? AND status = ?", userID, "published").Preload("Genres").Unscoped().Find(&tales)
+	result := database.DB.Where("user_id = ?", userID).Preload("Genres").Unscoped().Find(&tales)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
 	ctx.JSON(http.StatusOK, tales)
 }
 
@@ -548,7 +561,7 @@ func HandleUpdateDraft(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, draftToUpdate)
+	ctx.JSON(http.StatusOK, gin.H{"sucess":true, "draft":draftToUpdate, "message": "Draft updated/saved"})
 }
 
 func HandleGetSingleTalePublishedById(ctx *gin.Context) {
@@ -647,6 +660,18 @@ func HandlePurchaseTale(ctx *gin.Context) {
 		}
 	}
 
+	var foundUser model.User
+	result = database.DB.First(&foundUser, userID);
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to find user with that ID"})
+		return
+	}
+
+	if foundUser.Balance < tale.Price {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Not enough balance to purchase"})
+		return
+	}
+
 	newPurchase := model.TalePurchase{
 		TaleID: tale.ID,
 		PurchaserUserID: userID,
@@ -659,7 +684,15 @@ func HandlePurchaseTale(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "succesfully purchased tale", "tale": newPurchase})
+	newBalance := foundUser.Balance - tale.Price
+	foundUser.Balance = math.Round(newBalance*100) / 100
+	updateUserBalanceResult := database.DB.Save(&foundUser)
+	if updateUserBalanceResult.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Update Balance"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Succesfully purchased tale", "tale": newPurchase, "balance": foundUser.Balance})
 }
 
 func HandleGetAllTalesPurchasedByUserId(ctx *gin.Context) {
@@ -753,7 +786,7 @@ func HandleSoftDeleteTaleByUserID(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Succesfully delete tale", "tale deleted": tale})
+	ctx.JSON(http.StatusOK, gin.H{"message": "Succesfully delete tale", "tale_deleted": tale})
 }
 
 func HandlePermanentDeleteTaleByUserID(ctx *gin.Context) {
@@ -828,9 +861,9 @@ func HandleActiveTaleByUserId(ctx *gin.Context) {
 		return
 	}
 
-	if !tale.DeletedAt.Time.IsZero() || tale.Status == "archived" {
+	if !tale.DeletedAt.Time.IsZero()  {
 		tale.DeletedAt = gorm.DeletedAt{} // setting the deleteAt value to nil
-		tale.Status = "published"
+		tale.IsActive = true
 
 		result := database.DB.Save(&tale)
 		if result.Error != nil {
@@ -854,3 +887,4 @@ func HandleGetAllGenres(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"sucess": true, "genres": genres})
 }
+

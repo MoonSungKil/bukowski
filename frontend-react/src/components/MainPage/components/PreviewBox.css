@@ -40,110 +40,110 @@
   margin-bottom: 0;
 }
 
-.preview_box_genre_fiction {
+.genre_type_name_fiction {
   background-color: rgb(42, 87, 160); /* Deep blue */
 }
 
-.preview_box_genre_non_fiction {
+.genre_type_name_non_fiction {
   background-color: rgb(113, 138, 148); /* Subtle greyish blue */
 }
 
-.preview_box_genre_children {
+.genre_type_name_children {
   background-color: rgb(255, 175, 120); /* Soft orange */
 }
 
-.preview_box_genre_poetry {
+.genre_type_name_poetry {
   background-color: rgb(255, 194, 125); /* Deep burrlywood */
 }
 
-.preview_box_genre_drama {
+.genre_type_name_drama {
   background-color: rgb(224, 80, 58); /* Red-Orange */
 }
 
-.preview_box_genre_religious_spiritual {
+.genre_type_name_religious_spiritual {
   background-color: rgb(228, 215, 117); /* Soft gold */
 }
 
-.preview_box_genre_surrealism {
+.genre_type_name_surrealism {
   background-color: rgb(0, 114, 89); /* Teal */
 }
 
-.preview_box_genre_mystery {
+.genre_type_name_mystery {
   background-color: rgb(255, 94, 0); /* Dark orange */
 }
 
-.preview_box_genre_philosophy {
+.genre_type_name_philosophy {
   background-color: rgb(0, 21, 114); /* Deep blue */
 }
 
-.preview_box_genre_realism {
+.genre_type_name_realism {
   background-color: rgb(120, 120, 120); /* Grey */
 }
 
-.preview_box_genre_psychology {
+.genre_type_name_psychology {
   background-color: rgb(61, 94, 110); /* Slate blue */
 }
 
-.preview_box_genre_existentialism {
+.genre_type_name_existentialism {
   background-color: rgb(54, 43, 35); /* Dark brown */
 }
 
-.preview_box_genre_politics {
+.genre_type_name_politics {
   background-color: rgb(0, 97, 255); /* Bright blue */
 }
 
-.preview_box_genre_thriller {
+.genre_type_name_thriller {
   background-color: rgb(0, 0, 0); /* Black */
 }
 
-.preview_box_genre_adventure {
+.genre_type_name_adventure {
   background-color: rgb(35, 136, 70); /* Forest green */
 }
 
-.preview_box_genre_horror {
+.genre_type_name_horror {
   background-color: rgb(98, 25, 0); /* Dark red */
 }
 
-.preview_box_genre_romance {
+.genre_type_name_romance {
   background-color: rgb(209, 40, 76); /* Soft pink */
 }
 
-.preview_box_genre_fantasy {
+.genre_type_name_fantasy {
   background-color: rgb(98, 57, 199); /* Purple */
 }
 
-.preview_box_genre_science_fiction {
+.genre_type_name_science_fiction {
   background-color: rgb(61, 128, 173); /* Sky blue */
 }
 
-.preview_box_genre_biography_memoir {
+.genre_type_name_biography_memoir {
   background-color: rgb(75, 47, 41); /* Earthy brown */
 }
 
-.preview_box_genre_culture {
+.genre_type_name_culture {
   background-color: rgb(85, 155, 104); /* Olive green */
 }
 
-.preview_box_genre_business {
+.genre_type_name_business {
   background-color: rgb(35, 45, 70); /* Dark grey */
 }
 
-.preview_box_genre_history {
+.genre_type_name_history {
   background-color: rgb(135, 115, 70); /* Vintage gold */
 }
 
-.preview_box_genre_western {
+.genre_type_name_western {
   background-color: rgb(166, 85, 34); /* Brown */
 }
 
-.preview_box_genre_dystopian {
+.genre_type_name_dystopian {
   background-color: rgb(47, 47, 47); /* Dark grey */
 }
 
-.preview_box_genre_self_help {
+.genre_type_name_self_help {
   background-color: rgb(253, 151, 73); /* Warm orange */
 }
 
-.preview_box_genre_science {
+.genre_type_name_science {
   background-color: rgb(43, 69, 102); /* Navy blue */
 }

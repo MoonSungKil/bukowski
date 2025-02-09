@@ -18,7 +18,7 @@ type Tale struct {
 	Content string `gorm:"not null" json:"content" validate:"required"`
 	Pages int64 `gorm:"not null" json:"pages" validate:"required"`
 	Price float64 `gorm:"not null" json:"price" validate:"required"`
-	Status string `gorm:"type:varchar(10);not null;default:'draft'" json:"status" validate:"required"`
+	IsActive bool `gorm:"type:boolean;not null;default:true" json:"is_active"`
 	Genres []Genre `gorm:"many2many:tale_genres" json:"genres"`
     TaleImage  string `json:"tale_image,omitempty" validate:"required"`
 	PublishedAt time.Time `json:"published_at" validate:"required"`	

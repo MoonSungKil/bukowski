@@ -6,6 +6,10 @@ export const initialState = {
   errorMessage: "",
   errorState: false,
 
+  //success values
+  successMessage: "",
+  successState: false,
+
   //tale values
   tales: [],
   filteredTales: [],
@@ -50,11 +54,18 @@ export const siteStateReducer = (state, action) => {
 
     // Error Modal
     case "SET_ERROR_MODAL":
-      console.log("SET_ERROR_MODAL");
       return {
         ...state,
         errorMessage: payload.errorMessage,
         errorState: payload.errorState,
+      };
+
+    // Success Modal
+    case "SET_SUCCESS_MODAL":
+      return {
+        ...state,
+        successMessage: payload.successMessage,
+        successState: payload.successState,
       };
 
     // Tale Reducers
@@ -147,6 +158,15 @@ export const siteStateReducer = (state, action) => {
         ...state,
         singleTaleSelected: payload.singleTaleSelected,
       };
+    case "PURCHASE_TALE":
+      const modifiedUser = { ...state.userLoggedIn, balance: payload.balance };
+      localStorage.setItem("userLoggedIn", JSON.stringify(modifiedUser));
+      localStorage.setItem("purchased", JSON.stringify([...state.purchased, payload.tale]));
+      return {
+        ...state,
+        purchased: [...state.purchased, payload.tale],
+        userLoggedIn: modifiedUser,
+      };
     case "GET_SINGLE_DRAFT":
       return {
         ...state,
@@ -156,19 +176,16 @@ export const siteStateReducer = (state, action) => {
       return {
         ...state,
         purchased: [...payload.purchased],
-        filteredPurchased: [...payload.purchased],
       };
     case "GET_ALL_PUBLISHED_TALES":
       return {
         ...state,
         published: [...payload.published],
-        filteredPublished: [...payload.published],
       };
     case "GET_ALL_DRAFTED_TALES":
       return {
         ...state,
         drafts: [...payload.drafts],
-        filteredDrafts: [...payload.drafts],
       };
 
     // End Tale Reducers

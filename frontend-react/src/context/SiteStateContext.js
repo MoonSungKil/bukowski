@@ -90,6 +90,60 @@ export const SiteStateProvider = ({ children }) => {
     }
   }, []);
 
+  // subscribe newsletter
+  // get all tales to show for everyone (unauthorized)
+  const SubscribeNewsletter = async (email) => {
+    try {
+      const { data } = await axios.post("http://localhost:8000/newsletter/subscribe", {
+        email,
+      });
+
+      const message = data.message;
+
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      console.log(data);
+    } catch (error) {
+      console.log(error.response.data);
+
+      const message = error.response.data.error;
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+    }
+  };
+
   // get all tales to show for everyone (unauthorized)
   const getAllTales = async () => {
     const { data } = await axios.get("http://localhost:8000/tales/get_tales");
@@ -118,33 +172,6 @@ export const SiteStateProvider = ({ children }) => {
     });
   };
 
-  const filterPurchased = (keyword) => {
-    dispatch({
-      type: "FILTER_PURCHASED_BY_KEYWORD",
-      payload: {
-        keyword: keyword,
-      },
-    });
-  };
-
-  const filterPublished = (keyword) => {
-    dispatch({
-      type: "FILTER_PUBLISHED_BY_KEYWORD",
-      payload: {
-        keyword: keyword,
-      },
-    });
-  };
-
-  const filterDrafts = (keyword) => {
-    dispatch({
-      type: "FILTER_DRAFTS_BY_KEYWORD",
-      payload: {
-        keyword: keyword,
-      },
-    });
-  };
-
   const quickFilterTale = (keyword) => {
     dispatch({
       type: "QUICK_FILTER_TALE",
@@ -161,6 +188,7 @@ export const SiteStateProvider = ({ children }) => {
       return data.tale;
     } catch (error) {
       console.log(error);
+      return false;
     }
   };
 
@@ -171,9 +199,11 @@ export const SiteStateProvider = ({ children }) => {
         withCredentials: true,
       });
 
+      console.log(data);
       return data.tale;
     } catch (error) {
       console.log(error);
+      return false;
     }
   };
 
@@ -192,7 +222,7 @@ export const SiteStateProvider = ({ children }) => {
   // create tale
   const createTale = async (formData) => {
     try {
-      const { data: tale } = await axios.post("http://localhost:8000/tales/create", formData, {
+      const { data } = await axios.post("http://localhost:8000/tales/create", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -200,11 +230,30 @@ export const SiteStateProvider = ({ children }) => {
       dispatch({
         type: "CREATE_TALE",
         payload: {
-          tale: tale,
+          tale: data.tale,
         },
       });
 
-      return tale;
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return data.tale;
     } catch (error) {
       console.log(error.response.data);
 
@@ -237,7 +286,7 @@ export const SiteStateProvider = ({ children }) => {
   // convert draft to tale
   const convertDraftToTale = async (formData, draftID) => {
     try {
-      const { data: tale } = await axios.post(
+      const { data } = await axios.post(
         `http://localhost:8000/tales/convert_draft_to_tale/${draftID}`,
         formData,
         {
@@ -249,12 +298,31 @@ export const SiteStateProvider = ({ children }) => {
       dispatch({
         type: "CREATE_TALE_DELETE_DRAFT",
         payload: {
-          tale: tale,
+          tale: data.tale,
           draftID: draftID,
         },
       });
 
-      return tale;
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return data.tale;
     } catch (error) {
       console.log(error.response.data);
 
@@ -287,23 +355,38 @@ export const SiteStateProvider = ({ children }) => {
   // create draft
   const createDraft = async (formData) => {
     try {
-      const { data: draft } = await axios.post(
-        "http://localhost:8000/tales/create_draft",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.post("http://localhost:8000/tales/create_draft", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
 
       dispatch({
         type: "CREATE_DRAFT",
         payload: {
-          draft: draft,
+          draft: data.draft,
         },
       });
 
-      return draft;
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return data.draft;
     } catch (error) {
       console.log(error);
     }
@@ -312,7 +395,7 @@ export const SiteStateProvider = ({ children }) => {
   //Update draft
   const updateDraft = async (formData, draftID) => {
     try {
-      const { data: draft } = await axios.put(
+      const { data } = await axios.put(
         `http://localhost:8000/tales/update_draft/${draftID}`,
         formData,
         {
@@ -320,16 +403,36 @@ export const SiteStateProvider = ({ children }) => {
           withCredentials: true,
         }
       );
+      console.log(data.message);
 
       dispatch({
         type: "UPDATE_DRAFT",
         payload: {
-          draft: draft,
+          draft: data.draft,
           draftID: draftID,
         },
       });
 
-      return draft;
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return data.draft;
     } catch (error) {
       console.log(error);
     }
@@ -338,29 +441,45 @@ export const SiteStateProvider = ({ children }) => {
   //Delete draft
   const deleteDraft = async (draftID) => {
     try {
-      const { data: draft } = await axios.delete(
-        `http://localhost:8000/tales/delete_draft/${draftID}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.delete(`http://localhost:8000/tales/delete_draft/${draftID}`, {
+        withCredentials: true,
+      });
 
       dispatch({
         type: "DELETE_DRAFT",
         payload: {
-          draft: draft,
+          draft: data.draft,
           draftID: draftID,
         },
       });
 
-      return draft;
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return data.draft;
     } catch (error) {
       console.log(error);
     }
   };
 
   const getSingleDraft = async (id) => {
-    const { data: draft } = await axios.get(`http://localhost:8000/tales/get_single_draft/${id}`, {
+    const { data } = await axios.get(`http://localhost:8000/tales/get_single_draft/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -371,11 +490,11 @@ export const SiteStateProvider = ({ children }) => {
       dispatch({
         type: "GET_SINGLE_DRAFT",
         payload: {
-          singleDraftSelected: draft,
+          singleDraftSelected: data.draft,
         },
       });
 
-      return draft;
+      return data.draft;
 
       // localStorage.setItem("singleDraftSelected", JSON.stringify(draft));
     } catch (error) {
@@ -418,6 +537,171 @@ export const SiteStateProvider = ({ children }) => {
       console.log(error);
       return false;
     }
+  };
+
+  //purchase tale
+  const purchaseTaleById = async (tale_id) => {
+    try {
+      const { data } = await axios.post(`http://localhost:8000/tales/purchase/${tale_id}`, null, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+
+      const purchasedTale = await getSingleTalePurchased(tale_id);
+
+      dispatch({
+        type: "PURCHASE_TALE",
+        payload: {
+          tale: purchasedTale,
+          balance: data.balance,
+        },
+      });
+
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      console.log(data);
+    } catch (error) {
+      console.log(error.response.data);
+      const message = error.response.data.error;
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+    }
+  };
+
+  const archiveTale = async (tale_id) => {
+    try {
+      const { data } = await axios.delete(`http://localhost:8000/tales/soft_delete/${tale_id}`, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return true;
+    } catch (error) {
+      const message = error.response.data.error;
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+    }
+    return false;
+  };
+
+  const activateTale = async (tale_id) => {
+    try {
+      const { data } = await axios.put(
+        `http://localhost:8000/tales/activate_tale/${tale_id}`,
+        null,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return true;
+    } catch (error) {
+      const message = error.response.data.error;
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+    }
+    return false;
   };
 
   //check if tale is published
@@ -466,17 +750,17 @@ export const SiteStateProvider = ({ children }) => {
   // get all the purhcased tales for a logged user
   const getAllDraftedTales = async () => {
     try {
-      const { data: drafts } = await axios.get("http://localhost:8000/tales/get_all_drafts", {
+      const { data } = await axios.get("http://localhost:8000/tales/get_all_drafts", {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
 
-      localStorage.setItem("drafts", JSON.stringify(drafts));
+      localStorage.setItem("drafts", JSON.stringify(data.drafts));
 
       dispatch({
         type: "GET_ALL_DRAFTED_TALES",
         payload: {
-          drafts: drafts,
+          drafts: data.drafts,
         },
       });
     } catch (error) {
@@ -674,18 +958,40 @@ export const SiteStateProvider = ({ children }) => {
 
       console.log("Upload sucessful:", data.filePath);
     } catch (error) {
-      console.log(error);
+      const message = error.response.data.error;
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
     }
   };
 
   const updateUserProfileInfo = async (id, KeyAndValue) => {
     try {
-      await axios.put(`http://localhost:8000/users/update_info/${id}`, KeyAndValue, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const { data } = await axios.put(
+        `http://localhost:8000/users/update_info/${id}`,
+        KeyAndValue,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
       const key = Object.keys(KeyAndValue);
 
@@ -697,13 +1003,53 @@ export const SiteStateProvider = ({ children }) => {
         },
       });
 
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
       let userInLocalStorage = localStorage.getItem("userLoggedIn");
       userInLocalStorage = JSON.parse(userInLocalStorage);
       userInLocalStorage[key] = KeyAndValue[key];
       localStorage.setItem("userLoggedIn", JSON.stringify(userInLocalStorage));
+      return true;
     } catch (error) {
+      const message = error.response.data.error;
       console.log(error);
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
     }
+    return false;
   };
 
   const updateProfilePassword = async (id, passwordData) => {
@@ -718,9 +1064,50 @@ export const SiteStateProvider = ({ children }) => {
           withCredentials: true,
         }
       );
+
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return true;
     } catch (error) {
-      console.log(error);
+      const message = error.response.data.error;
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
     }
+
+    return false;
   };
 
   // END USER CONTEXT
@@ -736,7 +1123,10 @@ export const SiteStateProvider = ({ children }) => {
         // error values
         errorMessage: state.errorMessage,
         errorState: state.errorState,
+        successMessage: state.successMessage,
+        successState: state.successState,
         // user values
+        SubscribeNewsletter,
         loginUser: loginUser,
         logoutUser,
         updateUserProfilePicture,
@@ -765,14 +1155,14 @@ export const SiteStateProvider = ({ children }) => {
         getAllDraftedTales,
         getSingleTalePublished,
         getSingleTalePurchased,
+        purchaseTaleById,
         hasAccessToTale,
         getTaleByAccess,
         getAllGenres,
         filterTales,
-        filterPublished,
-        filterPurchased,
-        filterDrafts,
         quickFilterTale,
+        archiveTale,
+        activateTale,
         filteredTales: state.filteredTales,
         filteredPurchased: state.filteredPurchased,
         filteredPublished: state.filteredPublished,

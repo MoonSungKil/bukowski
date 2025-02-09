@@ -119,11 +119,11 @@ const ProfileInfoBox = ({ setKeyword }) => {
                   <ProfileSettingsInfo text={"update quote of the day"} />
                 </i>
               </li>
-              <li className="profile_info_box_settings_item">
+              {/* <li className="profile_info_box_settings_item">
                 <i className="fa-solid fa-credit-card">
                   <ProfileSettingsInfo text={"update payment method"} />
                 </i>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

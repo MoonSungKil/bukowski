@@ -1,12 +1,11 @@
 import React from "react";
 import "./SinglePageTop.css";
-import PercentageBar from "../../MainPage/components/PercentageBar";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSiteState } from "../../../context/SiteStateContext";
 
 const SinglePageTop = ({ tale }) => {
-  const { isPurchasedorPublished } = useSiteState();
+  const { isPurchasedorPublished, purchaseTaleById, published, archiveTale } = useSiteState();
 
   const { id } = useParams();
 
@@ -19,6 +18,10 @@ const SinglePageTop = ({ tale }) => {
 
     checkPurchasedStatus();
   }, [id, isPurchasedorPublished]);
+
+  const handlePurchaseTale = () => {
+    purchaseTaleById(tale.id);
+  };
 
   const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
   const taleImage = tale && `${backendURL}${tale.tale_image}`;
@@ -49,13 +52,19 @@ const SinglePageTop = ({ tale }) => {
           </div>
           <div className="single_page_head_top_stats_bottom">
             {purchased ? (
-              <div className="single_page_head_top_stats_bottom_scroll_down">
+              <a
+                href="#single_page_content"
+                className="single_page_head_top_stats_bottom_scroll_down"
+              >
                 <p>Scroll Down to Content</p>
                 <i className="fa-solid fa-arrow-down"></i>
-              </div>
+              </a>
             ) : (
               <div className="single_page_head_top_stats_bottom_purchase">
-                <div className="single_page_head_top_stats_bottom_buy">
+                <div
+                  onClick={() => handlePurchaseTale()}
+                  className="single_page_head_top_stats_bottom_buy"
+                >
                   ${tale && tale.price}
                   <br />
                   Buy Now
@@ -67,12 +76,18 @@ const SinglePageTop = ({ tale }) => {
                 </div>
               </div>
             )}
-            <div className="single_page_head_top_stats_bottom_stats">
-              <PercentageBar title="Writting" percentage="9" />
-              <PercentageBar title="Plot" percentage="6" />
-              <PercentageBar title="Pacing" percentage="7" />
-              <PercentageBar title="Originality" percentage="4" />
-              <PercentageBar title="Profanity" percentage="10" />
+            <div className="single_page_head_top_genres">
+              {tale.genres.map((genre) => {
+                return (
+                  <p
+                    className={`single_page_head_top_genre genre_type_name_${genre.name
+                      .toLowerCase()
+                      .replace(/[\/\-]/g, "_")}`}
+                  >
+                    {genre.name}
+                  </p>
+                );
+              })}
             </div>
           </div>
         </div>

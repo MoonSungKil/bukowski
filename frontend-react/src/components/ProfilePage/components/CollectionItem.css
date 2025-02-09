@@ -14,6 +14,7 @@
   border-radius: inherit;
   transform: scale(0.9);
   transition: transform 0.3s ease;
+  box-shadow: 3px 3px 5px black;
 }
 
 .collection_item:hover {
@@ -43,7 +44,6 @@
   border-radius: inherit;
   display: flex;
   align-items: flex-end;
-  backdrop-filter: brightness(70%);
 }
 
 .collection_item_backdrop:hover {

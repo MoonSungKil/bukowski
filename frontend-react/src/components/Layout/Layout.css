@@ -6,3 +6,15 @@
 .layout_main {
   min-height: 100vh;
 }
+
+.layout_error {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+}
+
+.layout_success {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+}

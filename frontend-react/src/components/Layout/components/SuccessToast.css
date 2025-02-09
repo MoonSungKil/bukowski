@@ -1,0 +1,23 @@
+.success_toast {
+  width: 30%;
+  background-color: rgba(47, 167, 0, 0.589);
+  height: 7vh;
+  position: fixed;
+  top: 1%;
+  z-index: 30;
+  box-shadow: 3px 3px 5px rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+  border-radius: 0.5rem;
+  transform: translateY(-150%);
+  opacity: 0;
+  transition: transform 0.3s ease;
+  color: rgb(200, 200, 200);
+}
+
+.success_toast_slide {
+  transform: translateY(0%);
+  opacity: 1;
+}

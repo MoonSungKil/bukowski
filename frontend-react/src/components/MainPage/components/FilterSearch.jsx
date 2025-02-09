@@ -1,7 +1,7 @@
 import React from "react";
 import "./FilterSearch.css";
 
-const FilterSearch = ({ keyword, setKeyword, handleSubmitFilter }) => {
+const FilterSearch = ({ keyword, setKeyword, handleSubmitFilter, displayType, setDisplayType }) => {
   return (
     <div className="filter_search">
       <div className="filter_search_filters">
@@ -16,6 +16,22 @@ const FilterSearch = ({ keyword, setKeyword, handleSubmitFilter }) => {
           className="filter_search_input"
         />
       </form>
+      <div
+        onClick={() => setDisplayType("box")}
+        className={`filter_search_type_box ${
+          displayType === "box" && "filter_search_type_selected"
+        }`}
+      >
+        <i className="fa-solid fa-box"></i>
+      </div>
+      <div
+        onClick={() => setDisplayType("list")}
+        className={`filter_search_type_list ${
+          displayType === "list" && "filter_search_type_selected"
+        }`}
+      >
+        <i className="fa-solid fa-list"></i>
+      </div>
     </div>
   );
 };

@@ -31,8 +31,8 @@ code {
   --secondary-color: rgb(92, 0, 31);
   --third-color: rgb(255, 255, 255);
 } */
-/* 
-:root {
+
+/* :root {
   --primary-background: #0b0b0e;
   --secondary-background: #1d1615;
   --third-background: #0b0b0e;
@@ -48,5 +48,5 @@ code {
   --primary-color: rgb(199, 80, 0);
   --secondary-color: rgb(165, 118, 65);
   --third-color: rgb(255, 255, 255);
-  --error-color: rgb(133, 34, 34);
+  --error-color: rgb(189, 24, 24);
 }

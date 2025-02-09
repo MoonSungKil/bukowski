@@ -81,3 +81,16 @@
 .profile_icon_logout_btn:hover > .profile_icon_logout_btn_text {
   color: var(--secondary-color);
 }
+
+.profile_icon_balance {
+  background-color: rgba(0, 124, 0, 0.171);
+  height: 3rem;
+  min-width: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.2rem;
+  color: rgb(2, 131, 2);
+  padding-left: 0.2rem;
+  padding-right: 0.2rem;
+}
