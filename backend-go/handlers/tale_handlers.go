@@ -75,6 +75,7 @@ func HandleGetSingleTaleWithouthAuth(ctx *gin.Context) {
 		Genres:      tale.Genres,
 		TaleImage:   tale.TaleImage,
 		PublishedAt: tale.PublishedAt,
+		Rating: tale.Rating,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"success": true, "tale": taleUnauthorized})
@@ -606,6 +607,7 @@ func HandleGetSingleTalePublishedById(ctx *gin.Context) {
 				tale.Genres = t.Genres
 				tale.PublishedAt = t.PublishedAt
 				tale.TaleImage = t.TaleImage
+				tale.Rating = t.Rating
 				taleFound = true
 				break
 		}
@@ -886,5 +888,55 @@ func HandleGetAllGenres(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"sucess": true, "genres": genres})
+}
+
+func HandleSubmitTaleRating(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	var input types.RatingInput 
+	err = ctx.ShouldBind(&input)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid rating format"})
+		return
+	}
+
+	userID := user.ID
+	taleId := ctx.Param("id")
+	taleIdUint, err := strconv.ParseUint(taleId,10,64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid error format"})
+		return
+	}
+
+	var pruchasedTale model.TalePurchase
+	result := database.DB.Where("purchaser_user_id = ? AND tale_id = ?",userID,taleIdUint).First(&pruchasedTale)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "not eligible to rate tale"})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	pruchasedTale.UserRating = input.Rating
+	result = database.DB.Save(&pruchasedTale)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save/update rating"})
+		return
+	}
+
+
+	taleRating, err := utils.UpdateTaleRating(ctx, uint(taleIdUint), uint(userID), pruchasedTale.UserRating)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Rating Submitted", "user_rating": pruchasedTale.UserRating, "tale_rating": taleRating})
 }
 

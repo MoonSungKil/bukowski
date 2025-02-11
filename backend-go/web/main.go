@@ -57,6 +57,7 @@ func main() {
 	requireAuthGroup.DELETE("/tales/soft_delete/:id", handlers.HandleSoftDeleteTaleByUserID)
 	requireAuthGroup.DELETE("/tales/permanent_delete/:id", handlers.HandlePermanentDeleteTaleByUserID)
 	requireAuthGroup.PUT("/tales/activate_tale/:id", handlers.HandleActiveTaleByUserId)
+	requireAuthGroup.PUT("/tales/submit_rating/:id", handlers.HandleSubmitTaleRating)
 
 	router.GET("/tales/get_tales", handlers.HandleGetAllTalesWithoutAuth)
 	router.GET("/tales/get_tales/:id", handlers.HandleGetSingleTaleWithouthAuth)

@@ -61,8 +61,13 @@ type TaleBodyUnauthorized struct {
 	Genres      []model.Genre   `json:"genres"`
 	TaleImage   string    `json:"tale_image"`
 	PublishedAt time.Time `json:"published_at"`
+	Rating float64 		  `json:"rating"`
 }
 
 type EmailRequest struct {
 	Email string `json:"email" binding:"required,email"`
+}
+
+type RatingInput struct {
+    Rating int `json:"rating" binding:"min=1,max=5"`
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import "./SinglePageTop.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -26,8 +26,29 @@ const SinglePageTop = ({ tale }) => {
   const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
   const taleImage = tale && `${backendURL}${tale.tale_image}`;
 
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [hover, setHover] = useState(false);
+  const taleRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (taleRef.current) {
+      const rect = taleRef.current.getBoundingClientRect();
+      setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.bottom });
+    }
+  };
+
   if (!tale) {
     return <div>Loading</div>;
+  }
+
+  let starRatings = [];
+  if (tale) {
+    for (let i = 0; i < Math.floor(tale.rating); i++) {
+      starRatings.push(<i className="fa-solid fa-star rating_star"></i>);
+    }
+  }
+  if (!Number.isInteger(tale.rating)) {
+    starRatings.push(<i className="fa-solid fa-star rating_star_faded"></i>);
   }
 
   return (
@@ -37,11 +58,25 @@ const SinglePageTop = ({ tale }) => {
           <div className="single_page_head_top_image_wrapper">
             <img className="single_page_cover" src={taleImage} alt="cover_picture" />
           </div>
-          <div className="single_page_head_top_stats_rating">
-            <i className="fa-solid fa-star"></i>
-            <i className="fa-solid fa-star"></i>
-            <i className="fa-solid fa-star"></i>
-            <i className="fa-solid fa-star"></i>
+          <div
+            onMouseEnter={() => setHover(true)}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setHover(false)}
+            ref={taleRef}
+            className="single_page_head_top_stats_rating"
+          >
+            {hover && (
+              <div
+                style={{
+                  top: `${position.y}px`,
+                  left: `${position.x}px`,
+                }}
+                className="rating_digit"
+              >
+                {tale.rating}
+              </div>
+            )}
+            {starRatings}
           </div>
         </div>
         <div className="single_page_head_top_stats">

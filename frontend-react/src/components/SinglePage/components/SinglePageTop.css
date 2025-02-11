@@ -109,10 +109,34 @@
 
 .single_page_head_top_stats_rating {
   font-size: 3rem;
+  display: flex;
+  align-self: flex-start;
+  gap: 1rem;
+  position: relative;
+  width: fit-content;
+}
+
+.rating_star {
   color: yellow;
   text-shadow: 2px 2px 12px var(--primary-color);
-  display: flex;
-  gap: 1rem;
+}
+
+.rating_star_faded {
+  color: rgba(255, 255, 72, 0.226);
+  text-shadow: 2px 2px 12px rgba(236, 177, 69, 0.37);
+}
+
+.rating_digit {
+  background-color: var(--primary-background);
+  padding: 0.3rem 1rem;
+  z-index: 10;
+  width: fit-content;
+  align-self: flex-end;
+  color: gray;
+  font-size: 1rem;
+  position: absolute;
+  top: -100%;
+  box-shadow: 0px 0px 2px 2px black;
 }
 
 .single_page_head_top_title {

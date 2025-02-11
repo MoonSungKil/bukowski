@@ -106,3 +106,38 @@ func MoveImageToAnotherDirectory(ctx *gin.Context, imageLocation, destDir string
 	relativePath := newPath[2:]
 	return relativePath, nil
 }
+
+func UpdateTaleRating(ctx *gin.Context, taleId, userId uint, submittedRating int) (float64, error) {
+	var tale model.Tale
+	result := database.DB.Where("id = ?", taleId).Unscoped().First(&tale)
+	if result.Error != nil {
+		return 0, errors.New("tale not found")
+	}
+
+	var purchasedTales []model.TalePurchase
+	result = database.DB.Where("tale_id = ? AND purchaser_user_id != ?", taleId, userId).Find(&purchasedTales)
+	if result.Error != nil {
+		return 0, errors.New("internal Server Error")
+	}
+	var allRatings float64
+	if result.RowsAffected != 0 {
+		for _, t := range purchasedTales {
+			allRatings += float64(t.UserRating)
+		} 
+	}
+
+	var newRating float64
+	if len(purchasedTales) == 0 {
+		newRating = float64(submittedRating)
+	} else {
+		newRating = (float64(submittedRating) + allRatings) / (float64(len(purchasedTales)) + 1)
+	}
+	tale.Rating = float64(newRating)
+
+	result = database.DB.Save(&tale)
+	if result.Error != nil {
+		return 0, errors.New("unable to update rating")
+	}
+
+	return float64(newRating), nil
+}

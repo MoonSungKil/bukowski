@@ -21,6 +21,7 @@ type Tale struct {
 	IsActive bool `gorm:"type:boolean;not null;default:true" json:"is_active"`
 	Genres []Genre `gorm:"many2many:tale_genres" json:"genres"`
     TaleImage  string `json:"tale_image,omitempty" validate:"required"`
+	Rating float64	`gorm:"default:0;" json:"rating" binding:"min=0,max=5"`
 	PublishedAt time.Time `json:"published_at" validate:"required"`	
 	UserID uint `gorm:"not null" json:"-" validate:"required"`
 	TalePurchases []TalePurchase `gorm:"foreignKey:TaleID" json:"-"`
@@ -44,6 +45,7 @@ type TalePurchase struct {
 	TaleID         uint            `gorm:"not null" json:"-"`
 	PurchaserUserID uint           `gorm:"not null" json:"-"`
 	PurchaseDate   time.Time       `gorm:"not null" json:"purchase_date"`
+	UserRating	   int 			   `json:"user_rating" binding:"min=1,max=5"`
 }
 
 
