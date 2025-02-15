@@ -34,6 +34,10 @@ const ProfileCollection = ({ keyword, setKeyword }) => {
     if (typeCollectionSelected.toLocaleLowerCase() === "purchased".toLocaleLowerCase()) {
       navigate(`/tale/${taleId}`);
     }
+
+    if (typeCollectionSelected.toLocaleLowerCase() === "wishlist".toLocaleLowerCase()) {
+      navigate(`/tale/${taleId}`);
+    }
   };
 
   return (

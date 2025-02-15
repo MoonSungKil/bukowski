@@ -9,7 +9,6 @@ const RegisterForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [birthDate, setBirthDate] = useState("");
 
   const handleRegisterForm = async (e) => {
     e.preventDefault();
@@ -19,7 +18,6 @@ const RegisterForm = () => {
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-      setBirthDate("");
       closeAuthModal();
     } else {
       console.log("unable to register");
@@ -44,15 +42,6 @@ const RegisterForm = () => {
           value={email}
           className="register_form_element_input"
           type="email"
-        />
-      </div>
-      <div className="register_form_element">
-        <label className="register_form_element_label">Date of Birth</label>
-        <input
-          value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-          className="register_form_element_input"
-          type="date"
         />
       </div>
       <div className="register_form_element">

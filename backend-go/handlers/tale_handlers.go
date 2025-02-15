@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -144,37 +145,50 @@ func HandleCreateTale(ctx *gin.Context) {
 		return
 	}
 
-
-	// Handle image upload
-	uploadDir := "../uploads/tale_covers"
-	filePath, err := utils.UploadImage(ctx, uploadDir)
+	//Handle Upload File
+	file, err := ctx.FormFile("file")
+	var pathUrl string 
 	var draft model.Draft
 	draftID := ctx.Param("draft_id")
 	draftIDUint, _ := strconv.ParseInt(draftID,10,64)
 	_ = database.DB.Where("id = ? AND user_id = ?", draftIDUint, userID).First(&draft)
-	imageAlreadyMoved := false
 	if err != nil {
 		if draft.TaleImage != "" {
-			filePath, err = utils.MoveImageToAnotherDirectory(ctx, draft.TaleImage, "../uploads/tale_covers")
+			publicID := utils.ExtractPublicID(draft.TaleImage)
+			pathParts := strings.Split(publicID, "/")
+			justImageName := pathParts[len(pathParts) -1]
+			pathUrl, err = utils.MoveImage("bukowski_draft_images", "bukowski_tale_images", justImageName)
 			if err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save image", "details": err.Error(), "field": "image"})
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Upload Failed"})
 				return
 			}
-			imageAlreadyMoved = true
 		} else {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "No image porvided or found within an associated draft of yours", "details": err.Error(), "field": "image"})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to retrive image from form"})
 			return
 		}
-	}
-
-	if draft.TaleImage != "" && !imageAlreadyMoved {
-		oldImageFilePath := draft.TaleImage
-		oldImageFilePath = filepath.Join("..", oldImageFilePath)
-		err := os.Remove(oldImageFilePath)
+	} else {
+		// Open the file to get the content
+		fileContent, err := file.Open()
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete old image path, draft deleted", "field": "image"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
+   	 		return
 		}
-	}
+		defer fileContent.Close()
+	
+		folderName := "bukowski_tale_images"
+		pathUrl, err = utils.UploadImageToCloudinary(folderName, fileContent)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to retrive image from form"})
+			return
+		}
+		
+		// delete the unused draft image if it exists
+		if draft.TaleImage != "" {
+			_, err := utils.DeleteImage(draft.TaleImage); if err != nil {
+				ctx.JSON(http.StatusInternalServerError,gin.H{"error": "Unable to delete old draft Image"})
+			}
+		}
+}
 
 
 	// Create a new tale
@@ -186,7 +200,7 @@ func HandleCreateTale(ctx *gin.Context) {
 		Content:     content,
 		Pages:       int64(pages),
 		Price:       price,
-		TaleImage:   filePath,
+		TaleImage:   pathUrl,
 		PublishedAt: publishedAt,
 		UserID:      userID,
 	}
@@ -324,13 +338,29 @@ func HandleCreateDraft(ctx *gin.Context) {
 		}
 	}
 
-	uploadDir := "../uploads/draft_covers"
+	// uploadDir := "../uploads/draft_covers"
+	// var filePath string
+	// _, err = ctx.FormFile("file")
+	// if err == nil {
+	// 	filePath, err = utils.UploadImage(ctx, uploadDir);
+	// 	if err != nil {
+	// 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload Image", "details": err.Error()})
+	// 	}
+	// }
+
+	folderName := "bukowski_draft_images"
 	var filePath string
-	_, err = ctx.FormFile("file")
+	file, err := ctx.FormFile("file")
 	if err == nil {
-		filePath, err = utils.UploadImage(ctx, uploadDir);
+		fileContent, err := file.Open()
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload Image", "details": err.Error()})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
+   	 	return
+		}
+		defer fileContent.Close()
+		filePath, err = utils.UploadImageToCloudinary(folderName, fileContent)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Failed to Upload Image"})
 		}
 	}
 	
@@ -535,25 +565,53 @@ func HandleUpdateDraft(ctx *gin.Context) {
 		}
 	}
 
-	_, ok := form.File["file"];
-	if ok {
-		uploadDir := "../uploads/draft_covers"
-		filePath, err := utils.UploadImage(ctx, uploadDir)
+	// _, ok := form.File["file"];
+	// if ok {
+	// 	uploadDir := "../uploads/draft_covers"
+	// 	filePath, err := utils.UploadImage(ctx, uploadDir)
+	// 	if err != nil {
+	// 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image", "details": err.Error()})
+	// 		return
+	// 	}
+	// 	if draftToUpdate.TaleImage != "" {
+	// 		oldImageFilePath := draftToUpdate.TaleImage
+	// 		oldImageFilePath = filepath.Join("..", oldImageFilePath)
+	// 		if err = os.Remove(oldImageFilePath); err != nil {
+	// 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete old image", "details": err.Error(), "path": oldImageFilePath})
+	// 			return
+	// 		}
+	// 	}
+	// 	draftToUpdate.TaleImage = filePath
+	// }
+
+	file, err := ctx.FormFile("file")
+	if err == nil {
+		fileContent, err := file.Open()
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload image", "details": err.Error()})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
 			return
 		}
+		defer fileContent.Close()
+
+		folderName := "bukowski_draft_images"
+		filePath, err := utils.UploadImageToCloudinary(folderName,fileContent)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to Upload Image"})
+			return
+		}
+
 		if draftToUpdate.TaleImage != "" {
-			oldImageFilePath := draftToUpdate.TaleImage
-			oldImageFilePath = filepath.Join("..", oldImageFilePath)
-			if err = os.Remove(oldImageFilePath); err != nil {
-				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "unable to delete old image", "details": err.Error(), "path": oldImageFilePath})
+			oldImagePath := draftToUpdate.TaleImage
+			oldPublicID := utils.ExtractPublicID(oldImagePath)
+			_, err = utils.DeleteImage(oldPublicID)
+			if err != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{"error": "Deleting Image Failed"})
 				return
 			}
 		}
+
 		draftToUpdate.TaleImage = filePath
 	}
-
 	
 
 	result = database.DB.Save(&draftToUpdate)
@@ -619,6 +677,142 @@ func HandleGetSingleTalePublishedById(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"success": true, "tale": tale})
+}
+
+func HandleAddToWishlistTaleById(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	userID := user.ID
+	taleIDFromParams := ctx.Param("id")
+	tobeAddedToWishlistTaleID, err := strconv.ParseUint(taleIDFromParams, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+		return
+	}
+
+	var tale model.Tale
+	result := database.DB.Preload("Genres").First(&tale, tobeAddedToWishlistTaleID)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error" : "No tale found"})
+		return
+	}
+
+	if userID == tale.UserID {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "tale owned by you"})
+		return
+	}
+
+	var talesAlreadyInWishlist []model.TaleWishlist
+	database.DB.Where("wishlist_user_id = ?", userID).Find(&talesAlreadyInWishlist)
+	for _, alreadyInWishlisth := range talesAlreadyInWishlist {
+		if alreadyInWishlisth.TaleID == tale.ID {
+			ctx.JSON(http.StatusConflict, gin.H{"error": "Tale already in your wishlist"})
+			return
+		}
+	}
+
+	var alreadyPurchasedTales []model.TalePurchase
+	database.DB.Where("purchaser_user_id = ?", userID).Find(&alreadyPurchasedTales)
+	for _, alreadyPurchased := range alreadyPurchasedTales {
+		if alreadyPurchased.TaleID == uint(tobeAddedToWishlistTaleID) {
+			ctx.JSON(http.StatusConflict, gin.H{"error": "Tale already purchased"})
+			return
+		}
+	}
+
+	newWishlist := model.TaleWishlist{
+		TaleID: tale.ID,
+		WishlistUserID: userID,
+		Title: tale.Title,
+		TaleImage: tale.TaleImage,
+	}
+
+	result = database.DB.Create(&newWishlist)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add to wishlist", "details": result.Error.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Successfully added to wishlist", "tale": tale})
+}
+
+func HandleRemoveFromWishlist(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	userID := user.ID
+	taleIDFromParams := ctx.Param("id")
+	toBePurchasedTaleID, err := strconv.ParseUint(taleIDFromParams, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+	}
+
+	var wishlistedTaleToRemove model.TaleWishlist
+	result := database.DB.Where("wishlist_user_id = ? AND tale_id = ?", userID, toBePurchasedTaleID).Find(&wishlistedTaleToRemove)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": result.Error.Error()})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "No such tale in your wishlist"})
+		return
+	}
+
+	result = database.DB.Delete(&wishlistedTaleToRemove)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to remove wishlisted tale"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Removed from Wishlist", "removed_tale_id": taleIDFromParams })
+
+}
+
+
+func HandleGetAllWishlistedTalesByUserId(ctx *gin.Context) {
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
+
+	userID := user.ID
+
+	var wishlistedTales []model.TaleWishlist
+	result := database.DB.Where("wishlist_user_id = ?",userID).Find(&wishlistedTales)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": result.Error.Error()})
+		return
+	}
+
+	var taleIDs []uint
+	for _, wishtale := range wishlistedTales {
+		taleIDs = append(taleIDs, wishtale.TaleID)
+	}
+
+	var tales []model.Tale
+	if len(taleIDs) > 0 {
+		result = database.DB.Select("id", "title", "tale_image").Where("id IN (?)", taleIDs).Find(&tales)
+		if result.Error != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": result.Error.Error()})
+			return
+		}
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"tales": tales})
 }
 
 func HandlePurchaseTale(ctx *gin.Context) {
@@ -692,6 +886,16 @@ func HandlePurchaseTale(ctx *gin.Context) {
 	if updateUserBalanceResult.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Update Balance"})
 		return
+	}
+
+	var wishlistedTale model.TaleWishlist
+	result = database.DB.Where("wishlist_user_id = ? AND tale_id = ?", userID, toBePurchasedTaleID).First(&wishlistedTale)
+
+	if result.RowsAffected != 0 {
+		result = database.DB.Delete(&wishlistedTale)
+		if result.Error != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to remove tale from wishlist"})
+		}
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Succesfully purchased tale", "tale": newPurchase, "balance": foundUser.Balance})
@@ -792,7 +996,6 @@ func HandleSoftDeleteTaleByUserID(ctx *gin.Context) {
 }
 
 func HandlePermanentDeleteTaleByUserID(ctx *gin.Context) {
-	// not working, no use case yet
 	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
@@ -810,7 +1013,6 @@ func HandlePermanentDeleteTaleByUserID(ctx *gin.Context) {
 
 	var tale model.Tale
 	result := database.DB.Unscoped().First(&tale,taleID)
-
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -834,7 +1036,7 @@ func HandlePermanentDeleteTaleByUserID(ctx *gin.Context) {
 	
 	result = database.DB.Unscoped().Delete(&model.Tale{}, taleID)
 	if result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", })
 		return
 	}
 

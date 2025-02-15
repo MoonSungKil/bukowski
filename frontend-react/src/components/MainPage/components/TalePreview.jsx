@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./TalePreview.css";
 import { useNavigate } from "react-router-dom";
 import PreviewBox from "./PreviewBox";
@@ -10,8 +10,13 @@ const TalePreview = ({ tale }) => {
     navigate(`/tale/${tale.id}`);
   };
 
-  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
-  const taleImage = `${backendURL}${tale.tale_image}`;
+  // const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
+  // const taleImage = `${backendURL}${tale.tale_image}`;
+  const taleImage = tale.tale_image;
+
+  useEffect(() => {
+    console.log(taleImage);
+  }, []);
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);

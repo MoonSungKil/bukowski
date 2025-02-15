@@ -4,7 +4,7 @@ import "./CollectionItem.css";
 const CollectionItem = ({ tale, clickHandler }) => {
   const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
   const coverImage = tale.tale_image
-    ? `${backendURL}${tale.tale_image}`
+    ? tale.tale_image
     : `${backendURL}/uploads/tale_covers/cover_placeholder.jpg`;
 
   return (

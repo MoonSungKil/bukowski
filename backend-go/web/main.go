@@ -7,12 +7,14 @@ import (
 	"github.com/moonsungkil/bukowski/initializers"
 	"github.com/moonsungkil/bukowski/jobs"
 	"github.com/moonsungkil/bukowski/middleware"
+	"github.com/moonsungkil/bukowski/utils"
 )
 
 
 func init() {
 	initializers.LoadEnvVariables()
 	database.ConnectToDB()
+	utils.InitCloudinary()
 }
 
 func main() {
@@ -53,6 +55,9 @@ func main() {
 	requireAuthGroup.GET("/tales/published/:id", handlers.HandleGetSingleTalePublishedById)
 	requireAuthGroup.GET("/tales/get_all_purchased", handlers.HandleGetAllTalesPurchasedByUserId)
 	requireAuthGroup.POST("/tales/purchase/:id", handlers.HandlePurchaseTale)
+	requireAuthGroup.GET("/tales/get_all_wishlisted", handlers.HandleGetAllWishlistedTalesByUserId)
+	requireAuthGroup.POST("/tales/add_to_wishlist/:id", handlers.HandleAddToWishlistTaleById)
+	requireAuthGroup.DELETE("/tales/delete_tale_from_wishlist/:id", handlers.HandleRemoveFromWishlist)
 	requireAuthGroup.GET("/tales/purchased/:id", handlers.HandleGetPurchasedTaleByID)
 	requireAuthGroup.DELETE("/tales/soft_delete/:id", handlers.HandleSoftDeleteTaleByUserID)
 	requireAuthGroup.DELETE("/tales/permanent_delete/:id", handlers.HandlePermanentDeleteTaleByUserID)

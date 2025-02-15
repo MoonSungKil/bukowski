@@ -18,6 +18,7 @@ type User struct {
     ProfilePicture  string `json:"profile_picture,omitempty"`
 	PublishedTales []Tale `gorm:"foreignKey:UserID" json:"published_tales"`
 	PurchasedTales []Tale `gorm:"many2many:tale_purchases" json:"purchased_tales"`
+	WishlistTales []Tale `gorm:"many2many:tale_purchases" json:"wishlist_tales"`
 }
 
 func NewUser(username,email,password string) *User {

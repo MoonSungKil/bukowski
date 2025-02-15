@@ -161,9 +161,9 @@ const ProfileInfoBox = ({ setKeyword }) => {
             {/* <li onClick={() => setCollectionType("quotes")} className="profile_info_box_body_item">
               QUOTES
             </li> */}
-            <li onClick={() => setCollectionType("cart")} className="profile_info_box_body_item">
+            {/* <li onClick={() => setCollectionType("cart")} className="profile_info_box_body_item">
               CART
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>

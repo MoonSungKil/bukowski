@@ -14,6 +14,7 @@ const SinglePage = () => {
   const { getTaleByAccess, archiveTale, activateTale, published } = useSiteState();
 
   const [fetchedTale, setFetchedTale] = useState();
+  const [view, setView] = useState();
 
   const handleSoftDeleteTale = async (tale_id) => {
     const isDeleted = await archiveTale(tale_id);
@@ -28,8 +29,9 @@ const SinglePage = () => {
 
   useEffect(() => {
     (async () => {
-      const tale = await getTaleByAccess(id);
+      const { tale, view } = await getTaleByAccess(id);
       setFetchedTale(tale);
+      setView(view);
       if (!tale) {
         navigate("/");
         window.location.reload();
@@ -43,7 +45,7 @@ const SinglePage = () => {
 
   return (
     <div className="single_page">
-      <SinglePageTop tale={fetchedTale} />
+      <SinglePageTop view={view} tale={fetchedTale} />
       <SinglePageContent tale={fetchedTale} />
       <SinglePageFog />
       {published.some((t) => fetchedTale.ID === t.ID) && (

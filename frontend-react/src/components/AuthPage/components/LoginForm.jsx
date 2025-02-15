@@ -5,15 +5,15 @@ import { useSiteState } from "../../../context/SiteStateContext";
 const LoginForm = () => {
   const { closeAuthModal, loginUser, errorState } = useSiteState();
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    const loggedSuccesfully = await loginUser(email, password);
+    const loggedSuccesfully = await loginUser(username, password);
     if (loggedSuccesfully) {
       closeAuthModal();
-      setEmail("");
+      setUsername("");
       setPassword("");
     } else {
       console.log("Unable to login");
@@ -23,10 +23,10 @@ const LoginForm = () => {
   return (
     <form onSubmit={(e) => handleLoginSubmit(e)} className="login_form">
       <div className="login_form_element">
-        <label className="login_form_element_label">Email</label>
+        <label className="login_form_element_label">Username</label>
         <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           className="login_form_element_input"
           type="text"
         />

@@ -18,6 +18,7 @@ export const initialState = {
   singleDraftSelected: {},
   purchased: [],
   published: [],
+  wishlist: [],
   drafts: [],
   selectedTalePurchased: {},
   //end tale values
@@ -153,19 +154,41 @@ export const siteStateReducer = (state, action) => {
         ...state,
         drafts: [...state.drafts.filter((draft) => +draft.ID !== +payload.draftID)],
       };
+    case "REMOVE_TALE_FROM_WISHLIST":
+      localStorage.setItem(
+        "wishlist",
+        JSON.stringify([...state.wishlist.filter((tale) => +tale.ID !== +payload.taleID)])
+      );
+      return {
+        ...state,
+        wishlist: [...state.wishlist.filter((tale) => +tale.ID !== +payload.taleID)],
+      };
     case "GET_SINGLE_TALE":
       return {
         ...state,
         singleTaleSelected: payload.singleTaleSelected,
       };
     case "PURCHASE_TALE":
+      console.log(payload.tale);
+      console.log(state.wishlist);
       const modifiedUser = { ...state.userLoggedIn, balance: payload.balance };
       localStorage.setItem("userLoggedIn", JSON.stringify(modifiedUser));
       localStorage.setItem("purchased", JSON.stringify([...state.purchased, payload.tale]));
+      localStorage.setItem(
+        "wishlist",
+        JSON.stringify([...state.wishlist.filter((tale) => tale.ID !== payload.tale.ID)])
+      );
       return {
         ...state,
         purchased: [...state.purchased, payload.tale],
+        wishlist: [...state.wishlist.filter((tale) => tale.ID !== payload.tale.ID)],
         userLoggedIn: modifiedUser,
+      };
+    case "ADD_TALE_TO_WISHLIST":
+      localStorage.setItem("wishlist", JSON.stringify([...state.wishlist, payload.tale]));
+      return {
+        ...state,
+        wishlist: [...state.wishlist, payload.tale],
       };
     case "GET_SINGLE_DRAFT":
       return {
@@ -176,6 +199,11 @@ export const siteStateReducer = (state, action) => {
       return {
         ...state,
         purchased: [...payload.purchased],
+      };
+    case "GET_ALL_WISHLISTED_TALES":
+      return {
+        ...state,
+        wishlist: [...payload.wishlist],
       };
     case "GET_ALL_PUBLISHED_TALES":
       return {
@@ -209,6 +237,8 @@ export const siteStateReducer = (state, action) => {
         userLoggedIn: {},
         singleTaleSelected: {},
         purchased: [],
+        wishlist: [],
+        published: [],
         selectedTalePurchased: {},
       };
 

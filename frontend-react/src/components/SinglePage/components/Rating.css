@@ -1,0 +1,15 @@
+.rating {
+  display: flex;
+  width: 100%;
+  font-size: 3rem;
+  color: rgba(218, 213, 213, 0.192);
+  gap: 2.5%;
+}
+
+.rating_element_star {
+  cursor: pointer;
+}
+
+.rating_element_selected {
+  color: rgb(255, 255, 0);
+}

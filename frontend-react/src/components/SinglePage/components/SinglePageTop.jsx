@@ -1,11 +1,18 @@
 import React, { useRef } from "react";
 import "./SinglePageTop.css";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSiteState } from "../../../context/SiteStateContext";
+import Rating from "./Rating";
 
-const SinglePageTop = ({ tale }) => {
-  const { isPurchasedorPublished, purchaseTaleById, published, archiveTale } = useSiteState();
+const SinglePageTop = ({ tale, view }) => {
+  const {
+    isPurchasedorPublished,
+    purchaseTaleById,
+    addTaleToWishlist,
+    removeTaleFromWishlist,
+    wishlist,
+  } = useSiteState();
 
   const { id } = useParams();
 
@@ -19,12 +26,24 @@ const SinglePageTop = ({ tale }) => {
     checkPurchasedStatus();
   }, [id, isPurchasedorPublished]);
 
-  const handlePurchaseTale = () => {
-    purchaseTaleById(tale.id);
+  const [purchaseBox, setPurchaseBox] = useState(false);
+
+  const handlePurchaseTale = async () => {
+    const purchasedSuccesfully = await purchaseTaleById(id);
+    setPurchaseBox(false);
+    // if (purchasedSuccesfully) {
+    //   setTimeout(() => {
+    //     window.location.reload();
+    //   }, 1000);
+    // }
   };
 
-  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
-  const taleImage = tale && `${backendURL}${tale.tale_image}`;
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
+  const taleImage = tale && tale.tale_image;
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);
@@ -36,6 +55,8 @@ const SinglePageTop = ({ tale }) => {
       setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.bottom });
     }
   };
+
+  const [enableRating, setEnableRating] = useState(false);
 
   if (!tale) {
     return <div>Loading</div>;
@@ -56,28 +77,50 @@ const SinglePageTop = ({ tale }) => {
       <div className="single_page_head_top">
         <div className="single_page_head_top_left">
           <div className="single_page_head_top_image_wrapper">
-            <img className="single_page_cover" src={taleImage} alt="cover_picture" />
-          </div>
-          <div
-            onMouseEnter={() => setHover(true)}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={() => setHover(false)}
-            ref={taleRef}
-            className="single_page_head_top_stats_rating"
-          >
-            {hover && (
-              <div
-                style={{
-                  top: `${position.y}px`,
-                  left: `${position.x}px`,
-                }}
-                className="rating_digit"
-              >
-                {tale.rating}
+            {wishlist.some((tale) => tale.ID === Number(id)) && (
+              <div className="single_page_head_top_wishlist_banner">
+                <i className="fa-solid fa-bookmark"></i>
               </div>
             )}
-            {starRatings}
+            <img className="single_page_cover" src={taleImage} alt="cover_picture" />
+            {view === "purchased" && (
+              <div
+                onClick={() => setEnableRating(!enableRating)}
+                className="single_page_head_top_image_backdrop"
+              >
+                <p>Click to Rate</p>
+                <i className="fa-solid fa-caret-down"></i>
+              </div>
+            )}
           </div>
+          {view === "purchased" && enableRating ? (
+            <Rating tale={tale} setEnableRating={setEnableRating} />
+          ) : (
+            <div
+              onMouseEnter={() => setHover(true)}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={() => setHover(false)}
+              ref={taleRef}
+              className="single_page_head_top_stats_rating"
+            >
+              {hover && (
+                <div
+                  style={{
+                    top: `${position.y}px`,
+                    left: `${position.x}px`,
+                  }}
+                  className="rating_digit"
+                >
+                  {tale.rating}
+                </div>
+              )}
+              {starRatings.length > 0 ? (
+                starRatings
+              ) : (
+                <div className="rating_still_not_rated"> No ratings available</div>
+              )}
+            </div>
+          )}
         </div>
         <div className="single_page_head_top_stats">
           <div className="single_page_head_top_title">{tale.title}</div>
@@ -97,17 +140,54 @@ const SinglePageTop = ({ tale }) => {
             ) : (
               <div className="single_page_head_top_stats_bottom_purchase">
                 <div
-                  onClick={() => handlePurchaseTale()}
+                  onClick={() => setPurchaseBox(!purchaseBox)}
                   className="single_page_head_top_stats_bottom_buy"
                 >
                   ${tale && tale.price}
                   <br />
                   Buy Now
                 </div>
-                <div className="single_page_head_top_stats_bottom_cart">
-                  Add to
-                  <br />
-                  Cart
+                {wishlist.some((tale) => tale.ID === Number(id)) ? (
+                  <div
+                    onClick={() => removeTaleFromWishlist(id)}
+                    className="single_page_head_top_stats_bottom_cart"
+                  >
+                    Remove from
+                    <br />
+                    Wishlist
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => addTaleToWishlist(id)}
+                    className="single_page_head_top_stats_bottom_cart"
+                  >
+                    Add to
+                    <br />
+                    Wishlist
+                  </div>
+                )}
+                <div
+                  className={`single_page_top_purchase_box ${
+                    purchaseBox && "purchase_box_display"
+                  }`}
+                >
+                  <p className="single_page_purchase_box_text">
+                    Click "Purchase" to purchase authorize payment.
+                  </p>
+                  <div className="single_page_purchase_box_buttons">
+                    <div
+                      onClick={() => handlePurchaseTale(id)}
+                      className="single_page_purchase_submit_btn"
+                    >
+                      Purchase
+                    </div>
+                    <div
+                      onClick={() => setPurchaseBox(false)}
+                      className="single_page_purchase_cancel_btn"
+                    >
+                      Cancel
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

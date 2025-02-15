@@ -44,9 +44,7 @@ const Compose = () => {
           setContent(fetchedDraft.content || "");
           setDescription(fetchedDraft.description || "");
           setPrice(fetchedDraft.price || "");
-          setImagePreview(
-            fetchedDraft.tale_image && (`${backendURL}${fetchedDraft.tale_image}` || null)
-          );
+          setImagePreview(fetchedDraft.tale_image && (fetchedDraft.tale_image || null));
           setGenreOne(fetchedDraft.genres[0].name || "None");
           setGenreTwo(fetchedDraft.genres[1].name || "None");
           setGenreThree(fetchedDraft.genres[2].name || "None");

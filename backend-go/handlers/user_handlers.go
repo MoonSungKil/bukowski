@@ -470,11 +470,21 @@ func HandleUpdateUserProfilePicture(ctx *gin.Context) {
 		return
 	}
 
+	oldProfilePicture := userToChangeProfilePicture.ProfilePicture
+
 	// Updating user's profile picture in the database (the path)
 	userToChangeProfilePicture.ProfilePicture = filePath
 	if err := database.DB.Save(&userToChangeProfilePicture).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update profile picture"})
 		return
+	}
+	
+	if oldProfilePicture != "/uploads/profile_pictures/user_placeholder.webp" {
+		err = os.Remove(".." + oldProfilePicture)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete previous image"})
+			return
+		}
 	}
 	
 	ctx.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "filePath": filePath})

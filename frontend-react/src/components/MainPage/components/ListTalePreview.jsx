@@ -10,8 +10,8 @@ const ListTalePreview = ({ tale }) => {
     navigate(`/tale/${tale.id}`);
   };
 
-  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
-  const taleImage = `${backendURL}${tale.tale_image}`;
+  // const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
+  const taleImage = tale.tale_image;
 
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   useEffect(() => {

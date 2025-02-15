@@ -3,8 +3,7 @@ import "./QuickFilteredTale.css";
 import { useNavigate } from "react-router-dom";
 
 const QuickFilteredTale = ({ tale, setKeyword }) => {
-  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
-  const taleImage = `${backendURL}${tale.tale_image}`;
+  const taleImage = tale.tale_image;
 
   const navigate = useNavigate();
   const navigateToTale = () => {

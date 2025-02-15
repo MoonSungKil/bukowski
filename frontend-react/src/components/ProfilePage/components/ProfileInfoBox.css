@@ -184,9 +184,8 @@
   cursor: pointer;
   color: gray;
   font-size: 1.1rem;
-  border-radius: 0.5rem;
   box-shadow: 0px 0px 5px 1px black;
-  transition: all 0.3s ease;
+  color: var(--secondary-color);
 }
 
 .profile_info_box_body_item:hover {
