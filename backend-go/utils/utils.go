@@ -2,11 +2,15 @@ package utils
 
 import (
 	"errors"
+	"fmt"
+	"net/mail"
+	"net/smtp"
 	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/moonsungkil/bukowski/database"
 	model "github.com/moonsungkil/bukowski/models"
@@ -140,4 +144,80 @@ func UpdateTaleRating(ctx *gin.Context, taleId, userId uint, submittedRating int
 	}
 
 	return float64(newRating), nil
+}
+
+func GenerateResetToken(email string) (string, error) {
+	claims := jwt.MapClaims{
+		"email": email,
+		"exp": time.Now().Add(15 * time.Minute).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(os.Getenv("REST_PASSWORD_SECRET")))
+}
+
+func ValidateResetToken(tokenString string) (string, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("REST_PASSWORD_SECRET")), nil
+	})
+
+	if err != nil || !token.Valid {
+		return "", errors.New("token not valid")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || claims["email"] == nil {
+		return "", errors.New("token not valid")
+	}
+
+	return claims["email"].(string), nil
+}
+
+func SendRestPasswordLink(userEmail, resetLink string) (bool, error) {
+	_, err := mail.ParseAddress(userEmail)
+	if err != nil {
+		return false, errors.New("not a valid email format")
+	} 
+
+	emailBody := fmt.Sprintf(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bukowski: Reset Password</title>
+</head>
+<body>
+    <div class="container">
+        <a href="%s" class="button">Reset Password</a>
+    </div>
+</body>
+</html>`, resetLink)
+
+bukowskiEmail := os.Getenv("NL_EMAIL")
+	bukowskiAppPass := os.Getenv("NL_APP_PASS")
+
+	auth := smtp.PlainAuth(
+		"",
+		bukowskiEmail,
+		bukowskiAppPass,
+		"smtp.gmail.com",
+	)
+
+	msg := "MIME-Version: 1.0\r\n" +
+		"Content-Type: text/html; charset=\"UTF-8\"\r\n" +
+		"Subject: Bukowski: Reset Password!\r\n\r\n" +
+		string(emailBody)
+
+	err = smtp.SendMail(
+		"smtp.gmail.com:587",
+		auth,
+		bukowskiEmail,
+		[]string{userEmail},
+		[]byte(msg),
+	)
+	if err != nil {
+		return false, errors.New("bad request")
+	}
+
+	return true, nil
 }

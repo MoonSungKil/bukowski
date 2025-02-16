@@ -7,6 +7,7 @@ import Layout from "./components/Layout/Layout";
 import AuthPage from "./components/AuthPage/Auth";
 import SinglePage from "./components/SinglePage/SinglePage";
 import ProfilePage from "./components/ProfilePage/ProfilePage";
+import ResetPassword from "./components/ResetPassword/ResetPassword";
 import { ProfileStateProvider } from "./context/ProfileStateContext";
 import ComposePage from "./components/ComposePage/ComposePage";
 
@@ -65,6 +66,14 @@ function App() {
       element: (
         <Layout>
           <ComposePage />
+        </Layout>
+      ),
+    },
+    {
+      path: "/reset-password",
+      element: (
+        <Layout>
+          <ResetPassword />
         </Layout>
       ),
     },

@@ -20,6 +20,11 @@ type PasswordUpdate struct {
 	ConfirmNewPassword string `json:"confirm_new_password"`
 }
 
+type RestPassword struct {
+	NewPassword        string `json:"new_password"`
+	ConfirmNewPassword string `json:"confirm_new_password"`
+}
+
 type LoginUserBody struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`

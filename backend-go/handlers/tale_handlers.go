@@ -184,8 +184,10 @@ func HandleCreateTale(ctx *gin.Context) {
 		
 		// delete the unused draft image if it exists
 		if draft.TaleImage != "" {
-			_, err := utils.DeleteImage(draft.TaleImage); if err != nil {
+			publicID := utils.ExtractPublicID(draft.TaleImage)
+			_, err := utils.DeleteImage(publicID); if err != nil {
 				ctx.JSON(http.StatusInternalServerError,gin.H{"error": "Unable to delete old draft Image"})
+				return
 			}
 		}
 }
@@ -362,6 +364,8 @@ func HandleCreateDraft(ctx *gin.Context) {
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Failed to Upload Image"})
 		}
+	// } else {
+	// 	filePath = "https://res.cloudinary.com/dscuqiqmz/image/upload/v1739617686/bukowski_draft_images/tale_placeholder.jpg"
 	}
 	
 	// Create a new draft

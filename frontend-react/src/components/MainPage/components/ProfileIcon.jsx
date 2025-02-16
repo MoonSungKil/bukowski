@@ -6,8 +6,7 @@ import { useSiteState } from "../../../context/SiteStateContext";
 export const ProfileIcon = () => {
   const { logoutUser, userLoggedIn } = useSiteState();
 
-  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
-  const profilePicture = `${backendURL}${userLoggedIn.profile_picture}`;
+  const profilePicture = userLoggedIn.profile_picture;
 
   const navigate = useNavigate();
 

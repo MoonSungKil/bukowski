@@ -60,7 +60,7 @@ func HandleCreateUser(ctx *gin.Context){
 		return
 	}
 	
-	defaultProfilePicture := "/uploads/profile_pictures/user_placeholder.webp"
+	defaultProfilePicture := "https://res.cloudinary.com/dscuqiqmz/image/upload/v1739616434/bukowski_profile_picture_images/profile_placeholder.jpg"
 
 	newUser := model.User{
 		Username: userBody.Username,
@@ -388,6 +388,89 @@ func HandleUpdateUserPassword(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"success":true, "message": "Password Updated"})
 }
 
+func HandleSendResetUserPasswordLink(ctx *gin.Context) {
+	var email types.EmailRequest
+
+	err := ctx.ShouldBindJSON(&email)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email format"})
+		return
+	}
+
+	resetToken, err := utils.GenerateResetToken(email.Email)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	resetLink := "http://localhost:3000/reset-password?token=" + resetToken
+
+	_, err = utils.SendRestPasswordLink(email.Email, resetLink)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Reset Link Sent to Email"})
+}
+
+func HandleResetPassword(ctx *gin.Context) {
+	token := ctx.Query("token")
+	if token == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Token string not present"})
+		return
+	}
+
+	email, err := utils.ValidateResetToken(token)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var passwordBody types.RestPassword
+	if err = ctx.ShouldBindJSON(&passwordBody); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid password format"})
+		return
+	}
+
+	if len(passwordBody.NewPassword) < 8 || len(passwordBody.NewPassword) > 16 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Password needs to be between 8 and 16 characters"})
+		return
+	}
+
+	if passwordBody.NewPassword != passwordBody.ConfirmNewPassword {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Password do not match"})
+		return
+	}
+
+	hashedPassword, err := utils.HashPassword(passwordBody.NewPassword)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	var user model.User
+	result := database.DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	user.Password = hashedPassword
+	result = database.DB.Save(&user)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Password successfully reseted"})
+}
+
 
 func Test(ctx *gin.Context) {
 	user, ok := ctx.Get("user") 
@@ -463,31 +546,51 @@ func HandleUpdateUserProfilePicture(ctx *gin.Context) {
 		return
 	}
 	
-	uploadDir := "../uploads/profile_pictures"
-	filePath, err := utils.UploadImage(ctx, uploadDir)
+	// uploadDir := "../uploads/profile_pictures"
+	// filePath, err := utils.UploadImage(ctx, uploadDir)
+	// if err != nil {
+	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 	return
+	// }
+
+	file, err := ctx.FormFile("file")
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to retrive image from form"})
+		return
+	}
+	fileContent, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrive image from form"})
+		return
+	}
+	defer fileContent.Close()
+
+	folderName := "bukowski_profile_picture_images"
+	pathUrl, err := utils.UploadImageToCloudinary(folderName,fileContent)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Unable to retrive image from form"})
 		return
 	}
 
 	oldProfilePicture := userToChangeProfilePicture.ProfilePicture
+	oldPublicID := utils.ExtractPublicID(oldProfilePicture) 
 
 	// Updating user's profile picture in the database (the path)
-	userToChangeProfilePicture.ProfilePicture = filePath
+	userToChangeProfilePicture.ProfilePicture = pathUrl
 	if err := database.DB.Save(&userToChangeProfilePicture).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update profile picture"})
 		return
 	}
 	
-	if oldProfilePicture != "/uploads/profile_pictures/user_placeholder.webp" {
-		err = os.Remove(".." + oldProfilePicture)
+	if oldPublicID != "bukowski_profile_picture_images/profile_placeholder" {
+		_, err := utils.DeleteImage(oldPublicID)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete previous image"})
-			return
+			ctx.JSON(http.StatusInternalServerError,gin.H{"error": "Unable to delete old draft Image"})
+				return
 		}
 	}
 	
-	ctx.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "filePath": filePath})
+	ctx.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully", "filePath": pathUrl})
 }
 
 func HandleDeleteAuthorizationCookie(ctx *gin.Context) {

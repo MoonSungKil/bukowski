@@ -2,10 +2,9 @@ import React from "react";
 import "./CollectionItem.css";
 
 const CollectionItem = ({ tale, clickHandler }) => {
-  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
   const coverImage = tale.tale_image
     ? tale.tale_image
-    : `${backendURL}/uploads/tale_covers/cover_placeholder.jpg`;
+    : "https://res.cloudinary.com/dscuqiqmz/image/upload/v1739617686/bukowski_draft_images/tale_placeholder.jpg";
 
   return (
     <div onClick={clickHandler} className="collection_item_container">

@@ -18,8 +18,7 @@ const ProfileInfoBox = ({ setKeyword }) => {
   const inputRef = useRef();
   const [file, setFile] = useState(null);
 
-  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
-  const profilePicture = `${backendURL}${userLoggedIn.profile_picture}`;
+  const profilePicture = userLoggedIn.profile_picture;
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];

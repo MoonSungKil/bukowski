@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Compose.css";
 import { useSiteState } from "../../../context/SiteStateContext";
-import coverPhotoTest from "../../../assets/cover/cover_placeholder.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Compose = () => {
@@ -146,6 +145,8 @@ const Compose = () => {
 
   const [showPublishModal, setPublishModal] = useState(false);
 
+  const coverPlaceholderUrl =
+    "https://res.cloudinary.com/dscuqiqmz/image/upload/v1739617686/bukowski_draft_images/tale_placeholder.jpg";
   return (
     <div className="compose">
       <form className="compose_form">
@@ -162,7 +163,7 @@ const Compose = () => {
           <div className="compose_form_body_left">
             <div className="compose_image">
               <div className={`compose_image_preview`}>
-                <img src={imagePreview ? imagePreview : coverPhotoTest} alt="cover_image" />
+                <img src={imagePreview ? imagePreview : coverPlaceholderUrl} alt="cover_image" />
               </div>
               <div className="compose_image_buttons">
                 <div onClick={onChooseFile} className="compose_image_select_button">

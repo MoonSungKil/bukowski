@@ -1342,6 +1342,67 @@ export const SiteStateProvider = ({ children }) => {
     return false;
   };
 
+  const resetPassword = async (newPassword, confirmNewPassword, token) => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:8000/users/reset-password?token=${token}`,
+        {
+          new_password: newPassword,
+          confirm_new_password: confirmNewPassword,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const message = data.message;
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: message,
+          successState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_SUCCESS_MODAL",
+          payload: {
+            successMessage: [],
+            successState: false,
+          },
+        });
+      }, 2500);
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      const message = error.response.data.error;
+
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: message,
+          errorState: true,
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_ERROR_MODAL",
+          payload: {
+            errorMessage: [],
+            errorState: false,
+          },
+        });
+      }, 2500);
+    }
+
+    return false;
+  };
+
   // END USER CONTEXT
 
   return (
@@ -1364,6 +1425,7 @@ export const SiteStateProvider = ({ children }) => {
         updateUserProfilePicture,
         updateUserProfileInfo,
         updateProfilePassword,
+        resetPassword,
         registerUser,
         users: state.users,
         userLoggedIn: state.userLoggedIn,

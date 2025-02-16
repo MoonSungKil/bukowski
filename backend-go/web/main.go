@@ -33,6 +33,9 @@ func main() {
 
 	preventLoginGroup.POST("/users/register", handlers.HandleCreateUser)
 	preventLoginGroup.POST("/users/login", handlers.HandleLoginUser)
+	preventLoginGroup.POST("/users/request-password-reset", handlers.HandleSendResetUserPasswordLink)
+	preventLoginGroup.POST("/users/reset-password", handlers.HandleResetPassword)
+
 	requireAuthGroup.POST("/users/logout", handlers.HandleLogoutUser)
 	requireAuthGroup.GET("/users/", handlers.HandleGetAllUsers)
 	requireAuthGroup.GET("/users/:id", handlers.HandleGetSingleUser)
@@ -65,10 +68,11 @@ func main() {
 	requireAuthGroup.PUT("/tales/submit_rating/:id", handlers.HandleSubmitTaleRating)
 
 	router.GET("/tales/get_tales", handlers.HandleGetAllTalesWithoutAuth)
-	router.GET("/tales/get_tales/:id", handlers.HandleGetSingleTaleWithouthAuth)
+	router.GET("/tales/get_tales/:id", handlers.HandleGetSingleTaleWithouthAuth)	
 	router.GET("/tales/get_genres", handlers.HandleGetAllGenres)
 
 	router.POST("/newsletter/subscribe", handlers.HandleSubscribeToNewsletter)
+	
 
 	router.Run()
 }
