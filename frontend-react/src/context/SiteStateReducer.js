@@ -33,21 +33,24 @@ export const siteStateReducer = (state, action) => {
   const { type, payload } = action;
   switch (type) {
     case "OPEN_AUTH_MODAL_REGISTER":
-      console.log("OPEN_AUTH_MODAL_REGISTER");
       return {
         ...state,
         authModalType: payload.authModalType,
         authModalOpen: true,
       };
     case "OPEN_AUTH_MODAL_LOGIN":
-      console.log("OPEN_AUTH_MODAL_LOGIN");
+      return {
+        ...state,
+        authModalType: payload.authModalType,
+        authModalOpen: true,
+      };
+    case "OPEN_AUTH_MODAL_FORGOT_PASSWORD":
       return {
         ...state,
         authModalType: payload.authModalType,
         authModalOpen: true,
       };
     case "CLOSE_AUTH_MODAL":
-      console.log("OPEN_AUTH_MODAL_LOGIN");
       return {
         ...state,
         authModalOpen: false,
@@ -169,8 +172,6 @@ export const siteStateReducer = (state, action) => {
         singleTaleSelected: payload.singleTaleSelected,
       };
     case "PURCHASE_TALE":
-      console.log(payload.tale);
-      console.log(state.wishlist);
       const modifiedUser = { ...state.userLoggedIn, balance: payload.balance };
       localStorage.setItem("userLoggedIn", JSON.stringify(modifiedUser));
       localStorage.setItem("purchased", JSON.stringify([...state.purchased, payload.tale]));
@@ -252,7 +253,6 @@ export const siteStateReducer = (state, action) => {
       };
 
     case "UPDATE_PROFILE_INFO":
-      console.log([payload.key], payload.key);
       return {
         ...state,
         userLoggedIn: {
@@ -264,7 +264,6 @@ export const siteStateReducer = (state, action) => {
     // End User Reducers
 
     default:
-      console.log("default");
       return state;
   }
 };

@@ -19,7 +19,6 @@ const Compose = () => {
   const navigate = useNavigate();
 
   const { getSingleDraft } = useSiteState();
-  const backendURL = process.env.REACT_APP_BACKEND_URL || "http://localhost:8000";
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -129,11 +128,12 @@ const Compose = () => {
 
   const onDeleteDraft = async (e) => {
     e.preventDefault();
-
     if (tale_id) {
-      await deleteDraft(tale_id);
+      const successfullyDeleted = await deleteDraft(tale_id);
+      if (successfullyDeleted) {
+        setShowDeleteDraftModal(false);
+      }
     }
-
     navigate(`/profile/${userLoggedIn.id}`);
   };
 
@@ -144,6 +144,7 @@ const Compose = () => {
   };
 
   const [showPublishModal, setPublishModal] = useState(false);
+  const [showDeleteDraftModal, setShowDeleteDraftModal] = useState(false);
 
   const coverPlaceholderUrl =
     "https://res.cloudinary.com/dscuqiqmz/image/upload/v1739617686/bukowski_draft_images/tale_placeholder.jpg";
@@ -242,7 +243,11 @@ const Compose = () => {
               >
                 PUBLISH TALE
               </butto>
-              <button onClick={(e) => onDeleteDraft(e)} className="compose_delete">
+              <button
+                type="button"
+                onClick={() => setShowDeleteDraftModal(true)}
+                className="compose_delete"
+              >
                 DELETE DRAFT
               </button>
               <div
@@ -263,6 +268,27 @@ const Compose = () => {
                   </div>
                   <div
                     onClick={() => setPublishModal(false)}
+                    className="compose_publish_cancle_btn"
+                  >
+                    Cancel
+                  </div>
+                </div>
+              </div>
+              <div
+                className={`compose_delete_draft_box ${
+                  showDeleteDraftModal && "compose_delete_draft_box_display"
+                }`}
+              >
+                <p className="compose_delete_draft_box_text">
+                  By pressing "DELETE" the draft will be permanently deleted and action cannot be
+                  reversed.
+                </p>
+                <div className="compose_delete_draft_box_buttons">
+                  <div onClick={(e) => onDeleteDraft(e)} className="compose_delete_draft_btn">
+                    Delete
+                  </div>
+                  <div
+                    onClick={() => setShowDeleteDraftModal(false)}
                     className="compose_publish_cancle_btn"
                   >
                     Cancel

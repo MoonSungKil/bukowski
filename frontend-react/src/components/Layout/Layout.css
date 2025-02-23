@@ -4,7 +4,10 @@
 }
 
 .layout_main {
-  min-height: 100vh;
+  min-height: 60vh;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .layout_error {

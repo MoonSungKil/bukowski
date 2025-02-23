@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/moonsungkil/bukowski/database"
 	handlers "github.com/moonsungkil/bukowski/handlers"
@@ -52,6 +54,7 @@ func main() {
 	requireAuthGroup.PUT("/tales/update_draft/:draft_id", handlers.HandleUpdateDraft)
 	requireAuthGroup.DELETE("/tales/delete_draft/:draft_id", handlers.HandleDeleteDraft)
 	requireAuthGroup.POST("/tales/create_draft", handlers.HandleCreateDraft)
+	
 	requireAuthGroup.GET("/tales/get_all_published", handlers.HandleGetAllTalesPublishedByUserId)
 	requireAuthGroup.GET("/tales/get_single_draft/:id", handlers.HandleGetSingleDraft)
 	requireAuthGroup.GET("/tales/get_all_drafts", handlers.HandleGetAllDraftByUserId)
@@ -74,5 +77,5 @@ func main() {
 	router.POST("/newsletter/subscribe", handlers.HandleSubscribeToNewsletter)
 	
 
-	router.Run()
+	router.Run("0.0.0.0:" + os.Getenv("PORT"))
 }

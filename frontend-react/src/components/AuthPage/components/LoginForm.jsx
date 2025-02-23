@@ -3,7 +3,7 @@ import "./LoginForm.css";
 import { useSiteState } from "../../../context/SiteStateContext";
 
 const LoginForm = () => {
-  const { closeAuthModal, loginUser, errorState } = useSiteState();
+  const { closeAuthModal, loginUser, errorState, openAuthModalForgotPassword } = useSiteState();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +39,13 @@ const LoginForm = () => {
           className="login_form_element_input"
           type="password"
         />
+      </div>
+
+      <div
+        onClick={() => openAuthModalForgotPassword()}
+        className="login_form_forgot_password_text"
+      >
+        Forgto Password?
       </div>
       <button
         className={`login_form_element_button ${errorState && "login_form_element_button_error"}`}

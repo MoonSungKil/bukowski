@@ -84,6 +84,11 @@
   display: flex;
 }
 
+.list_preview_box_genres {
+  display: f;
+}
+
+
 @media (max-width: 2150px) {
   .list_tale_preview {
     grid-template-columns: 0.7fr 0.7fr 8fr;

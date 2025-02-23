@@ -11,6 +11,7 @@
   justify-content: flex-end;
   align-items: center;
   padding: 0 1rem 2rem 1rem;
+  z-index: 20;
 }
 
 .auth_modal_title > p {

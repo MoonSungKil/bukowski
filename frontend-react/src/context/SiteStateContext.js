@@ -34,6 +34,19 @@ export const SiteStateProvider = ({ children }) => {
     }
   };
 
+  const openAuthModalForgotPassword = () => {
+    try {
+      dispatch({
+        type: "OPEN_AUTH_MODAL_FORGOT_PASSWORD",
+        payload: {
+          authModalType: "forgot_password",
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const closeAuthModal = () => {
     try {
       dispatch({
@@ -108,48 +121,12 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
-
-      console.log(data);
+      triggerSuccessDispatch(message);
     } catch (error) {
       console.log(error.response.data);
 
       const message = error.response.data.error;
-
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      triggerErrorDispatch(message);
     }
   };
 
@@ -223,9 +200,7 @@ export const SiteStateProvider = ({ children }) => {
         withCredentials: true,
       });
       return { tale: data.tale, view: "purchased" };
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   // create tale
@@ -244,23 +219,7 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return data.tale;
     } catch (error) {
@@ -269,24 +228,7 @@ export const SiteStateProvider = ({ children }) => {
       const message = Array.isArray(error.response.data.error)
         ? error.response.data.error[0]
         : error.response.data.error;
-
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      triggerErrorDispatch(message);
 
       return false;
     }
@@ -313,23 +255,7 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return data.tale;
     } catch (error) {
@@ -338,24 +264,7 @@ export const SiteStateProvider = ({ children }) => {
       const message = Array.isArray(error.response.data.error)
         ? error.response.data.error[0]
         : error.response.data.error;
-
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      triggerErrorDispatch(message);
 
       return false;
     }
@@ -377,27 +286,12 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return data.draft;
     } catch (error) {
-      console.log(error);
+      const message = error.response.data.error;
+      triggerErrorDispatch(message);
     }
   };
 
@@ -423,27 +317,12 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return data.draft;
     } catch (error) {
-      console.log(error);
+      const message = error.response.data.error;
+      triggerErrorDispatch(message);
     }
   };
 
@@ -463,27 +342,12 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return data.draft;
     } catch (error) {
-      console.log(error);
+      const message = error.response.data.error;
+      triggerErrorDispatch(message);
     }
   };
 
@@ -506,9 +370,7 @@ export const SiteStateProvider = ({ children }) => {
       return data.draft;
 
       // localStorage.setItem("singleDraftSelected", JSON.stringify(draft));
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   // get all the purhcased tales for a logged user
@@ -576,48 +438,16 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return true;
     } catch (error) {
       console.log(error.response.data);
       const message = error.response.data.error;
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
+      triggerErrorDispatch(message);
 
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      return false;
     }
-
-    return false;
   };
 
   //remove tale to wishlist
@@ -639,48 +469,15 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return true;
     } catch (error) {
-      console.log(error.response.data);
       const message = error.response.data.error;
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
+      triggerErrorDispatch(message);
 
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      return false;
     }
-
-    return false;
   };
 
   // check if the selected tale is purchased
@@ -715,48 +512,16 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return true;
     } catch (error) {
       console.log(error.response.data);
       const message = error.response.data.error;
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
+      triggerErrorDispatch(message);
 
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      return false;
     }
-
-    return false;
   };
 
   const archiveTale = async (tale_id) => {
@@ -767,46 +532,15 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return true;
     } catch (error) {
       const message = error.response.data.error;
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
+      triggerErrorDispatch(message);
 
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      return false;
     }
-    return false;
   };
 
   const activateTale = async (tale_id) => {
@@ -821,46 +555,15 @@ export const SiteStateProvider = ({ children }) => {
       );
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return true;
     } catch (error) {
       const message = error.response.data.error;
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
+      triggerErrorDispatch(message);
 
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      return false;
     }
-    return false;
   };
 
   //check if tale is published
@@ -949,46 +652,15 @@ export const SiteStateProvider = ({ children }) => {
       );
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return true;
     } catch (error) {
       const message = error.response.data.error;
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
+      triggerErrorDispatch(message);
 
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      return false;
     }
-    return false;
   };
 
   // END TALE CONTEXT
@@ -1042,24 +714,7 @@ export const SiteStateProvider = ({ children }) => {
       const message = Array.isArray(error.response.data.error)
         ? error.response.data.error[0]
         : error.response.data.error;
-
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      triggerErrorDispatch(message);
 
       return false;
     }
@@ -1091,29 +746,11 @@ export const SiteStateProvider = ({ children }) => {
 
       return true;
     } catch (error) {
-      console.log(error.response.data);
-
       const message = Array.isArray(error.response.data.error)
         ? error.response.data.error[0]
         : error.response.data.error;
 
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      triggerErrorDispatch(message);
 
       return false;
     }
@@ -1172,43 +809,10 @@ export const SiteStateProvider = ({ children }) => {
       localStorage.setItem("userLoggedIn", JSON.stringify(userInLocalStorage));
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
     } catch (error) {
       const message = error.response.data.error;
-
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
     }
   };
 
@@ -1236,23 +840,7 @@ export const SiteStateProvider = ({ children }) => {
       });
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       let userInLocalStorage = localStorage.getItem("userLoggedIn");
       userInLocalStorage = JSON.parse(userInLocalStorage);
@@ -1261,25 +849,7 @@ export const SiteStateProvider = ({ children }) => {
       return true;
     } catch (error) {
       const message = error.response.data.error;
-      console.log(error);
-
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      triggerErrorDispatch(message);
     }
     return false;
   };
@@ -1298,45 +868,40 @@ export const SiteStateProvider = ({ children }) => {
       );
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return true;
     } catch (error) {
       const message = error.response.data.error;
+      triggerErrorDispatch(message);
+    }
+    return false;
+  };
 
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
+  const sendResetPasswordLink = async (email) => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:8000/users/request-password-reset`,
+        {
+          email: email,
         },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
+        {
+          headers: {
+            "Content-Type": "application/json",
           },
-        });
-      }, 2500);
+          withCredentials: true,
+        }
+      );
+
+      const message = data.message;
+      triggerSuccessDispatch(message);
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      const message = error.response.data.error;
+
+      triggerErrorDispatch(message);
     }
 
     return false;
@@ -1354,56 +919,66 @@ export const SiteStateProvider = ({ children }) => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         }
       );
 
       const message = data.message;
-      dispatch({
-        type: "SET_SUCCESS_MODAL",
-        payload: {
-          successMessage: message,
-          successState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_SUCCESS_MODAL",
-          payload: {
-            successMessage: [],
-            successState: false,
-          },
-        });
-      }, 2500);
+      triggerSuccessDispatch(message);
 
       return true;
     } catch (error) {
       console.log(error);
       const message = error.response.data.error;
-
-      dispatch({
-        type: "SET_ERROR_MODAL",
-        payload: {
-          errorMessage: message,
-          errorState: true,
-        },
-      });
-
-      setTimeout(() => {
-        dispatch({
-          type: "SET_ERROR_MODAL",
-          payload: {
-            errorMessage: [],
-            errorState: false,
-          },
-        });
-      }, 2500);
+      triggerErrorDispatch(message);
     }
 
     return false;
   };
 
   // END USER CONTEXT
+
+  // UTILS
+
+  const triggerSuccessDispatch = (message) => {
+    dispatch({
+      type: "SET_SUCCESS_MODAL",
+      payload: {
+        successMessage: message,
+        successState: true,
+      },
+    });
+
+    setTimeout(() => {
+      dispatch({
+        type: "SET_SUCCESS_MODAL",
+        payload: {
+          successMessage: [],
+          successState: false,
+        },
+      });
+    }, 2500);
+  };
+
+  const triggerErrorDispatch = (message) => {
+    dispatch({
+      type: "SET_ERROR_MODAL",
+      payload: {
+        errorMessage: message,
+        errorState: true,
+      },
+    });
+
+    setTimeout(() => {
+      dispatch({
+        type: "SET_ERROR_MODAL",
+        payload: {
+          errorMessage: [],
+          errorState: false,
+        },
+      });
+    }, 2500);
+  };
 
   return (
     <SiteStateContext.Provider
@@ -1412,6 +987,7 @@ export const SiteStateProvider = ({ children }) => {
         authModalOpen: state.authModalOpen,
         openAuthModalRegister,
         openAuthModalLogin,
+        openAuthModalForgotPassword,
         closeAuthModal,
         // error values
         errorMessage: state.errorMessage,
@@ -1426,6 +1002,7 @@ export const SiteStateProvider = ({ children }) => {
         updateUserProfileInfo,
         updateProfilePassword,
         resetPassword,
+        sendResetPasswordLink,
         registerUser,
         users: state.users,
         userLoggedIn: state.userLoggedIn,

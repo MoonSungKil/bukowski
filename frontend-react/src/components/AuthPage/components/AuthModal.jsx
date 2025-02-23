@@ -3,6 +3,7 @@ import "./AuthModal.css";
 import { useSiteState } from "../../../context/SiteStateContext";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
+import SendResetPasswordForm from "./SendResetPasswordForm";
 
 const AuthModal = () => {
   const { authModalType, errorState } = useSiteState();
@@ -13,7 +14,7 @@ const AuthModal = () => {
       className={`auth_modal ${errorState && "autho_modal_error"}`}
     >
       <div className="auth_modal_title">
-        <p>{authModalType}</p>
+        <p>{authModalType.replace("_", " ")}</p>
         <svg
           className="auth_modal_svg"
           viewBox="0 0 1440 480"
@@ -27,7 +28,13 @@ const AuthModal = () => {
         </svg>
       </div>
       <div className={`auth_modal_form_container ${errorState && "auth_modal_form_error"}`}>
-        {authModalType === "register" ? <RegisterForm /> : <LoginForm />}
+        {authModalType === "register" ? (
+          <RegisterForm />
+        ) : authModalType === "login" ? (
+          <LoginForm />
+        ) : (
+          <SendResetPasswordForm />
+        )}
       </div>
     </div>
   );
