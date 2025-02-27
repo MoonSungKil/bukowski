@@ -45,9 +45,6 @@ const TalePreview = ({ tale }) => {
       >
         <div className="tale_preview_main">
           <img className="tale_preview_image" src={taleImage} alt="tale_image" />
-          <div className="tale_preview_add_cart">
-            <i className="fa-solid fa-cart-shopping"></i>
-          </div>
         </div>
         <div className="tale_preview_title_container">
           <p className="tale_preview_title">

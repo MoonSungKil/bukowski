@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	"github.com/gin-gonic/gin"
 	"github.com/moonsungkil/bukowski/database"
 	handlers "github.com/moonsungkil/bukowski/handlers"
@@ -41,7 +39,7 @@ func main() {
 	requireAuthGroup.POST("/users/logout", handlers.HandleLogoutUser)
 	requireAuthGroup.GET("/users/", handlers.HandleGetAllUsers)
 	requireAuthGroup.GET("/users/:id", handlers.HandleGetSingleUser)
-	requireAuthGroup.DELETE("/users/soft_delete/:id", handlers.HandleSoftDeleteSingleUser)
+	requireAuthGroup.DELETE("/users/soft_delete", handlers.HandleSoftDeleteSingleUser)
 	requireAuthGroup.DELETE("/users/permanent_delete/:id", handlers.HandlePermanentDeleteSingleUser)
 	requireAuthGroup.PUT("/users/update_info/:id",handlers.HandleUpdateUserInformation)
 	requireAuthGroup.PUT("/users/update_profile_picture/:id",handlers.HandleUpdateUserProfilePicture)
@@ -75,7 +73,6 @@ func main() {
 	router.GET("/tales/get_genres", handlers.HandleGetAllGenres)
 
 	router.POST("/newsletter/subscribe", handlers.HandleSubscribeToNewsletter)
-	
 
-	router.Run("0.0.0.0:" + os.Getenv("PORT"))
+	router.Run()
 }

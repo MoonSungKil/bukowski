@@ -111,7 +111,7 @@ const SinglePageTop = ({ tale, view }) => {
                   }}
                   className="rating_digit"
                 >
-                  {tale.rating}
+                  {tale.rating.toFixed(1)}
                 </div>
               )}
               {starRatings.length > 0 ? (

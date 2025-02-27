@@ -1,0 +1,29 @@
+.collection_filter_buttons {
+  width: 100%;
+  display: flex;
+}
+
+.collection_filter_buttons_list {
+  display: flex;
+  gap: 1rem;
+  list-style-type: none;
+  padding: 0;
+  color: gray;
+}
+
+.collection_filter_buttons_list_item {
+  border-radius: 0.4rem;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+}
+
+.collection_filter_buttons_list_item:hover {
+  background-color: var(--primary-background);
+
+  color: var(--third-color);
+}
+
+.collection_filter_buttons_list_item_selected {
+  background-color: var(--primary-background);
+  color: var(--third-color);
+}

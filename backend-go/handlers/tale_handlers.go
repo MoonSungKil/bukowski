@@ -145,6 +145,19 @@ func HandleCreateTale(ctx *gin.Context) {
 		return
 	}
 
+	timeLimit := time.Now().Add(-24 * time.Hour) // this means 24h ago
+	var talesAlreadyPublished []model.Tale
+	result := database.DB.Where("user_id = ? && created_at >= ? ", userID, timeLimit).Preload("Genres").Unscoped().Find(&talesAlreadyPublished)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	if len(talesAlreadyPublished) > 2 {
+		ctx.JSON(http.StatusTooManyRequests, gin.H{"error": "Too many tales created in the last 24h"})
+		return
+	}
+
 	//Handle Upload File
 	file, err := ctx.FormFile("file")
 	var pathUrl string 
@@ -340,15 +353,19 @@ func HandleCreateDraft(ctx *gin.Context) {
 		}
 	}
 
-	// uploadDir := "../uploads/draft_covers"
-	// var filePath string
-	// _, err = ctx.FormFile("file")
-	// if err == nil {
-	// 	filePath, err = utils.UploadImage(ctx, uploadDir);
-	// 	if err != nil {
-	// 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload Image", "details": err.Error()})
-	// 	}
-	// }
+	timeLimit := time.Now().Add(-24 * time.Hour) // this means 24h ago
+	var draftsAlreadyCreated []model.Draft
+	result := database.DB.Where("user_id = ? && created_at >= ? ", userID, timeLimit).Preload("Genres").Unscoped().Find(&draftsAlreadyCreated)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	if len(draftsAlreadyCreated) > 2 {
+		ctx.JSON(http.StatusTooManyRequests, gin.H{"error": "Too many drafts created in the last 24h"})
+		return
+	}
+
 
 	folderName := "bukowski_draft_images"
 	var filePath string

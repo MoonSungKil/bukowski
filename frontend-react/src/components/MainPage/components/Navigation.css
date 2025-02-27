@@ -3,6 +3,8 @@
   flex-direction: column;
   gap: 0.5rem;
   color: var(--third-color);
+  width: 100%;
+  transform: translateY(10%);
 }
 
 .navigation_top_section {
@@ -48,19 +50,16 @@
   align-items: center;
 }
 
-.navigation_genres_field {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  padding: 0;
-  gap: 1rem;
+.navigation_text {
+  font-size: 1rem;
+  padding: 1rem 0rem;
+  color: rgb(150, 150, 150);
 }
 
-.navigation_genres_item {
-  list-style: none;
-  padding: 0.3rem 0.5rem;
-  border-radius: 3px;
-  transition: all 0.2s ease;
+.navigation_text_link {
+  font-size: 1.1rem;
+  color: var(--secondary-color);
+  text-decoration: none;
 }
 
 .navigation_genres_item:hover {

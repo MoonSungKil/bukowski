@@ -1,23 +1,23 @@
 .tale_preview_container {
   position: relative;
+  aspect-ratio: 1/1;
 }
 
 .tale_preview {
   position: relative;
   height: 18rem;
   width: 17rem;
-  background: linear-gradient(var(--secondary-background), var(--secondary-background));
-  border-radius: 1rem;
+  background: linear-gradient(var(--secondary-background), var(--primary-background));
+  border-radius: 0.3rem;
   display: grid;
   grid-template-rows: 4fr 2fr;
   cursor: pointer;
   transition: all 0.3s ease;
   padding: 1rem;
-  box-shadow: 1px 1px 5px black;
 }
 
 .tale_preview:hover {
-  box-shadow: 0px 0px 3px 3px black;
+  box-shadow: 0px 0px 3px black;
   transform: scale(1.1);
 }
 
@@ -33,14 +33,6 @@
   object-fit: cover;
   border-radius: inherit;
   box-shadow: 0px 0px 3px black;
-}
-
-.tale_preview_add_cart {
-  position: absolute;
-  top: 1.5rem;
-  left: 2rem;
-  font-size: 1.5rem;
-  color: var(--third-color);
 }
 
 .tale_preview_title_container {

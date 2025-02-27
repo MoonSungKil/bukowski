@@ -1,6 +1,7 @@
 import "./Navigation.css";
 import { useSiteState } from "../../../context/SiteStateContext";
 import { ProfileIcon } from "./ProfileIcon";
+import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import QuickFilteredTale from "./QuickFilteredTale";
 
@@ -34,6 +35,15 @@ const Navigation = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [keyword]);
+
+  const handleScroll = () => {
+    setTimeout(() => {
+      const element = document.getElementById("main_page_body_container");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 200);
+  };
 
   return (
     <div className="navigation_container">
@@ -73,22 +83,13 @@ const Navigation = () => {
           )}
         </div>
       </div>
-      <div className="navigation_bottom_section">
-        <ul className="navigation_genres_field">
-          <li className="navigation_genres_item">Horror</li>
-          <li className="navigation_genres_item">Romance</li>
-          <li className="navigation_genres_item">Poetry</li>
-          <li className="navigation_genres_item">Fiction</li>
-          <li className="navigation_genres_item">Fantasy</li>
-          <li className="navigation_genres_item">Short Story</li>
-          <li className="navigation_genres_item">Adventure</li>
-          <li className="navigation_genres_item">Biography</li>
-          <li className="navigation_genres_item">History</li>
-          <li className="navigation_genres_item">Realism</li>
-          <li className="navigation_genres_item">Philosophy</li>
-          <li className="navigation_genres_item">Psychology</li>
-          <li className="navigation_genres_item">More</li>
-        </ul>
+      <div className="navigation_text">
+        Visit our{" "}
+        <Link to={"/"} onClick={handleScroll} className="navigation_text_link">
+          library.
+        </Link>{" "}
+        To explore a new stories, browse our curated selection of tales or sing up to craft your own
+        adventures.
       </div>
     </div>
   );

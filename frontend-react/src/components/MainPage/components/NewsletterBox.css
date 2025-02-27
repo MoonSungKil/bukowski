@@ -93,6 +93,13 @@
   background-color: rgba(65, 37, 1, 0.486);
 }
 
+@media (max-width: 1800px) {
+  .newsletter_container {
+    width: 80%;
+    height: 50%;
+  }
+}
+
 /* 
 .newsletter_container {
   position: relative;

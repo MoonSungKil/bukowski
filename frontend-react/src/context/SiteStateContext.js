@@ -8,6 +8,9 @@ const SiteStateContext = createContext();
 export const SiteStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer(siteStateReducer, initialState);
 
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  // const backendUrl = "http://localhost:8000";
+
   const openAuthModalRegister = () => {
     try {
       dispatch({
@@ -116,7 +119,7 @@ export const SiteStateProvider = ({ children }) => {
   // get all tales to show for everyone (unauthorized)
   const SubscribeNewsletter = async (email) => {
     try {
-      const { data } = await axios.post("http://localhost:8000/newsletter/subscribe", {
+      const { data } = await axios.post(`${backendUrl}/newsletter/subscribe`, {
         email,
       });
 
@@ -132,15 +135,24 @@ export const SiteStateProvider = ({ children }) => {
 
   // get all tales to show for everyone (unauthorized)
   const getAllTales = async () => {
-    const { data } = await axios.get("http://localhost:8000/tales/get_tales");
-
     try {
-      dispatch({
-        type: "GET_ALL_TALES",
-        payload: {
-          tales: data.tales,
-        },
-      });
+      const { data } = await axios.get(`${backendUrl}/tales/get_tales`);
+
+      if (data.tales != null) {
+        dispatch({
+          type: "GET_ALL_TALES",
+          payload: {
+            tales: data.tales,
+          },
+        });
+      } else {
+        dispatch({
+          type: "GET_ALL_TALES",
+          payload: {
+            tales: [],
+          },
+        });
+      }
 
       localStorage.setItem("tales", JSON.stringify(data.tales));
     } catch (error) {
@@ -170,7 +182,7 @@ export const SiteStateProvider = ({ children }) => {
   // select tale to show for single page view
   const getSingleTale = async (id) => {
     try {
-      const { data } = await axios.get(`http://localhost:8000/tales/get_tales/${id}`);
+      const { data } = await axios.get(`${backendUrl}/tales/get_tales/${id}`);
       return { tale: data.tale, view: "unauthorized" };
     } catch (error) {
       console.log(error);
@@ -181,7 +193,7 @@ export const SiteStateProvider = ({ children }) => {
   //  get single tale published
   const getSingleTalePublished = async (id) => {
     try {
-      const { data } = await axios.get(`http://localhost:8000/tales/published/${id}`, {
+      const { data } = await axios.get(`${backendUrl}/tales/published/${id}`, {
         withCredentials: true,
       });
 
@@ -196,7 +208,7 @@ export const SiteStateProvider = ({ children }) => {
   // get single tale purchased
   const getSingleTalePurchased = async (id) => {
     try {
-      const { data } = await axios.get(`http://localhost:8000/tales/purchased/${id}`, {
+      const { data } = await axios.get(`${backendUrl}/tales/purchased/${id}`, {
         withCredentials: true,
       });
       return { tale: data.tale, view: "purchased" };
@@ -206,7 +218,7 @@ export const SiteStateProvider = ({ children }) => {
   // create tale
   const createTale = async (formData) => {
     try {
-      const { data } = await axios.post("http://localhost:8000/tales/create", formData, {
+      const { data } = await axios.post(`${backendUrl}/tales/create`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -238,7 +250,7 @@ export const SiteStateProvider = ({ children }) => {
   const convertDraftToTale = async (formData, draftID) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:8000/tales/convert_draft_to_tale/${draftID}`,
+        `${backendUrl}/tales/convert_draft_to_tale/${draftID}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -273,7 +285,7 @@ export const SiteStateProvider = ({ children }) => {
   // create draft
   const createDraft = async (formData) => {
     try {
-      const { data } = await axios.post("http://localhost:8000/tales/create_draft", formData, {
+      const { data } = await axios.post(`${backendUrl}/tales/create_draft`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -298,14 +310,10 @@ export const SiteStateProvider = ({ children }) => {
   //Update draft
   const updateDraft = async (formData, draftID) => {
     try {
-      const { data } = await axios.put(
-        `http://localhost:8000/tales/update_draft/${draftID}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.put(`${backendUrl}/tales/update_draft/${draftID}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
       console.log(data.message);
 
       dispatch({
@@ -329,7 +337,7 @@ export const SiteStateProvider = ({ children }) => {
   //Delete draft
   const deleteDraft = async (draftID) => {
     try {
-      const { data } = await axios.delete(`http://localhost:8000/tales/delete_draft/${draftID}`, {
+      const { data } = await axios.delete(`${backendUrl}/tales/delete_draft/${draftID}`, {
         withCredentials: true,
       });
 
@@ -352,7 +360,7 @@ export const SiteStateProvider = ({ children }) => {
   };
 
   const getSingleDraft = async (id) => {
-    const { data } = await axios.get(`http://localhost:8000/tales/get_single_draft/${id}`, {
+    const { data } = await axios.get(`${backendUrl}/tales/get_single_draft/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -376,13 +384,10 @@ export const SiteStateProvider = ({ children }) => {
   // get all the purhcased tales for a logged user
   const getAllPurchasedTales = async () => {
     try {
-      const { data: purchasedTales } = await axios.get(
-        "http://localhost:8000/tales/get_all_purchased",
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const { data: purchasedTales } = await axios.get(`${backendUrl}/tales/get_all_purchased`, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
 
       localStorage.setItem("purchased", JSON.stringify(purchasedTales));
 
@@ -400,7 +405,7 @@ export const SiteStateProvider = ({ children }) => {
   // get all the purhcased tales for a logged user
   const getAllWishlistedTales = async () => {
     try {
-      const { data } = await axios.get("http://localhost:8000/tales/get_all_wishlisted", {
+      const { data } = await axios.get(`${backendUrl}/tales/get_all_wishlisted`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
@@ -421,14 +426,10 @@ export const SiteStateProvider = ({ children }) => {
   //add tale to wishlist
   const addTaleToWishlist = async (tale_id) => {
     try {
-      const { data } = await axios.post(
-        `http://localhost:8000/tales/add_to_wishlist/${tale_id}`,
-        null,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.post(`${backendUrl}/tales/add_to_wishlist/${tale_id}`, null, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
 
       dispatch({
         type: "ADD_TALE_TO_WISHLIST",
@@ -454,7 +455,7 @@ export const SiteStateProvider = ({ children }) => {
   const removeTaleFromWishlist = async (tale_id) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:8000/tales/delete_tale_from_wishlist/${tale_id}`,
+        `${backendUrl}/tales/delete_tale_from_wishlist/${tale_id}`,
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -496,7 +497,7 @@ export const SiteStateProvider = ({ children }) => {
   //purchase tale
   const purchaseTaleById = async (tale_id) => {
     try {
-      const { data } = await axios.post(`http://localhost:8000/tales/purchase/${tale_id}`, null, {
+      const { data } = await axios.post(`${backendUrl}/tales/purchase/${tale_id}`, null, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
@@ -526,7 +527,7 @@ export const SiteStateProvider = ({ children }) => {
 
   const archiveTale = async (tale_id) => {
     try {
-      const { data } = await axios.delete(`http://localhost:8000/tales/soft_delete/${tale_id}`, {
+      const { data } = await axios.delete(`${backendUrl}/tales/soft_delete/${tale_id}`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
@@ -545,14 +546,10 @@ export const SiteStateProvider = ({ children }) => {
 
   const activateTale = async (tale_id) => {
     try {
-      const { data } = await axios.put(
-        `http://localhost:8000/tales/activate_tale/${tale_id}`,
-        null,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.put(`${backendUrl}/tales/activate_tale/${tale_id}`, null, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
 
       const message = data.message;
       triggerSuccessDispatch(message);
@@ -589,13 +586,10 @@ export const SiteStateProvider = ({ children }) => {
   // get all the published tales for a logged user
   const getAllPublishedTales = async () => {
     try {
-      const { data: publishedTales } = await axios.get(
-        "http://localhost:8000/tales/get_all_published",
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const { data: publishedTales } = await axios.get(`${backendUrl}/tales/get_all_published`, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
 
       localStorage.setItem("published", JSON.stringify(publishedTales));
 
@@ -612,7 +606,7 @@ export const SiteStateProvider = ({ children }) => {
   // get all the purhcased tales for a logged user
   const getAllDraftedTales = async () => {
     try {
-      const { data } = await axios.get("http://localhost:8000/tales/get_all_drafts", {
+      const { data } = await axios.get(`${backendUrl}/tales/get_all_drafts`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
@@ -632,7 +626,7 @@ export const SiteStateProvider = ({ children }) => {
 
   const getAllGenres = async () => {
     try {
-      const { data } = await axios.get("http://localhost:8000/tales/get_genres");
+      const { data } = await axios.get(`${backendUrl}/tales/get_genres`);
 
       return data.genres;
     } catch (error) {
@@ -643,7 +637,7 @@ export const SiteStateProvider = ({ children }) => {
   const submitRating = async (tale_id, rating) => {
     try {
       const { data } = await axios.put(
-        `http://localhost:8000/tales/submit_rating/${tale_id}`,
+        `${backendUrl}/tales/submit_rating/${tale_id}`,
         { rating },
         {
           headers: { "Content-Type": "application/json" },
@@ -683,7 +677,7 @@ export const SiteStateProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:8000/users/login",
+        `${backendUrl}/users/login`,
         {
           username: email,
           password,
@@ -693,6 +687,8 @@ export const SiteStateProvider = ({ children }) => {
           withCredentials: true,
         }
       );
+
+      console.log(data);
 
       localStorage.setItem("userLoggedIn", JSON.stringify(data.user));
       dispatch({
@@ -723,7 +719,7 @@ export const SiteStateProvider = ({ children }) => {
   const registerUser = async (username, email, password, confirmPassword) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:8000/users/register",
+        `${backendUrl}/users/register`,
         {
           username,
           email,
@@ -759,11 +755,7 @@ export const SiteStateProvider = ({ children }) => {
   // logout user
   const logoutUser = async () => {
     try {
-      const { data } = axios.post(
-        "http://localhost:8000/users/logout",
-        {},
-        { withCredentials: true }
-      );
+      const { data } = axios.post(`${backendUrl}/users/logout`, {}, { withCredentials: true });
       console.log(data);
 
       localStorage.removeItem("userLoggedIn");
@@ -780,13 +772,35 @@ export const SiteStateProvider = ({ children }) => {
     }
   };
 
+  // delete user
+  const deleteUserAccount = async () => {
+    try {
+      const { data } = await axios.delete(`${backendUrl}/users/soft_delete`, {
+        withCredentials: true,
+      });
+
+      if (data.success) {
+        localStorage.removeItem("userLoggedIn");
+        localStorage.removeItem("purchased");
+        localStorage.removeItem("drafts");
+        localStorage.removeItem("published");
+        localStorage.removeItem("wishlist");
+      }
+
+      return data.success;
+    } catch (error) {
+      const message = error.response.data.error;
+      triggerSuccessDispatch(message);
+    }
+  };
+
   const updateUserProfilePicture = async (file, id) => {
     const formData = new FormData();
     formData.append("file", file);
 
     try {
       const { data } = await axios.put(
-        `http://localhost:8000/users/update_profile_picture/${id}`,
+        `${backendUrl}/users/update_profile_picture/${id}`,
         formData,
         {
           headers: {
@@ -818,16 +832,12 @@ export const SiteStateProvider = ({ children }) => {
 
   const updateUserProfileInfo = async (id, KeyAndValue) => {
     try {
-      const { data } = await axios.put(
-        `http://localhost:8000/users/update_info/${id}`,
-        KeyAndValue,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.put(`${backendUrl}/users/update_info/${id}`, KeyAndValue, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
       const key = Object.keys(KeyAndValue);
 
@@ -856,16 +866,12 @@ export const SiteStateProvider = ({ children }) => {
 
   const updateProfilePassword = async (id, passwordData) => {
     try {
-      const { data } = await axios.put(
-        `http://localhost:8000/users/update_password/${id}`,
-        passwordData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.put(`${backendUrl}/users/update_password/${id}`, passwordData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
       const message = data.message;
       triggerSuccessDispatch(message);
@@ -881,7 +887,7 @@ export const SiteStateProvider = ({ children }) => {
   const sendResetPasswordLink = async (email) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:8000/users/request-password-reset`,
+        `${backendUrl}/users/request-password-reset`,
         {
           email: email,
         },
@@ -910,7 +916,7 @@ export const SiteStateProvider = ({ children }) => {
   const resetPassword = async (newPassword, confirmNewPassword, token) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:8000/users/reset-password?token=${token}`,
+        `${backendUrl}/users/reset-password?token=${token}`,
         {
           new_password: newPassword,
           confirm_new_password: confirmNewPassword,
@@ -1004,6 +1010,7 @@ export const SiteStateProvider = ({ children }) => {
         resetPassword,
         sendResetPasswordLink,
         registerUser,
+        deleteUserAccount,
         users: state.users,
         userLoggedIn: state.userLoggedIn,
         // end user values

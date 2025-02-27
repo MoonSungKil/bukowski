@@ -28,7 +28,7 @@ const MainPageBody = () => {
   }, [keyword, selectedGenres]);
 
   return (
-    <div className="main_page_body_container">
+    <div id="main_page_body_container" className="main_page_body_container">
       <div className="main_page_body">
         <FilterSearch
           keyword={keyword}
@@ -52,7 +52,7 @@ const MainPageBody = () => {
           </div>
         ) : (
           <div className="main_page_body_collection_list">
-            {filteredTales.length > 0 ? (
+            {filteredTales.length > 0 && filteredTales ? (
               filteredTales.map((tale) => <ListTalePreview key={tale.id} tale={tale} />)
             ) : (
               <div className="main_page_body_empty">No Tales Found</div>

@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"net/mail"
 	"net/smtp"
 	"os"
@@ -55,6 +56,21 @@ func CheckIfAuthorizedAndGetUserFromReq(ctx *gin.Context) (model.User, error) {
 func DeleteAssociatedGenres(taleID uint) error {
 	result := database.DB.Where("tale_id = ?", taleID).Delete(&model.TaleGenre{})
 	return result.Error
+}
+
+
+func GetCookieDomain() string {
+	if os.Getenv("ENV") == "production" {
+		return "backend-bukowski-production.up.railway.app"
+	}
+	return ""
+}
+
+func SameSiteType() http.SameSite {
+	if os.Getenv("ENV") == "production" {
+		return http.SameSiteNoneMode
+	}
+	return http.SameSiteLaxMode
 }
 
 func UploadImage(ctx *gin.Context, uploadDir string) (string, error) {
@@ -221,3 +237,4 @@ bukowskiEmail := os.Getenv("NL_EMAIL")
 
 	return true, nil
 }
+

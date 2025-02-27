@@ -98,8 +98,17 @@ func HandleCreateUser(ctx *gin.Context){
 		return
 	}
 
-	ctx.SetSameSite(http.SameSiteLaxMode)
-	ctx.SetCookie("Authorization", tokenString, 3600 * 25 * 30, "", "", false, true)
+	http.SetCookie(ctx.Writer, &http.Cookie{
+		Name:     "Authorization",
+		Value:    tokenString,
+		Path:     "/",
+		Domain:   utils.GetCookieDomain(),
+		Expires:  time.Now().Add(30 * 24 * time.Hour), 
+		HttpOnly: true,
+		Secure:   os.Getenv("ENV") == "production",
+		SameSite: utils.SameSiteType(), 
+	})
+
 
 	sanitizedUser := map[string]interface{}{
 		"id": newUser.ID,
@@ -107,7 +116,8 @@ func HandleCreateUser(ctx *gin.Context){
 		"email": newUser.Email,
 		"profile_picture": newUser.ProfilePicture,
 		"balance": newUser.Balance,
-	}
+		"created_at": newUser.CreatedAt,
+		}
 
 	ctx.JSON(200, gin.H{"message":"Succesfully user Created", "user": sanitizedUser})
 }
@@ -161,8 +171,18 @@ func HandleLoginUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetSameSite(http.SameSiteLaxMode)
-	ctx.SetCookie("Authorization", tokenString, 3600 * 24 * 30, "", "", false, true)
+	http.SetCookie(ctx.Writer, &http.Cookie{
+		Name:     "Authorization",
+		Value:    tokenString,
+		Path:     "/",
+		Domain:   utils.GetCookieDomain(),
+		Expires:  time.Now().Add(30 * 24 * time.Hour), 
+		HttpOnly: true,
+		Secure:   os.Getenv("ENV") == "production",
+		SameSite: utils.SameSiteType(), 
+	})
+
+	thisType := utils.SameSiteType()
 
 	// Return only essential info
 	sanitizedUser := map[string]interface{}{
@@ -171,9 +191,10 @@ func HandleLoginUser(ctx *gin.Context) {
 		"email": user.Email,
 		"profile_picture": user.ProfilePicture,
 		"balance": user.Balance,
+		"created_at": user.CreatedAt,
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Successfuly Logged in", "user": sanitizedUser})
+	ctx.JSON(http.StatusOK, gin.H{"message": "Successfuly Logged in", "user": sanitizedUser, "sameSite": thisType, "ENV": os.Getenv("ENV")})
 }
 
 
@@ -184,8 +205,18 @@ func HandleLogoutUser(ctx *gin.Context) {
 		return
 	}
 
-	// delete the cookie Authorization to deauthorize the user
-	middleware.DeleteCookie(ctx, "Authorization")
+
+	// set expire date to expire
+	http.SetCookie(ctx.Writer, &http.Cookie{
+        Name:     "Authorization",
+        Value:    "",
+        Path:     "/",
+		Domain:   utils.GetCookieDomain(),
+        Expires:  time.Now().Add(-time.Hour), 
+        HttpOnly: true,
+        Secure:   os.Getenv("ENV") == "production",
+        SameSite: utils.SameSiteType(), 
+    })
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "User successfully Logged out", "user_information": user})
 }
@@ -226,9 +257,13 @@ func HandleGetSingleUser(ctx *gin.Context){
 }
 
 func HandleSoftDeleteSingleUser(ctx *gin.Context) {
-	id := ctx.Param("id")
+	user, err := utils.CheckIfAuthorizedAndGetUserFromReq(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not Authorized"})
+		return
+	}
 
-	userID, err := strconv.ParseUint(id, 10, 64)
+	userID := user.ID
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
 		return
@@ -241,11 +276,23 @@ func HandleSoftDeleteSingleUser(ctx *gin.Context) {
 	}
 
 	if result.RowsAffected == 0 {
-		ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "User successfuly deleted"})
+		// set expire date to expire
+		http.SetCookie(ctx.Writer, &http.Cookie{
+			Name:     "Authorization",
+			Value:    "",
+			Path:     "/",
+			Domain:   utils.GetCookieDomain(),
+			Expires:  time.Now().Add(-time.Hour), 
+			HttpOnly: true,
+			Secure:   os.Getenv("ENV") == "production",
+			SameSite: utils.SameSiteType(), 
+		})
+
+	ctx.JSON(http.StatusOK, gin.H{"success":true, "message": "User successfuly deleted"})
 }
 
 func HandlePermanentDeleteSingleUser(ctx *gin.Context) {

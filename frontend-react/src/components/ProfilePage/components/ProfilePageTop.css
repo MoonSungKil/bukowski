@@ -1,4 +1,4 @@
-.profile_page_top {
+/* .profile_page_top {
   display: grid;
   width: 70%;
   height: 100%;
@@ -7,4 +7,14 @@
   align-items: start;
   padding-top: 7%;
   gap: 5%;
+} */
+
+.profile_page_top {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 7%;
 }

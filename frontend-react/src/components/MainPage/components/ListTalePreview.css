@@ -1,5 +1,5 @@
 .list_tale_preview {
-  width: 100%;
+  width: 97%;
   display: grid;
   grid-template-columns: 0.5fr 0.8fr 10fr;
   justify-content: center;
@@ -87,7 +87,6 @@
 .list_preview_box_genres {
   display: f;
 }
-
 
 @media (max-width: 2150px) {
   .list_tale_preview {
