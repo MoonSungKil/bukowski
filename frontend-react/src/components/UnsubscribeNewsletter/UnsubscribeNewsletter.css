@@ -1,0 +1,45 @@
+.unsubscribe_newsletter_container {
+  position: relative;
+  display: flex;
+  gap: 10%;
+  justify-self: center;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  margin-top: 5%;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: linear-gradient(var(--primary-background), var(--secondary-background));
+}
+
+.unsubscribe_newsletter_form {
+  color: var(--third-color);
+}
+
+.unsubscribe_newsletter_form_submit {
+  padding: 12px 20px;
+  background-color: rgba(198, 137, 90, 0.671);
+  color: var(--third-color);
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.unsubscribe_newsletter_form_submit:hover {
+  transform: scale(1.01);
+  background-color: var(--secondary-color);
+}
+
+.unsubscribe_newsletter_form_submit:active {
+  background-color: var(--primary-color);
+}
+
+.unsubscribe_newsletter_form .error {
+  color: var(--error-color);
+  font-size: 12px;
+  margin-top: 5px;
+}

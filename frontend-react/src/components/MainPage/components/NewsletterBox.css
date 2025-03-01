@@ -100,121 +100,12 @@
   }
 }
 
-/* 
-.newsletter_container {
-  position: relative;
-  width: 25rem;
-  height: 25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  filter: drop-shadow(10px 14px 4px rgba(0, 0, 0, 0.5));
-  align-items: center;
+@media (max-width: 1400px) {
+  .newsletter_container {
+    height: 100%;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
-
-.newsletter {
-  position: relative;
-  width: 95%;
-  height: 95%;
-  background-color: transparent;
-  border-radius: inherit;
-  color: var(--secondary-color);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  color: var(--third-color);
-  gap: 2rem;
-  background-image: url("../../../assets/particle.jpg");
-  background-repeat: repeat;
-  background-color: var(--primary-background);
-  background-blend-mode: multiply;
-}
-
-.newsletter_title > h2 {
-  color: var(--third-color);
-}
-
-.newsletter_title {
-  font-size: 1.5rem;
-}
-.newsletter_title p {
-  font-family: "Dancing Script", cursive;
-}
-
-.newsletter_title h2,
-.newsletter_title p {
-  margin: 0.5rem;
-}
-
-.newsletter_form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 80%;
-  gap: 0.3rem;
-  z-index: 20;
-}
-
-.newsletter_form > input {
-  width: 95%;
-  height: 2rem;
-  outline: none;
-  border: none;
-  text-align: center;
-  color: var(--third-color);
-  font-size: 1.1rem;
-  padding: 0.2rem;
-  border-bottom: 2px solid var(--third-color);
-  background-color: transparent;
-}
-
-.newsletter_form > input::placeholder {
-  color: var(--third-color);
-}
-
-.newsletter_form > button {
-  width: 100%;
-  height: 3rem;
-  border: none;
-  color: #fff;
-  font-size: 1.1rem;
-  color: var(--third-color);
-  background-color: var(--primary-background);
-  cursor: pointer;
-  border-radius: 5px;
-  border: 2px solid var(--third-color);
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.newsletter_form > button:hover {
-  color: var(--primary-background);
-  background-color: var(--primary-color);
-  border: 2px solid var(--primary-background);
-}
-
-.newsletter_svg {
-  position: absolute;
-  width: 145%;
-  height: 145%;
-  inset: -20%;
-}
-
-.newsletter_waveform {
-  fill: var(--primary-color);
-}
-
-.newsletter_svg_inner {
-  position: absolute;
-  width: 135%;
-  height: 135%;
-  inset: -15%;
-}
-
-.newsletter_waveform_inner {
-  fill: var(--primary-background);
-}
-
-} */

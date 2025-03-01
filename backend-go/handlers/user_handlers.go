@@ -7,6 +7,7 @@ import (
 	"net/mail"
 	"net/smtp"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -264,10 +265,6 @@ func HandleSoftDeleteSingleUser(ctx *gin.Context) {
 	}
 
 	userID := user.ID
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
-		return
-	}
 
 	result := database.DB.Delete(&model.User{}, userID)
 	if result.Error != nil {
@@ -592,13 +589,6 @@ func HandleUpdateUserProfilePicture(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
-	
-	// uploadDir := "../uploads/profile_pictures"
-	// filePath, err := utils.UploadImage(ctx, uploadDir)
-	// if err != nil {
-	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
 
 	file, err := ctx.FormFile("file")
 	if err != nil {
@@ -645,12 +635,11 @@ func HandleDeleteAuthorizationCookie(ctx *gin.Context) {
 }
 
 func HandleSubscribeToNewsletter(ctx *gin.Context) {
-
 	var emailBody types.EmailRequest
 	err := ctx.ShouldBind(&emailBody)
 	if err != nil {
 		if strings.Contains(err.Error(), "required") {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Filed cannot be empty", "details": err.Error()})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Filed cannot be empty", "details": err.Error()})	
 			return
 		}
 		if strings.Contains(err.Error(), "validation") {
@@ -668,7 +657,7 @@ func HandleSubscribeToNewsletter(ctx *gin.Context) {
 	} 
 
 	newSubscriber := model.NewsletterSubscriber{
-		Email: emailBody.Email,
+		Email: strings.ToLower(emailBody.Email),
 	}
 
 	result := database.DB.Create(&newSubscriber)
@@ -681,11 +670,19 @@ func HandleSubscribeToNewsletter(ctx *gin.Context) {
 		return
 	}
 
-	htmlContent, err := os.ReadFile("../email_templates/subscribe_template.html")
+	// Get the absolute path to the template
+	basePath, _ := os.Getwd() // Gets the root directory where the app is running
+	templatePath := filepath.Join(basePath, "email_templates", "subscribe_template.html")
+
+	htmlContent, err := os.ReadFile(templatePath)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error", "details": err.Error()})
 		return
 	}
+
+	htmlStr := string(htmlContent)
+
+	htmlStr = strings.ReplaceAll(htmlStr, "{{email}}", emailBody.Email)
 
 	bukowskiEmail := os.Getenv("NL_EMAIL")
 	bukowskiAppPass := os.Getenv("NL_APP_PASS")
@@ -700,7 +697,7 @@ func HandleSubscribeToNewsletter(ctx *gin.Context) {
 	msg := "MIME-Version: 1.0\r\n" +
 		"Content-Type: text/html; charset=\"UTF-8\"\r\n" +
 		"Subject: Welcome to the Bukowski Newsletter!\r\n\r\n" +
-		string(htmlContent)
+		htmlStr
 
 	err = smtp.SendMail(
 		"smtp.gmail.com:587",
@@ -717,3 +714,26 @@ func HandleSubscribeToNewsletter(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"sucessful": true, "message": "Sucessfully Subscribed"})
 }
 
+func HandleUnsubscribeToNewsletter(ctx *gin.Context) {
+	email := strings.ToLower(strings.TrimSpace(ctx.Query("email")))
+
+	if email == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Email is required"})
+		return
+	}
+
+	var newsletterSubscriber model.NewsletterSubscriber
+	result := database.DB.Where("email = ?", email).First(&newsletterSubscriber)
+	if result.RowsAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Email not subscribed"})
+		return
+	}
+
+	result = database.DB.Unscoped().Delete(&newsletterSubscriber)
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unsubscribe", "details": result.Error.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"success": true, "message": "Successfully unsubscribed"})
+}

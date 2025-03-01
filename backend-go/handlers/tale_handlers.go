@@ -136,6 +136,10 @@ func HandleCreateTale(ctx *gin.Context) {
 	}
 	publishedAt, _ := time.Parse(time.RFC3339, ctx.PostForm("published_at"))
 	
+	if price <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"success":false,"error": "Price cannot be less than 0", "field": "price"})
+		return
+	}
 
 	// Parse genres JSON string into a slice
 	genresJSON := ctx.PostForm("genres")

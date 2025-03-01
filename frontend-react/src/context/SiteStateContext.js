@@ -116,12 +116,25 @@ export const SiteStateProvider = ({ children }) => {
   }, []);
 
   // subscribe newsletter
-  // get all tales to show for everyone (unauthorized)
-  const SubscribeNewsletter = async (email) => {
+
+  const subscribeNewsletter = async (email) => {
     try {
       const { data } = await axios.post(`${backendUrl}/newsletter/subscribe`, {
         email,
       });
+
+      const message = data.message;
+      triggerSuccessDispatch(message);
+    } catch (error) {
+      console.log(error.response.data);
+
+      const message = error.response.data.error;
+      triggerErrorDispatch(message);
+    }
+  };
+  const unsubscribeNewsletter = async (email) => {
+    try {
+      const { data } = await axios.post(`${backendUrl}/newsletter/unsubscribe?email=${email}`, {});
 
       const message = data.message;
       triggerSuccessDispatch(message);
@@ -1007,8 +1020,9 @@ export const SiteStateProvider = ({ children }) => {
         successMessage: state.successMessage,
         successState: state.successState,
         // user values
-        SubscribeNewsletter,
-        loginUser: loginUser,
+        subscribeNewsletter,
+        unsubscribeNewsletter,
+        loginUser,
         logoutUser,
         updateUserProfilePicture,
         updateUserProfileInfo,

@@ -8,3 +8,11 @@
   gap: 5%;
   padding-top: 8%;
 }
+
+@media (max-width: 1400px) {
+  .main_page_top {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+  }
+}

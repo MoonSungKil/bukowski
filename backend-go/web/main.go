@@ -73,6 +73,7 @@ func main() {
 	router.GET("/tales/get_genres", handlers.HandleGetAllGenres)
 
 	router.POST("/newsletter/subscribe", handlers.HandleSubscribeToNewsletter)
+	router.POST("/newsletter/unsubscribe", handlers.HandleUnsubscribeToNewsletter)
 
 	router.Run()
 }

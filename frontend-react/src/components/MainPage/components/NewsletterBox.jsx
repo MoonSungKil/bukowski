@@ -3,13 +3,13 @@ import "./NewsletterBox.css";
 import { useSiteState } from "../../../context/SiteStateContext";
 
 const NewsletterBox = () => {
-  const { SubscribeNewsletter } = useSiteState();
+  const { subscribeNewsletter } = useSiteState();
 
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    SubscribeNewsletter(email);
+    subscribeNewsletter(email);
     console.log(email);
   };
 

@@ -58,3 +58,12 @@
 .main_page_text_svg_two > svg > path {
   fill: var(--primary-color);
 }
+
+@media (max-width: 1400px) {
+  .main_page_text_li {
+    font-size: 0.9rem;
+  }
+  .main_page_text h1 {
+    font-size: 1.3rem;
+  }
+}

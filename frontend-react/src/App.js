@@ -10,6 +10,7 @@ import ProfilePage from "./components/ProfilePage/ProfilePage";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 import { ProfileStateProvider } from "./context/ProfileStateContext";
 import ComposePage from "./components/ComposePage/ComposePage";
+import UnsubscribeNewsletter from "./components/UnsubscribeNewsletter/UnsubscribeNewsletter";
 
 function App() {
   const { getAllPurchasedTales } = useSiteState();
@@ -74,6 +75,14 @@ function App() {
       element: (
         <Layout>
           <ResetPassword />
+        </Layout>
+      ),
+    },
+    {
+      path: "/newsletter-unsubscribe",
+      element: (
+        <Layout>
+          <UnsubscribeNewsletter />
         </Layout>
       ),
     },

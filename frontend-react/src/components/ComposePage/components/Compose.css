@@ -1,4 +1,4 @@
-.compose {
+/* .compose {
   display: grid;
   width: 65%;
   height: 100%;
@@ -369,6 +369,402 @@
 
 .compose_delete:hover {
   background-color: rgb(128, 0, 28);
+}
+
+.compose_error {
+  color: rgb(128, 0, 28);
+  box-shadow: 0px 0px 5px 5px rgb(128, 0, 28);
+  pointer-events: none;
+}
+
+.compose_error *::placeholder {
+  color: rgb(128, 0, 28);
+}
+
+@media (max-width: 2350px) {
+  .compose {
+    width: 70%;
+  }
+}
+
+@media (max-width: 1850px) {
+  .compose {
+    width: 80%;
+  }
+} */
+
+.compose {
+  display: grid;
+  width: 65%;
+  height: 100%;
+  justify-content: center;
+  align-items: start;
+  padding-top: 6%;
+  background-color: transparent;
+}
+
+.compose_form {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 2%;
+  z-index: 30;
+}
+
+.compose_title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+}
+
+.compose_title > input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  text-align: center;
+  color: var(--secondary-color);
+}
+
+.compose_form_left {
+  display: grid;
+  grid-template-rows: 0.5fr 3fr 2.5fr 2.5fr 1fr;
+  gap: 1rem;
+}
+
+.compose_image {
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  gap: 2%;
+  max-height: 14rem;
+}
+
+.compose_image_preview {
+  box-shadow: 0px 0px 3px black;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.compose_image_preview > img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.compose_image_buttons {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  flex-direction: column;
+  gap: 5%;
+  color: var(--third-color);
+}
+
+.compose_image_select_button {
+  box-shadow: 0px 0px 3px black;
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3%;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background-color: var(--secondary-background);
+}
+
+.compose_image_select_button:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: rgb(30, 117, 66);
+}
+
+.compose_image_remove_button {
+  box-shadow: 0px 0px 3px black;
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3%;
+  font-size: 0.9rem;
+  background-color: var(--secondary-background);
+  cursor: pointer;
+}
+
+.compose_image_remove_button:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: rgb(139, 19, 45);
+}
+
+.compose_image_select_button > input {
+  display: none;
+}
+
+.compose_genres {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5%;
+  padding: 0;
+}
+
+.compose_genres > label {
+  color: var(--third-color);
+  align-self: flex-start;
+}
+
+.compose_genres > select {
+  height: 15%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--third-color);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.compose_genres > select > option {
+  background-color: var(--primary-background);
+}
+
+.compose_content {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 1rem;
+  border: 0.3rem solid var(--primary-background);
+  padding: 0.4rem 0.3rem;
+}
+
+.compose_content > textarea {
+  width: inherit;
+  height: inherit;
+  resize: none;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  color: gray;
+  outline: none;
+  text-indent: 0.5rem;
+  border: none;
+  background-color: var(--primary-background);
+}
+
+.compose *::-webkit-scrollbar {
+  width: 1rem;
+  height: 1rem;
+}
+
+.compose *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.compose *::-webkit-scrollbar-thumb {
+  background-color: var(--secondary-background);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.compose_form_body_right {
+  display: grid;
+  grid-template-rows: 3fr 1fr 2fr;
+  gap: 3%;
+  padding: 5%;
+}
+
+.compose_description {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3%;
+}
+
+.compose_description > label {
+  color: var(--third-color);
+}
+
+.compose_description > textarea {
+  height: 100%;
+  width: 100%;
+  color: var(--third-color);
+  outline: none;
+  color: gray;
+  resize: none;
+  border: none;
+  background-color: var(--primary-background);
+  border-radius: inherit;
+  border-radius: 0.5rem;
+  text-indent: 0.5rem;
+}
+
+.compose_price_pages {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5%;
+}
+
+.compose_price,
+.compose_pages_count {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--third-color);
+  gap: 5%;
+}
+
+.compose_price > input,
+.compose_pages_count > input {
+  width: 100%;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  height: 100%;
+  text-align: center;
+  background-color: var(--primary-background);
+  color: var(--third-color);
+  font-size: 1rem;
+}
+
+.compose_form_buttons {
+  display: flex;
+  gap: 2%;
+  position: relative;
+  justify-content: space-around;
+}
+
+.compose_draft,
+.compose_publish,
+.compose_delete {
+  background-color: var(--primary-background);
+  box-shadow: 0px 0px 5px black;
+  color: var(--third-color);
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+}
+
+.compose_publish_approve_box {
+  height: fit-content;
+  background-color: var(--primary-background);
+  padding: 1rem;
+  box-shadow: 2px 2px 5px black;
+  margin-top: 10%;
+  border: 1px solid rgb(51, 51, 51);
+  position: absolute;
+  width: 100%;
+  bottom: 70%;
+  left: 65%;
+  display: none;
+}
+
+.compose_publish_approve_box_display {
+  display: block;
+}
+
+.compose_publish_approve_box_text {
+  color: gray;
+}
+
+.compose_publish_approve_box_buttons {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.compose_publish_approve_box_buttons > div {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  border: none;
+  cursor: pointer;
+  background-color: var(--third-color);
+  box-shadow: 0px 0px 5px black;
+}
+
+.compose_publish_approve_box_buttons > div:hover {
+  background-color: rgb(185, 184, 183);
+}
+
+.compose_delete_draft_box {
+  height: fit-content;
+  background-color: var(--primary-background);
+  padding: 1rem;
+  box-shadow: 2px 2px 5px black;
+  margin-top: 10%;
+  border: 1px solid rgb(51, 51, 51);
+  position: absolute;
+  width: 100%;
+  bottom: 70%;
+  left: 101%;
+  display: none;
+}
+
+.compose_delete_draft_box_display {
+  display: block;
+}
+
+.compose_delete_draft_box_text {
+  color: gray;
+}
+
+.compose_delete_draft_box_buttons {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.compose_delete_draft_box_buttons > div {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  border: none;
+  cursor: pointer;
+  background-color: var(--third-color);
+  box-shadow: 0px 0px 5px black;
+}
+
+.compose_delete_draft_box_buttons > div:hover {
+  background-color: rgb(185, 184, 183);
+}
+
+.compose_draft {
+  color: rgb(30, 117, 66);
+}
+
+.compose_draft:hover {
+  background-color: rgb(0, 128, 53);
+  color: var(--third-color);
+}
+
+.compose_publish {
+  color: rgb(218, 138, 47);
+}
+
+.compose_publish:hover {
+  background-color: rgb(218, 138, 47);
+  color: var(--third-color);
+}
+
+.compose_delete {
+  color: rgb(139, 19, 45);
+}
+
+.compose_delete:hover {
+  background-color: rgb(128, 0, 28);
+  color: var(--third-color);
 }
 
 .compose_error {
