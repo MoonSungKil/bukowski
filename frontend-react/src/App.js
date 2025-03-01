@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import "./App.css";
 import MainPage from "./components/MainPage/MainPage";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { useSiteState } from "./context/SiteStateContext";
 import Layout from "./components/Layout/Layout";
 import AuthPage from "./components/AuthPage/Auth";
@@ -44,7 +44,7 @@ function App() {
       ),
     },
     {
-      path: "/profile/:id",
+      path: "/profile/:username",
       element: (
         <Layout>
           <ProfileStateProvider>
@@ -54,7 +54,7 @@ function App() {
       ),
     },
     {
-      path: "/profile/:id/compose",
+      path: "/profile/:username/compose",
       element: (
         <Layout>
           <ComposePage />
@@ -62,7 +62,7 @@ function App() {
       ),
     },
     {
-      path: "/profile/:id/edit/:tale_id",
+      path: "/profile/:username/edit/:tale_id",
       element: (
         <Layout>
           <ComposePage />
@@ -74,6 +74,14 @@ function App() {
       element: (
         <Layout>
           <ResetPassword />
+        </Layout>
+      ),
+    },
+    {
+      path: "*",
+      element: (
+        <Layout>
+          <MainPage />
         </Layout>
       ),
     },

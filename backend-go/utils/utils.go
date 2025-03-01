@@ -186,7 +186,21 @@ func ValidateResetToken(tokenString string) (string, error) {
 		return "", errors.New("token not valid")
 	}
 
-	return claims["email"].(string), nil
+	exp, ok := (claims)["exp"].(float64)
+	if !ok {
+		return "", errors.New("token expired")
+	}
+
+	if int64(exp) < time.Now().Unix(){
+		return "", errors.New("token expired")
+	}
+	
+	email, ok := (claims)["email"].(string)
+	if !ok || email == "" {
+		return "", errors.New("invalid email claim")
+	}
+
+	return email, nil
 }
 
 func SendRestPasswordLink(userEmail, resetLink string) (bool, error) {

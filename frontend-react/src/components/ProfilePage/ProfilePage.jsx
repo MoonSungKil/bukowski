@@ -8,13 +8,13 @@ const ProfilePage = () => {
   const navigate = useNavigate();
 
   const { userLoggedIn } = useSiteState();
-  const { id } = useParams();
+  const { username } = useParams();
 
   useEffect(() => {
-    if (!userLoggedIn || !userLoggedIn.id || userLoggedIn.id !== Number(id)) {
+    if (!userLoggedIn || !userLoggedIn.username || userLoggedIn.username !== username) {
       navigate("/");
     }
-  }, [userLoggedIn, id, navigate]);
+  }, [userLoggedIn, username, navigate]);
 
   return (
     <div className="profile_page">

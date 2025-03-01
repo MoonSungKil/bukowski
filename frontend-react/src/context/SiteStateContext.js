@@ -942,6 +942,11 @@ export const SiteStateProvider = ({ children }) => {
     return false;
   };
 
+  const alreadyLoggedInModal = () => {
+    const message = "Already Logged In";
+    triggerErrorDispatch(message);
+  };
+
   // END USER CONTEXT
 
   // UTILS
@@ -995,6 +1000,7 @@ export const SiteStateProvider = ({ children }) => {
         openAuthModalLogin,
         openAuthModalForgotPassword,
         closeAuthModal,
+        alreadyLoggedInModal,
         // error values
         errorMessage: state.errorMessage,
         errorState: state.errorState,

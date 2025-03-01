@@ -16,7 +16,7 @@ export const ProfileIcon = () => {
   };
 
   const navigateToProfile = () => {
-    navigate(`/profile/${userLoggedIn.id}`);
+    navigate(`/profile/${userLoggedIn.username}`);
   };
 
   return (

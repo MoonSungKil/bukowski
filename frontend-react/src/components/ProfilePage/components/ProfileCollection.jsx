@@ -5,19 +5,10 @@ import { useProfileState } from "../../../context/ProfileStateContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ProfileCollection = ({ keyword, setKeyword }) => {
-  const {
-    typeCollectionSelected,
-    filteredCollection,
-    filterCollectionByKeyword,
-    selectedCollectionType,
-  } = useProfileState();
+  const { typeCollectionSelected, filteredCollection, filterCollectionByKeyword } =
+    useProfileState();
 
-  const { id } = useParams();
-
-  const setCollectionType = (collectionType) => {
-    selectedCollectionType(collectionType.toLowerCase());
-    setKeyword("");
-  };
+  const { username } = useParams();
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -31,9 +22,8 @@ const ProfileCollection = ({ keyword, setKeyword }) => {
   const navigate = useNavigate();
 
   const navigateToEdit = (taleId) => {
-    console.log(id, taleId);
     if (typeCollectionSelected.toLowerCase() === "drafts".toLowerCase()) {
-      navigate(`/profile/${id}/edit/${taleId}`);
+      navigate(`/profile/${username}/edit/${taleId}`);
     }
 
     if (typeCollectionSelected.toLowerCase() === "published".toLocaleLowerCase()) {
@@ -67,40 +57,10 @@ const ProfileCollection = ({ keyword, setKeyword }) => {
           </form>
         </div>
       </div>
-
-      {/* <div className="profile_collection_select">
-        <ul className="profile_collection_select_list">
-          <li
-            onClick={() => setCollectionType("published")}
-            className="profile_collection_select_list_item"
-          >
-            PUBLISHED
-          </li>
-          <li
-            onClick={() => setCollectionType("purchased")}
-            className="profile_collection_select_list_item"
-          >
-            PURCHASES
-          </li>
-          <li
-            onClick={() => setCollectionType("drafts")}
-            className="profile_collection_select_list_item"
-          >
-            DRAFTS
-          </li>
-          <li
-            onClick={() => setCollectionType("wishlist")}
-            className="profile_collection_select_list_item"
-          >
-            WISHLIST
-          </li>
-        </ul>
-      </div> */}
-
       <div className="profile_collection">
         {typeCollectionSelected.toLowerCase() === "drafts".toLowerCase() && (
           <div
-            onClick={() => navigate(`/profile/${id}/compose`)}
+            onClick={() => navigate(`/profile/${username}/compose`)}
             className="profile_collection_create_tale_button"
           >
             <p>Create New Tale</p>

@@ -121,7 +121,7 @@ const Compose = () => {
         console.log(updatedDraft);
       } else {
         const newDraftCreated = await createDraft(formData);
-        navigate(`/profile/${userLoggedIn.id}`);
+        navigate(`/profile/${userLoggedIn.username}`);
       }
     }
   };
@@ -134,7 +134,7 @@ const Compose = () => {
         setShowDeleteDraftModal(false);
       }
     }
-    navigate(`/profile/${userLoggedIn.id}`);
+    navigate(`/profile/${userLoggedIn.username}`);
   };
 
   const approveSubmit = (e, type) => {

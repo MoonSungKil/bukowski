@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ResetPassword.css";
 import { useSiteState } from "../../context/SiteStateContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const ResetPassword = () => {
-  const { resetPassword } = useSiteState();
+  const { resetPassword, userLoggedIn, alreadyLoggedInModal } = useSiteState();
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -26,6 +26,13 @@ const ResetPassword = () => {
       }, 2500);
     }
   };
+
+  useEffect(() => {
+    if (userLoggedIn.id) {
+      navigate("/");
+      alreadyLoggedInModal();
+    }
+  }, [userLoggedIn]);
 
   return (
     <div className="reset_password_container">
